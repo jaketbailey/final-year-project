@@ -1,7 +1,7 @@
 package main
 
 import (
-	webServer "final-year-project/src/back-end"
+	webServer "cycling-route-planner/src/back-end"
 )
 
 func main() {
