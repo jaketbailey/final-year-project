@@ -1,0 +1,25 @@
+{
+  "name": "final-year-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaketbailey/final-year-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaketbailey/final-year-project/issues"
+  },
+  "homepage": "https://github.com/jaketbailey/final-year-project#readme",
+  "dependencies": {
+    "create-react-app": "^5.0.1"
+  }
+}
