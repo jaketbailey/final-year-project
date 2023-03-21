@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "go run main.go",
-    "test": "jest && go test ./src/back-end/__tests",
+    "test": "jest && go test -v ./src/back-end/__tests",
     "lint:fix": "eslint src/**/*.js --fix",
     "lint": "eslint src/**/*.js",
     "prettify": "prettier src/**/*.js --write"
