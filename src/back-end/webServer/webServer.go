@@ -3,6 +3,8 @@ package webServer
 import (
 	"net/http"
 
+	"fmt"
+
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +23,11 @@ func Init() {
 			c.JSON(http.StatusOK, gin.H{
 				"message": "pong",
 			})
+		})
+		api.POST("/test", func(c *gin.Context) {
+			fmt.Println("test")
+			// message := c.PostForm()
+			c.JSON(http.StatusOK, gin.H{"status": "Good"})
 		})
 	}
 

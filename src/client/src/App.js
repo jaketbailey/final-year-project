@@ -3,6 +3,17 @@ import './App.css';
 
 function App() {
   console.log('test');
+
+  fetch("/api/test", {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'test',
+    })
+  }).then(response => console.log(response))
+  
   return (
     <div className="App">
       <header className="App-header">
