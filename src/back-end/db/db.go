@@ -3,24 +3,24 @@
 package db
 
 import (
+	"cycling-route-planner/src/back-end/config"
 	"database/sql"
 	"fmt"
 
 	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "postgres"
-	password = "password-here"
-	dbname   = "block_shop"
-)
-
 func Init() {
+	host := config.GetDotEnvStr("DB_HOST")
+	port := config.GetDotEnvInt("DB_PORT")
+	user := config.GetDotEnvStr("DB_USER")
+	password := config.GetDotEnvStr("DB_PASSWORD")
+	dbname := config.GetDotEnvStr("DB_NAME")
+	sslmode := config.GetDotEnvStr("DB_SSLMODE")
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+		"password=%s dbname=%s sslmode=%s",
+		host, port, user, password, dbname, sslmode)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {

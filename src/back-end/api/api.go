@@ -8,7 +8,14 @@ func Init(router *gin.Engine) {
 	// Setup route group for the API
 	api := router.Group("/api")
 	{
+		// GET Routes
 		api.GET("/", GetTest)
+
+		// POST Routes
 		api.POST("/test", PostTest)
+
+		// PUT Routes
+
+		// DELETE Routes
 	}
 }
