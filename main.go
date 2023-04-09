@@ -1,11 +1,11 @@
 package main
 
 import (
-	api "cycling-route-planner/src/back-end/api"
-	webServer "cycling-route-planner/src/back-end/webServer"
+	"cycling-route-planner/src/back-end/db"
+	"cycling-route-planner/src/back-end/server"
 )
 
 func main() {
-	api.Init()
-	webServer.Init()
+	db.Init()
+	server.Init()
 }
