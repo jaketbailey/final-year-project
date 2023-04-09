@@ -3,6 +3,7 @@ package server
 import (
 	"cycling-route-planner/src/back-end/api"
 	"cycling-route-planner/src/back-end/config"
+	"cycling-route-planner/src/back-end/utils/logger"
 	"fmt"
 
 	"github.com/gin-gonic/contrib/static"
@@ -10,6 +11,11 @@ import (
 )
 
 func Init(mode string) {
+
+	Logger := logger.New()
+
+	Logger.Info().Println("Server Init()")
+
 	// Set the router as the default one shipped with Gin
 	if mode == "dev" {
 		gin.SetMode(gin.DebugMode)

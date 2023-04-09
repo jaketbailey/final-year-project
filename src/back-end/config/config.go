@@ -1,6 +1,7 @@
 package config
 
 import (
+	"cycling-route-planner/src/back-end/utils/logger"
 	"os"
 	"strconv"
 
@@ -8,6 +9,10 @@ import (
 )
 
 func Init() string {
+	Logger := logger.New()
+
+	Logger.Info().Println("Config Init()")
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		panic("Error loading .env file")

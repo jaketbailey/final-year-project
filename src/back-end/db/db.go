@@ -4,6 +4,7 @@ package db
 
 import (
 	"cycling-route-planner/src/back-end/config"
+	"cycling-route-planner/src/back-end/utils/logger"
 	"database/sql"
 	"fmt"
 
@@ -11,6 +12,11 @@ import (
 )
 
 func Init() {
+
+	Logger := logger.New()
+
+	Logger.Info().Println("Database Init()")
+
 	host := config.GetDotEnvStr("DB_HOST")
 	port := config.GetDotEnvInt("DB_PORT")
 	user := config.GetDotEnvStr("DB_USER")
