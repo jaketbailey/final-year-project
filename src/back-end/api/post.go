@@ -1,13 +1,13 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func PostTest(c *gin.Context) {
-	fmt.Println("test")
-	c.JSON(http.StatusOK, gin.H{"status": "Good"})
+	c.JSON(http.StatusOK, gin.H{
+		"status": "Good",
+	})
 }

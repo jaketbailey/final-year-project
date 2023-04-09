@@ -15,7 +15,10 @@ func Init(router *gin.Engine) {
 		api.POST("/test", PostTest)
 
 		// PUT Routes
+		api.PUT("/test", PutTest)
 
 		// DELETE Routes
+		api.DELETE("/test", DeleteTest)
+
 	}
 }
