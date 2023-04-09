@@ -9,7 +9,7 @@ func Init(router *gin.Engine) {
 	api := router.Group("/api")
 	{
 		// GET Routes
-		api.GET("/", GetTest)
+		api.GET("/ping", GetTest)
 
 		// POST Routes
 		api.POST("/test", PostTest)
