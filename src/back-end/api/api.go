@@ -10,8 +10,6 @@ func Init(router *gin.Engine) {
 
 	Logger := logger.New()
 
-	Logger.Info().Println("API Init()")
-
 	// Setup route group for the API
 	api := router.Group("/api")
 	{
@@ -26,6 +24,7 @@ func Init(router *gin.Engine) {
 
 		// DELETE Routes
 		api.DELETE("/test", DeleteTest)
-
 	}
+
+	Logger.Info().Println("Router group /api created")
 }

@@ -11,13 +11,12 @@ import (
 func Init() string {
 	Logger := logger.New()
 
-	Logger.Info().Println("Config Init()")
-
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic("Error loading .env file")
+		Logger.Fatal().Println("Error loading .env file")
 	}
 
+	Logger.Info().Println("Configuration Loaded Successfully")
 	return GetDotEnvStr("MODE")
 }
 

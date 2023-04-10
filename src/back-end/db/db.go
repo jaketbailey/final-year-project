@@ -15,8 +15,6 @@ func Init() {
 
 	Logger := logger.New()
 
-	Logger.Info().Println("Database Init()")
-
 	host := config.GetDotEnvStr("DB_HOST")
 	port := config.GetDotEnvInt("DB_PORT")
 	user := config.GetDotEnvStr("DB_USER")
@@ -39,5 +37,5 @@ func Init() {
 		panic(err)
 	}
 
-	fmt.Println("Successfully connected!")
+	Logger.Info().Printf("Successfully connected to %s database!", dbname)
 }

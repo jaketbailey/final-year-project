@@ -14,7 +14,7 @@ func Init(mode string) {
 
 	Logger := logger.New()
 
-	Logger.Info().Println("Server Init()")
+	Logger.Info().Printf("Running in %s mode", mode)
 
 	// Set the router as the default one shipped with Gin
 	if mode == "dev" {
@@ -31,5 +31,7 @@ func Init(mode string) {
 	api.Init(router)
 
 	// Start and run the server
+	Logger.Info().Println("Server Starting")
 	router.Run(fmt.Sprintf(":%d", port))
+	Logger.Info().Println("Server Running")
 }
