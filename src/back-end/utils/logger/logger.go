@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"cycling-route-planner/src/back-end/config"
 	"fmt"
 	"io"
 	"log"
@@ -8,12 +9,9 @@ import (
 	"time"
 )
 
-const (
-	LogsDir = "logs"
-)
-
 var (
-	mw = io.MultiWriter(os.Stdout, SetLogFile())
+	mw      = io.MultiWriter(os.Stdout, SetLogFile())
+	LogsDir = config.GetDotEnvStr("LOGS_DIR")
 )
 
 type LogDir struct {
