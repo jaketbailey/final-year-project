@@ -4,6 +4,10 @@ import './App.css';
 function App() {
   console.log('test');
 
+
+  /**
+   * @function fetch
+   */
   fetch("/api/test", {
     headers: {
       'Content-Type': 'application/json',

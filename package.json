@@ -11,7 +11,8 @@
     "test": "jest && go test -v ./src/back-end/__tests",
     "lint:fix": "eslint src/**/*.js --fix",
     "lint": "eslint src/**/*.js",
-    "prettify": "prettier src/**/*.js --write"
+    "prettify": "prettier src/**/*.js --write",
+    "doc": "jsdoc -c jsdoc.conf.json -r ./src/ -d ./docs/jsdoc/ | godoc -http=:6060 | start http://localhost:6060/pkg/cycling-route-planner/"
   },
   "repository": {
     "type": "git",

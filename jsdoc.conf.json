@@ -1,0 +1,11 @@
+{
+  "source": {
+      "include": ["./src/client/src"],
+      "exclude": ["./node_modules", "./src/client/node_modules"],
+      "includePattern": ".+\\.(js(doc|x)?|mjs)$"
+  },
+  "opts": {
+      "destination": "./docs/"
+  },
+  "plugins": ["plugins/markdown"]
+}

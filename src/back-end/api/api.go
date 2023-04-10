@@ -1,3 +1,4 @@
+// API package for the back-end
 package api
 
 import (
