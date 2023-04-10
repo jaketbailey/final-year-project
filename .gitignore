@@ -20,4 +20,5 @@ build/
 .env
 logs/
 **/jsdoc/
+docs\jsdoc
 
