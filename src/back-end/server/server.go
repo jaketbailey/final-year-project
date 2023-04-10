@@ -33,5 +33,4 @@ func Init(mode string) {
 	// Start and run the server
 	Logger.Info().Println("Server Starting")
 	router.Run(fmt.Sprintf(":%d", port))
-	Logger.Info().Println("Server Running")
 }
