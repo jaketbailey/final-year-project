@@ -7,6 +7,8 @@ assignees: jaketbailey
 
 ---
 
-Acceptance Criteria / System Requirements:
-Priority:
-ID:
+**Acceptance Criteria / System Requirements**
+
+**Priority**
+
+**ID**
