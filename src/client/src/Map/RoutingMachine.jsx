@@ -3,10 +3,16 @@ import { createControlComponent } from '@react-leaflet/core';
 import 'leaflet-routing-machine';
 
 const createRoutingMachineLayer = (props) => {
+  const router = L.Routing.osrmv1({
+    serviceUrl: 'http://localhost:5000/route/v1',
+    profile: 'bike',
+    useHints: false,
+  })
+
   const instance = L.Routing.control({
+    router,
     waypoints: [
       L.latLng(50.798908,-1.091160),
-      L.latLng(50.7833823,-1.0888348),
       L.latLng(50.789560,-1.055250)
     ],
     lineOptions: {
