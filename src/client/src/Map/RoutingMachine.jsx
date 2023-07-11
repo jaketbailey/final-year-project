@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { createControlComponent } from '@react-leaflet/core';
 import 'leaflet-routing-machine';
+import 'leaflet-control-geocoder';
 
 const createRoutingMachineLayer = (props) => {
   const router = L.Routing.osrmv1({
@@ -24,9 +25,10 @@ const createRoutingMachineLayer = (props) => {
     routeWhileDragging: false,
     show: false,
     draggableWaypoints: true,
-    addWaypoints: false,
-    fitSelectedRoutes: true,
+    addWaypoints: true,
+    fitSelectedRoutes: false,
     showAlternatives: true,
+    geocoder: L.Control.Geocoder.nominatim(),
   });
   return instance;
 }
