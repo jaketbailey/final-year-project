@@ -18,6 +18,9 @@ const createRoutingMachineLayer = (props) => {
     lineOptions: {
       styles: [{color: '#8367C7', opacity: 1, weight: 3}]
     },
+    altLineOptions: {
+      styles: [{opacity: 0.5, weight: 3}]
+    },
     routeWhileDragging: false,
     show: false,
     draggableWaypoints: true,
