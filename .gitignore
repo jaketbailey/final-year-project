@@ -24,3 +24,6 @@ docs\jsdoc
 
 # Output from running `go build` (built version of the back-end application)
 cycling-route-planner
+
+# Open Source Routing Machine (OSRM) binaries
+osrm/
