@@ -25,7 +25,8 @@
   },
   "homepage": "https://github.com/jaketbailey/final-year-project#readme",
   "dependencies": {
-    "create-react-app": "^5.0.1"
+    "create-react-app": "^5.0.1",
+    "eslint-plugin-react": "^7.32.2"
   },
   "devDependencies": {
     "eslint": "^8.36.0",
@@ -41,7 +42,8 @@
     "extends": [
       "react-app",
       "plugin:prettier/recommended",
-      "portsoc"
+      "eslint:recommended",
+      "plugin:react/recommended"
     ],
     "root": true,
     "env": {
