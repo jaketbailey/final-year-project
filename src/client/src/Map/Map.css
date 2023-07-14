@@ -1,0 +1,47 @@
+.leaflet-right, dx.leaflet-top, .leaflet-control {
+  margin-top: 0;
+}
+
+.leaflet-routing-container {
+  /* background-color: red; */
+  font: 0.8rem Poppins;
+  /* height: 98vh; */
+  all: none;
+}
+  
+.leaflet-routing-geocoders {
+  /* background-color: blue; */
+}
+
+.leaflet-routing-geocoder {
+  /* background-color: green; */
+}
+
+.leaflet-routing-remove-waypoint {
+  /* background-color: yellow; */
+}
+
+input {
+  /* background-color: orange; */
+  font: 0.8rem Poppins;
+}
+
+.leaflet-routing-add-waypoint  {
+  /* background-color: purple; */
+}
+
+.leaflet-routing-alternatives-container {
+  /* background-color: pink; */
+  height: 100%;
+}
+
+.leaflet-routing-alt {
+  /* background-color: brown; */
+  height: 100%;
+}
+
+table {
+  /* background-color: navy;
+  color: white; */
+  height: 100%;
+}
