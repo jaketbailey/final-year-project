@@ -10,12 +10,7 @@ import Openrouteservice from 'openrouteservice-js'
 import './Map.css'
 
 const createRoutingMachineLayer = (props) => {
-  // const router = L.Routing.osrmv1({
-  //   serviceUrl: 'http://localhost:5000/route/v1',
-  //   profile: 'bike',
-  //   useHints: false,
-  // })
-
+  
   const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
   const router = new L.Routing.OpenRouteService(apiKey, {
     timeout: 30 * 1000, // 30",
