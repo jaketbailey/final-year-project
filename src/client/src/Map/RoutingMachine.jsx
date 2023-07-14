@@ -5,6 +5,7 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
+import Openrouteservice from 'openrouteservice-js'
 
 import './Map.css'
 
@@ -56,15 +57,13 @@ const createRoutingMachineLayer = (props) => {
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
     collapsible: true,
+    containerClassName: 'routing-container',
   });
 
   instance.on('routesfound', (e) => {
     const routes = e.routes;
-    const summary = routes[0].summary;
-    alert(routes);
+    props.setCoordinates(routes[0].coordinates);
     console.log(routes);
-    console.log(`Total ascent: ${summary.totalAscend} m`);
-    console.log(`Total descent: ${summary.totalDescend} m`);
   });
 
   return instance;
