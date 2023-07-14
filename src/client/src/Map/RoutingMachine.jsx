@@ -39,7 +39,7 @@ const createRoutingMachineLayer = (props) => {
       L.latLng(50.789560,-1.055250)
     ],
     lineOptions: {
-      styles: [{color: '#8367C7', opacity: 1, weight: 3}]
+      styles: [{color: '#3454D1', opacity: 1, weight: 3}]
     },
     altLineOptions: {
       styles: [{opacity: 0.5, weight: 3}]
@@ -58,6 +58,7 @@ const createRoutingMachineLayer = (props) => {
   instance.on('routesfound', (e) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
+    props.setSummary(routes[0].summary);
     console.log(routes);
   });
 

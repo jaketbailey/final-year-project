@@ -24,6 +24,7 @@ const Map = (props) => {
       <ZoomControl position="bottomleft" />
       <RoutingMachine
         setCoordinates={props.setCoordinates}
+        setSummary={props.setSummary}
       />
     </MapContainer>
   )
