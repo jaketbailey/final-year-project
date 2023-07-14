@@ -14,11 +14,11 @@ const createRoutingMachineLayer = (props) => {
   const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
   const router = new L.Routing.OpenRouteService(apiKey, {
     timeout: 30 * 1000, // 30",
-        format: "json",                           // default, gpx not yet supported
-        host: "https://api.openrouteservice.org", // default if not setting
-        service: "directions",                    // default (for routing) 
-        api_version: "v2",                        // default
-        profile: "cycling-road",                  // default
+        format: "json",                          
+        host: "https://api.openrouteservice.org",
+        service: "directions",                   
+        api_version: "v2",                       
+        profile: "cycling-road",                 
         routingQueryParams: {
             attributes: [
                 "avgspeed",
