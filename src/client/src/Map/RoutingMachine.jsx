@@ -59,7 +59,7 @@ const createRoutingMachineLayer = (props) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
     props.setSummary(routes[0].summary);
-    console.log(routes);
+    routes[0].name = 'Route Summary';
   });
 
   return instance;

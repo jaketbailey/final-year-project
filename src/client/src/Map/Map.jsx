@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 const Map = (props) => {
   
@@ -16,6 +16,7 @@ const Map = (props) => {
       zoom={13} 
       scrollWheelZoom={true}
       zoomControl={true}
+      ref={props.setMap}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

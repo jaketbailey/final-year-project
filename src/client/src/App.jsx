@@ -7,6 +7,7 @@ function App() {
 
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
+  const [map, setMap] = useState(null);
 
   return (
     <div>
@@ -14,10 +15,12 @@ function App() {
         coordinates={coordinates}
         setCoordinates={setCoordinates}
         setSummary={setSummary}
+        setMap={setMap}
       />
       <ElevationChart
         coordinates={coordinates}
         summary={summary}
+        mapRef={map}
       />
     </div>
   );
