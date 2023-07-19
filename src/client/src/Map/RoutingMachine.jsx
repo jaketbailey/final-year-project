@@ -5,12 +5,17 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
-import Openrouteservice from 'openrouteservice-js'
 
 import './Map.css'
 
+/**
+ * @function createRoutingMachineLayer
+ * @description Creates a route planning engine using the OpenRouteService API
+ * @see https://openrouteservice.org/dev/#/api-docs/v2/directions/{profile}/get
+ * @param {*} props 
+ * @returns RoutingMachineLayer instance
+ */
 const createRoutingMachineLayer = (props) => {
-  
   const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
   const router = new L.Routing.OpenRouteService(apiKey, {
     timeout: 30 * 1000, // 30",
@@ -65,6 +70,12 @@ const createRoutingMachineLayer = (props) => {
   return instance;
 }
 
+/**
+ * @function RoutingMachine
+ * @description Creates a React component from the RoutingMachineLayer instance
+ * @param {*} props
+ * @returns RoutingMachine component 
+ */
 const RoutingMachine = createControlComponent(createRoutingMachineLayer);
 
 export default RoutingMachine;

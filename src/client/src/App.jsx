@@ -4,11 +4,9 @@ import ElevationChart from './ElevationChart/ElevationChart';
 import { useState } from 'react';
 
 function App() {
-
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
-
   return (
     <div>
       <Map 

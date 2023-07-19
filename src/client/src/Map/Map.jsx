@@ -2,12 +2,17 @@ import { MapContainer, TileLayer } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect } from 'react';
 
+/**
+ * @function Map
+ * @description Creates an Open Street Map component with a route planning engine
+ * @param {*} props 
+ * @returns Map component
+ */
 const Map = (props) => {
-  
-
   useEffect(() => {
     console.log(props.coordinates)
   }, [props.coordinates])
+
 
   return (
     <MapContainer 
@@ -30,4 +35,4 @@ const Map = (props) => {
   )
 }
 
-export default Map; 
+export default Map;
