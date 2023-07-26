@@ -6,8 +6,15 @@ const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')
   const [showWeather, setShowWeather] = useState(false);
+  const [geoLocation, setGeoLocation] = useState({});
 
-  const API_KEY = ''
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setGeoLocation(position.coords)
+    })
+  }, [])
+
+  const API_KEY = 'cd23bb1d782fea9749efa44fa624ad6f'
 
   /**
    * @function getCurrentWeather
@@ -15,8 +22,8 @@ const WeatherPanel = () => {
    * @returns {Promise<void>}
    * @async
    */
-  const getCurrentWeather = async () => {
-    const response = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=Portsmouth&appid=${API_KEY}`)
+  const getCurrentWeather = async (currentGeoLocation) => {
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
     setWeather(data)
   }
@@ -35,13 +42,14 @@ const WeatherPanel = () => {
 
   // Fetch the weather on page load
   useEffect(() => {
-    getCurrentWeather();
-  }, [])
+    console.log(geoLocation)
+    getCurrentWeather(geoLocation);
+  }, [geoLocation])
   
   // Set the weather icon
   useEffect(() => {
     if (!weather.weather) return
-    setIcon(`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`)
+    setIcon(`/img/openweathermap/${weather.weather[0].icon}.svg`)
   }, [weather])
 
   const checkWeather = () => {
