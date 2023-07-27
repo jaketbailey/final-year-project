@@ -68,3 +68,9 @@ p .main {
     font-size: 1.5rem;
     font-weight: 500;
 }
+
+.minor-icon {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}

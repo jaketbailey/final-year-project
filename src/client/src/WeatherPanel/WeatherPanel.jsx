@@ -28,6 +28,70 @@ const WeatherPanel = () => {
     setWeather(data)
   }
 
+  const getWindDirectionIcon = (windDirection) => {
+    if (windDirection >= 0 && windDirection <= 22.5) {
+      return '↑'
+    } else if (windDirection > 22.5 && windDirection <= 67.5) {
+      return '↗'
+    } else if (windDirection > 67.5 && windDirection <= 112.5) {
+      return '→'
+    } else if (windDirection > 112.5 && windDirection <= 157.5) {
+      return '↘'
+    } else if (windDirection > 157.5 && windDirection <= 202.5) {
+      return '↓'
+    } else if (windDirection > 202.5 && windDirection <= 247.5) {
+      return '↙'
+    } else if (windDirection > 247.5 && windDirection <= 292.5) {
+      return '←'
+    } else if (windDirection > 292.5 && windDirection <= 337.5) {
+      return '↖'
+    } else if (windDirection > 337.5 && windDirection <= 360) {
+      return '↑'
+    }
+  }
+
+  const getWindBeaufort = (windSpeed) => {
+    let beaufort = 0
+    if (windSpeed >= 0 && windSpeed <= 0.2) {
+      beaufort = 0
+    } else if (windSpeed > 0.2 && windSpeed <= 1.5) {
+      beaufort = 1
+    } else if (windSpeed > 1.5 && windSpeed <= 3.3) {
+      beaufort = 2
+    } else if (windSpeed > 3.3 && windSpeed <= 5.4) {
+      beaufort = 3
+    } else if (windSpeed > 5.4 && windSpeed <= 7.9) {
+      beaufort = 4
+    } else if (windSpeed > 7.9 && windSpeed <= 10.7) {
+      beaufort = 5
+    } else if (windSpeed > 10.7 && windSpeed <= 13.8) {
+      beaufort = 6
+    } else if (windSpeed > 13.8 && windSpeed <= 17.1) {
+      beaufort = 7
+    } else if (windSpeed > 17.1 && windSpeed <= 20.7) {
+      beaufort = 8
+    } else if (windSpeed > 20.7 && windSpeed <= 24.4) {
+      beaufort = 9
+    } else if (windSpeed > 24.4 && windSpeed <= 28.4) {
+      beaufort = 10
+    } else if (windSpeed > 28.4 && windSpeed <= 32.6) {
+      beaufort = 11
+    } else if (windSpeed > 32.6) {
+      beaufort = 12
+    }
+    return `/img/all/wind-beaufort-${beaufort}.svg`
+  }
+
+  const getTemperatureIcon = (temperature) => {
+    let temperatureIcon = ''
+    if (temperature >= 0 && temperature <= 15) {
+      temperatureIcon = '/img/all/thermometer-colder.svg'
+    } else if (temperature > 15) {
+      temperatureIcon = '/img/all/thermometer-warmer.svg'
+    }
+    return temperatureIcon
+  }
+
   // Show/hide the weather panel
   useEffect(() => {
     const weatherPanel = document.querySelector('.weather-panel__body__left')
@@ -63,6 +127,8 @@ const WeatherPanel = () => {
       </div>
       <div className='panel-body'>
       <img src={icon} alt="weather icon" />
+      <img src={getWindBeaufort(weather.wind.speed)} alt="beaufort"/>
+      <img src={getTemperatureIcon(Math.round(weather.main.temp - 273.15))} alt="temperature"/>
       <p>
         <span>Current Conditions:</span>
         <span>{weather.weather[0].main}</span>
@@ -83,7 +149,8 @@ const WeatherPanel = () => {
         <span>{weather.wind.speed}mph</span></p>
       <p>
         <span>Wind Direction:</span>
-        <span>{weather.wind.deg}°</span></p>
+        <span>{getWindDirectionIcon(weather.wind.deg)}</span>
+      </p>
       </div>
       </>
     )
@@ -94,7 +161,7 @@ const WeatherPanel = () => {
       <div className='weather-panel'>
         <div className="weather-panel__body">
           <button onClick={() => setShowWeather(!showWeather)}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="25" fill="currentColor" class="bi bi-sun" viewBox="0 0 16 16"> <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/> </svg>
+            <img src="/img/all/clear-day.svg" alt="weather button" />
           </button>
           <div className="weather-panel__body__left">
             {checkWeather()}
