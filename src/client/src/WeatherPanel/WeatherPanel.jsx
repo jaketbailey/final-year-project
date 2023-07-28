@@ -23,8 +23,11 @@ const WeatherPanel = () => {
    * @async
    */
   const getCurrentWeather = async (currentGeoLocation) => {
-    const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
+    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
+    // const data = await response.json()
+    const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
+    console.log(data)
     setWeather(data)
   }
 
@@ -48,6 +51,34 @@ const WeatherPanel = () => {
     } else if (windDirection > 337.5 && windDirection <= 360) {
       return 'N ↑'
     }
+  }
+
+  const getUVIndexIcon = (uvIndex) => {
+    let uvIndexIcon = ''
+    if (uvIndex >= 0 && uvIndex < 2) {
+      uvIndexIcon = '/img/all/uv-index-1.svg'
+    } else if (uvIndex >= 2 && uvIndex < 3) {
+      uvIndexIcon = '/img/all/uv-index-2.svg'
+    } else if (uvIndex >= 3 && uvIndex < 4) {
+      uvIndexIcon = '/img/all/uv-index-3.svg'
+    } else if (uvIndex >= 4 && uvIndex < 5) {
+      uvIndexIcon = '/img/all/uv-index-4.svg'
+    } else if (uvIndex >= 5 && uvIndex < 6) {
+      uvIndexIcon = '/img/all/uv-index-5.svg'
+    } else if (uvIndex >= 6 && uvIndex < 7) {
+      uvIndexIcon = '/img/all/uv-index-6.svg'
+    } else if (uvIndex >= 7 && uvIndex < 8) {
+      uvIndexIcon = '/img/all/uv-index-7.svg'
+    } else if (uvIndex >= 8 && uvIndex < 9) {
+      uvIndexIcon = '/img/all/uv-index-8.svg'
+    } else if (uvIndex >= 9 && uvIndex < 10) {
+      uvIndexIcon = '/img/all/uv-index-9.svg'
+    } else if (uvIndex >= 10 && uvIndex < 11) {
+      uvIndexIcon = '/img/all/uv-index-10.svg'
+    } else {
+        uvIndexIcon = '/img/all/uv-index-11.svg'
+    }
+    return uvIndexIcon
   }
 
   const getWindBeaufort = (windSpeed) => {
@@ -112,44 +143,49 @@ const WeatherPanel = () => {
   
   // Set the weather icon
   useEffect(() => {
-    if (!weather.weather) return
-    setIcon(`/img/openweathermap/${weather.weather[0].icon}.svg`)
+    if (!weather.current) return
+    setIcon(`/img/openweathermap/${weather.current.weather[0].icon}.svg`)
   }, [weather])
 
   const checkWeather = () => {
-    if (!weather.weather) return;
+    if (!weather.current) return;
     return (
       <>
       <div className="weather-panel__header">
         <h1>
-          {weather.name} Weather 
+          Weather 
         </h1>
       </div>
       <div className='panel-body'>
       <img src={icon} alt="weather icon" />
-      <img src={getWindBeaufort(weather.wind.speed)} alt="beaufort"/>
-      <img src={getTemperatureIcon(Math.round(weather.main.temp - 273.15))} alt="temperature"/>
+      <img src={getWindBeaufort(weather.current.wind_speed)} alt="beaufort"/>
+      <img src={getTemperatureIcon(Math.round(weather.current.temp - 273.15))} alt="temperature"/>
+      <img src={getUVIndexIcon(weather.current.uvi)} alt="uvi"/>
       <p>
         <span>Current Conditions:</span>
-        <span>{weather.weather[0].main}</span>
+        <span>{weather.current.weather[0].main}</span>
       </p>
       <p>
         <span>Temperature:</span>
-        <span>{Math.round(weather.main.temp - 273.15)}°C</span>
+        <span>{Math.round(weather.current.temp - 273.15)}°C</span>
       </p>
       <p>
         <span>Feels like:</span>
-        <span>{Math.round(weather.main.feels_like - 273.15)}°C</span>
+        <span>{Math.round(weather.current.feels_like - 273.15)}°C</span>
       </p>
       <p>
         <span>Humidity:</span>
-        <span>{weather.main.humidity}%</span></p>
+        <span>{weather.current.humidity}%</span></p>
       <p>
         <span>Wind Speed:</span>
-        <span>{weather.wind.speed}mph</span></p>
+        <span>{weather.current.wind_speed}mph</span></p>
       <p>
         <span>Wind Direction:</span>
-        <span>{getWindDirectionIcon(weather.wind.deg)}</span>
+        <span>{getWindDirectionIcon(weather.current.wind_deg)}</span>
+      </p>
+      <p>
+        <span>UV Index:</span>
+        <span>{weather.current.uvi}</span>
       </p>
       </div>
       </>
