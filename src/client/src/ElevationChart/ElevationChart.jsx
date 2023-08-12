@@ -29,10 +29,19 @@ const ElevationChart = (props) => {
      * @returns false if no coordinate is found
      */
     const onHover = (event, chartElement) => {
+      console.log(event.type) 
+      if (event.type === 'mouseout') {
+        onHoverOut(event, chartElement);
+        return;
+      } 
       localMapRef.current.removeLayer(circle);
       const coordinate = getCoordinate(chartElement);
       if (!coordinate) return;
       circle = L.circle([coordinate.lat, coordinate.lng], {radius: 100}).addTo(localMapRef.current);
+    }
+
+    const onHoverOut = (event, chartElement) => {
+      localMapRef.current.removeLayer(circle);
     }
 
     /**
@@ -170,7 +179,7 @@ const ElevationChart = (props) => {
                   max: props.summary.totalDistance,
                 },
               },
-            }
+            },
           },
         },
       });
