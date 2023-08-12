@@ -62,6 +62,16 @@ const createRoutingMachineLayer = (props) => {
     return instructionPts;
   }
 
+  const exportGeoJSON = (geoJSON) => {
+    const data = JSON.stringify(geoJSON);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'route.geojson';
+    link.href = url;
+    link.click();
+  }
+
   const instance = L.Routing.control({
     router,
     waypoints: [
@@ -88,12 +98,11 @@ const createRoutingMachineLayer = (props) => {
   instance.on('routesfound', (e) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
-    props.setInstructions(routes[0].instructions)
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
-    props.setGeoJSON(geoJSON)
     console.log(geoJSON);
+    exportGeoJSON(geoJSON);
   });
 
   return instance;

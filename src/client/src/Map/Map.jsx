@@ -9,8 +9,6 @@ import { useEffect, useState } from 'react';
  * @returns Map component
  */
 const Map = (props) => {
-  const [instructions, setInstructions] = useState([]); 
-  const [geoJSON, setGeoJSON] = useState(null);
   useEffect(() => {
     console.log(props.coordinates)
   }, [props.coordinates])
@@ -31,11 +29,7 @@ const Map = (props) => {
       />
       <RoutingMachine
         setCoordinates={props.setCoordinates}
-        coordinates={props.coordinates}
         setSummary={props.setSummary}
-        setInstructions={setInstructions}
-        instructions={instructions}
-        setGeoJSON={setGeoJSON} 
       />
     </MapContainer>
   )
