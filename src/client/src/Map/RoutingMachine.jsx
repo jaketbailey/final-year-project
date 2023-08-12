@@ -47,7 +47,7 @@ const createRoutingMachineLayer = (props) => {
       const g = {
         type: 'Point',
         coordinates: [coordinates[instruction.index].lng, coordinates[instruction.index].lat],
-      };
+      }
 
       const p = {
         instruction: formatter.formatInstruction(instruction),
@@ -59,6 +59,28 @@ const createRoutingMachineLayer = (props) => {
         properties: p,
       });
     }
+    
+    for (const [index, coordinate] of coordinates.entries()) {
+      let g; 
+      
+      if (index === 0) {
+        g = {
+          type: 'LineString',
+          coordinates: [coordinate.lng, coordinate.lat],
+        };
+      } else {        
+        g = {
+          type: 'LineString',
+          coordinates: [[coordinates[index-1].lng, coordinates[index-1].lat], [coordinate.lng, coordinate.lat]],
+        };
+      }
+      instructionPts.features.push({
+        geometry: g,
+        type: 'Feature',
+        properties: {},
+      });
+    }
+    
     return instructionPts;
   }
 
