@@ -36,6 +36,31 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
+  const getGeoJSON = (instructions, coordinates) => {
+    const formatter = new L.Routing.Formatter();
+    const instructionPts = {
+      type: 'FeatureCollection',
+      features: []
+    };
+
+    for (const instruction of instructions) {
+      const g = {
+        type: 'Point',
+        coordinates: [coordinates[instruction.index].lng, coordinates[instruction.index].lat],
+      };
+
+      const p = {
+        instruction: formatter.formatInstruction(instruction),
+      };
+
+      instructionPts.features.push({
+        geometry: g,
+        type: 'Feature',
+        properties: p,
+      });
+    }
+    return instructionPts;
+  }
 
   const instance = L.Routing.control({
     router,
@@ -63,8 +88,12 @@ const createRoutingMachineLayer = (props) => {
   instance.on('routesfound', (e) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
+    props.setInstructions(routes[0].instructions)
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
+    const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
+    props.setGeoJSON(geoJSON)
+    console.log(geoJSON);
   });
 
   return instance;
