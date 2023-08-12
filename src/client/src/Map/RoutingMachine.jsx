@@ -5,20 +5,25 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
-import Openrouteservice from 'openrouteservice-js'
 
 import './Map.css'
 
+/**
+ * @function createRoutingMachineLayer
+ * @description Creates a route planning engine using the OpenRouteService API
+ * @see https://openrouteservice.org/dev/#/api-docs/v2/directions/{profile}/get
+ * @param {*} props 
+ * @returns RoutingMachineLayer instance
+ */
 const createRoutingMachineLayer = (props) => {
-  
   const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
   const router = new L.Routing.OpenRouteService(apiKey, {
     timeout: 30 * 1000, // 30",
-        format: "json",                           // default, gpx not yet supported
-        host: "https://api.openrouteservice.org", // default if not setting
-        service: "directions",                    // default (for routing) 
-        api_version: "v2",                        // default
-        profile: "cycling-road",                  // default
+        format: "json",                          
+        host: "https://api.openrouteservice.org",
+        service: "directions",                   
+        api_version: "v2",                       
+        profile: "cycling-road",                 
         routingQueryParams: {
             attributes: [
                 "avgspeed",
@@ -39,7 +44,7 @@ const createRoutingMachineLayer = (props) => {
       L.latLng(50.789560,-1.055250)
     ],
     lineOptions: {
-      styles: [{color: '#8367C7', opacity: 1, weight: 3}]
+      styles: [{color: '#3454D1', opacity: 1, weight: 3}]
     },
     altLineOptions: {
       styles: [{opacity: 0.5, weight: 3}]
@@ -58,12 +63,19 @@ const createRoutingMachineLayer = (props) => {
   instance.on('routesfound', (e) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
-    console.log(routes);
+    props.setSummary(routes[0].summary);
+    routes[0].name = 'Route Summary';
   });
 
   return instance;
 }
 
+/**
+ * @function RoutingMachine
+ * @description Creates a React component from the RoutingMachineLayer instance
+ * @param {*} props
+ * @returns RoutingMachine component 
+ */
 const RoutingMachine = createControlComponent(createRoutingMachineLayer);
 
 export default RoutingMachine;
