@@ -36,6 +36,13 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
+  /**
+   * @function getGeoJSON
+   * @param {Array} instructions 
+   * @param {Array} coordinates 
+   * @description Creates a GeoJSON object from the route instructions and coordinates
+   * @returns GeoJSON object
+   */
   const getGeoJSON = (instructions, coordinates) => {
     const formatter = new L.Routing.Formatter();
     const instructionPts = {
@@ -84,6 +91,12 @@ const createRoutingMachineLayer = (props) => {
     return instructionPts;
   }
 
+  /**
+   * @function exportGeoJSON
+   * @param {Object} geoJSON
+   * @description Exports the GeoJSON object as a .geojson file
+   * @returns null
+   */
   const exportGeoJSON = (geoJSON) => {
     const data = JSON.stringify(geoJSON);
     const blob = new Blob([data], {type: 'application/json'});
