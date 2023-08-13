@@ -1,0 +1,33 @@
+.options-panel__container {
+    width: auto;
+    position: fixed; 
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    background-color: transparent;
+    margin-bottom: 2rem;
+    margin-right: 0.5rem;
+}
+
+.options-panel {
+  background-color: white;
+  border: 1px solid #ccc;
+}
+
+.options-panel > div {
+    margin: 0.5rem;
+}
+
+.options-panel__button {
+    font: 0.5rem Poppins;
+    border-radius: 0.5rem;
+    padding: 0;
+}
+
+img {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}

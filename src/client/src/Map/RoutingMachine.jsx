@@ -104,7 +104,8 @@ const createRoutingMachineLayer = (props) => {
     const link = document.createElement('a');
     link.download = 'route.geojson';
     link.href = url;
-    link.click();
+    props.setGeoJSONLink(link);
+    // link.click();
   }
 
   const instance = L.Routing.control({

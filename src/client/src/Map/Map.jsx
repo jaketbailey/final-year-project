@@ -30,6 +30,7 @@ const Map = (props) => {
       <RoutingMachine
         setCoordinates={props.setCoordinates}
         setSummary={props.setSummary}
+        setGeoJSONLink={props.setGeoJSONLink} 
       />
     </MapContainer>
   )
