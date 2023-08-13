@@ -36,6 +36,77 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
+  /**
+   * @function getGeoJSON
+   * @param {Array} instructions 
+   * @param {Array} coordinates 
+   * @description Creates a GeoJSON object from the route instructions and coordinates
+   * @returns GeoJSON object
+   */
+  const getGeoJSON = (instructions, coordinates) => {
+    const formatter = new L.Routing.Formatter();
+    const instructionPts = {
+      type: 'FeatureCollection',
+      features: []
+    };
+
+    for (const instruction of instructions) {
+      const g = {
+        type: 'Point',
+        coordinates: [coordinates[instruction.index].lng, coordinates[instruction.index].lat],
+      }
+
+      const p = {
+        instruction: formatter.formatInstruction(instruction),
+      };
+
+      instructionPts.features.push({
+        geometry: g,
+        type: 'Feature',
+        properties: p,
+      });
+    }
+    
+    for (const [index, coordinate] of coordinates.entries()) {
+      let g; 
+      
+      if (index === 0) {
+        g = {
+          type: 'LineString',
+          coordinates: [coordinate.lng, coordinate.lat],
+        };
+      } else {        
+        g = {
+          type: 'LineString',
+          coordinates: [[coordinates[index-1].lng, coordinates[index-1].lat], [coordinate.lng, coordinate.lat]],
+        };
+      }
+      instructionPts.features.push({
+        geometry: g,
+        type: 'Feature',
+        properties: {},
+      });
+    }
+    
+    return instructionPts;
+  }
+
+  /**
+   * @function exportGeoJSON
+   * @param {Object} geoJSON
+   * @description Exports the GeoJSON object as a .geojson file
+   * @returns null
+   */
+  const exportGeoJSON = (geoJSON) => {
+    const data = JSON.stringify(geoJSON);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'route.geojson';
+    link.href = url;
+    props.setGeoJSONLink(link);
+    // link.click();
+  }
 
   const instance = L.Routing.control({
     router,
@@ -65,6 +136,9 @@ const createRoutingMachineLayer = (props) => {
     props.setCoordinates(routes[0].coordinates);
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
+    const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
+    console.log(geoJSON);
+    exportGeoJSON(geoJSON);
   });
 
   return instance;

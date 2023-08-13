@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * @function Map
@@ -30,6 +30,7 @@ const Map = (props) => {
       <RoutingMachine
         setCoordinates={props.setCoordinates}
         setSummary={props.setSummary}
+        setGeoJSONLink={props.setGeoJSONLink} 
       />
     </MapContainer>
   )
