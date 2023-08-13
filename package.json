@@ -27,6 +27,7 @@
   "dependencies": {
     "create-react-app": "^5.0.1",
     "eslint-plugin-react": "^7.32.2",
+    "jsdoc": "^4.0.2",
     "openrouteservice-js": "^0.3.0"
   },
   "devDependencies": {

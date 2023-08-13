@@ -97,7 +97,6 @@ const createRoutingMachineLayer = (props) => {
    * @returns null
    */
   const exportGPX = (gpx) => { 
-    console.log(gpx)
     const blob = new Blob([gpx], {type: 'text/xml'});
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -120,12 +119,14 @@ const createRoutingMachineLayer = (props) => {
     let gpx = '<?xml version="1.0" encoding="UTF-8"?>\n';
     gpx += '<gpx version="1.1" creator="Cycling Route Planner" xmlns="http://www.topografix.com/GPX/1/1">\n';
 
+    // Add waypoints for each instruction
     for (const instruction of instructions) {
       gpx += `  <wpt lat="${coordinates[instruction.index].lat}" lon="${coordinates[instruction.index].lng}">\n`;
       gpx += `    <name>${formatter.formatInstruction(instruction)}</name>\n`;
       gpx += `  </wpt>\n`;
     }
 
+    // Add tracks for each coordinate
     gpx += `  <trk>\n    <trkseg>\n`;
     for (const coordinate of coordinates) {
       gpx += `      <trkpt lat="${coordinate.lat}" lon="${coordinate.lng}">\n`;
