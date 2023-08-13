@@ -5,7 +5,6 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
-
 import './Map.css'
 
 /**
@@ -92,6 +91,55 @@ const createRoutingMachineLayer = (props) => {
   }
 
   /**
+   * @function exportGPX
+   * @param {Object} geoJSON
+   * @description Exports the GeoJSON object as a .geojson file
+   * @returns null
+   */
+  const exportGPX = (gpx) => { 
+    const blob = new Blob([gpx], {type: 'text/xml'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = 'route.gpx';
+    link.href = url;
+    props.setGPXLink(link);
+  }
+
+  /**
+   * @function getGPX
+   * @param {Array} instructions
+   * @param {Array} coordinates
+   * @description Creates a GPX file from the route instructions and coordinates
+   * @returns GPX file
+   * @see https://www.topografix.com/GPX/1/1/
+   */
+  const getGPX = (instructions, coordinates) => {
+    const formatter = new L.Routing.Formatter();
+    const currentTime = new Date().toISOString();
+    let gpx = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    gpx += '<gpx version="1.1" creator="Cycling Route Planner" xmlns="http://www.topografix.com/GPX/1/1">\n';
+
+    // Add waypoints for each instruction
+    for (const instruction of instructions) {
+      gpx += `  <wpt lat="${coordinates[instruction.index].lat}" lon="${coordinates[instruction.index].lng}">\n`;
+      gpx += `    <name>${formatter.formatInstruction(instruction)}</name>\n`;
+      gpx += `  </wpt>\n`;
+    }
+
+    // Add tracks for each coordinate
+    gpx += `  <trk>\n    <trkseg>\n`;
+    for (const coordinate of coordinates) {
+      gpx += `      <trkpt lat="${coordinate.lat}" lon="${coordinate.lng}">\n`;
+      gpx += `        <ele>${coordinate.alt}</ele>\n`;
+      gpx += `        <time>${currentTime}</time>\n`;
+      gpx += '      </trkpt>\n';
+    }
+    gpx += `    </trkseg>\n  </trk>\n`;
+    gpx += '</gpx>';
+    return gpx;
+  }
+
+  /**
    * @function exportGeoJSON
    * @param {Object} geoJSON
    * @description Exports the GeoJSON object as a .geojson file
@@ -104,8 +152,7 @@ const createRoutingMachineLayer = (props) => {
     const link = document.createElement('a');
     link.download = 'route.geojson';
     link.href = url;
-    props.setGeoJSONLink(link);
-    // link.click();
+    props.setGeoJSONLink(link); 
   }
 
   const instance = L.Routing.control({
@@ -137,8 +184,9 @@ const createRoutingMachineLayer = (props) => {
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
-    console.log(geoJSON);
+    const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
     exportGeoJSON(geoJSON);
+    exportGPX(gpx);
   });
 
   return instance;
