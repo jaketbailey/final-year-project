@@ -10,6 +10,8 @@ function App() {
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSONLink, setGeoJSONLink] = useState(null);
+  const [gpxLink, setGPXLink] = useState(null);
+
   return (
     <div>
       <Map 
@@ -18,9 +20,11 @@ function App() {
         setSummary={setSummary}
         setMap={setMap}
         setGeoJSONLink={setGeoJSONLink}
+        setGPXLink={setGPXLink} 
       />
       <OptionsPanel 
         geoJSONLink={geoJSONLink} 
+        gpxLink={gpxLink}
       />
       <ElevationChart
         coordinates={coordinates}
