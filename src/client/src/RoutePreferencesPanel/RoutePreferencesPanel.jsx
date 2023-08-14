@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 
+/**
+ * @function RoutePreferencesPanel
+ * @description Creates a panel for the user to select route preferences
+ * @param {*} props
+ * @returns RoutePreferencesPanel component
+ */
 const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
