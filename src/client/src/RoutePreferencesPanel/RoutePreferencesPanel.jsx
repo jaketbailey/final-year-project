@@ -1,8 +1,37 @@
 import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
+import 'leaflet-routing-machine';
 
 const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
+  const [avoidFeatures, setAvoidFeatures] = useState([]);
+
+  useEffect(() => {
+    const checkboxes = document.querySelectorAll('.checkbox-input');
+    console.log(checkboxes)
+    for (const checkbox of checkboxes) {
+      checkbox.addEventListener('change', (event) => {
+        if (event.target.checked) {
+          setAvoidFeatures(avoidFeatures => [...avoidFeatures, event.target.value]);
+        } else {
+          setAvoidFeatures(avoidFeatures => avoidFeatures.filter(feature => feature !== event.target.value));
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('')
+    if (props.control.current === null) {
+      return;
+    }
+    const filterAvoidFeatures = [...new Set(avoidFeatures)];
+    console.log(filterAvoidFeatures + "filterAvoidFeatures")
+    console.log(props.control.current)
+    console.log(props.control.current.getRouter()) 
+    props.control.current.getRouter().options.routingQueryParams.options.avoid_features = filterAvoidFeatures;
+    props.control.current.route();
+  }, [avoidFeatures]);
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
@@ -44,15 +73,15 @@ const RoutePreferencesPanel = (props) => {
             <p>Avoid:</p>
             <div className='checkbox-list'>
               <div className='checkbox-item'>
-                <input type='checkbox' id='avoidSteps' name='Steps' value='steps' />
+                <input type='checkbox' className="checkbox-input" id='avoidSteps' name='Steps' value='steps' />
                 <label className='checkbox-label' htmlFor='avoidSteps'>Steps</label>
               </div>
               <div className='checkbox-item'>
-                <input type='checkbox' id='avoidFerries' name='Ferries' value='ferries' />
+                <input type='checkbox' className="checkbox-input"  id='avoidFerries' name='Ferries' value='ferries' />
                 <label className='checkbox-label' htmlFor='avoidFerries'>Ferries</label>
               </div>
               <div className='checkbox-item'>
-                <input type='checkbox' id='avoidFords' name='Fords' value='fords' />
+                <input type='checkbox' className="checkbox-input"  id='avoidFords' name='Fords' value='fords' />
                 <label className='checkbox-label' htmlFor='avoidFords'>Fords</label>
               </div>
             </div>
