@@ -41,19 +41,21 @@ const RoutePreferencesPanel = (props) => {
         </button> 
         <div className="route-preferences-panel__preferences">
           <div className="route-preferences-panel__preferences__preference">
-            <label htmlFor="preference">Preference</label>
-            <select name="preference" id="preference">
-              <option value="fastest">Fastest</option>
-              <option value="shortest">Shortest</option>
-              <option value="recommended">Recommended</option>
-            </select>
-          </div>
-          <div className="route-preferences-panel__preferences__elevation">
-            <label htmlFor="elevation">Elevation</label>
-            <select name="elevation" id="elevation">
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </select>
+            <p>Avoid:</p>
+            <div className='checkbox-list'>
+              <div className='checkbox-item'>
+                <input type='checkbox' id='avoidSteps' name='Steps' value='steps' />
+                <label className='checkbox-label' htmlFor='avoidSteps'>Steps</label>
+              </div>
+              <div className='checkbox-item'>
+                <input type='checkbox' id='avoidFerries' name='Ferries' value='ferries' />
+                <label className='checkbox-label' htmlFor='avoidFerries'>Ferries</label>
+              </div>
+              <div className='checkbox-item'>
+                <input type='checkbox' id='avoidFords' name='Fords' value='fords' />
+                <label className='checkbox-label' htmlFor='avoidFords'>Fords</label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
