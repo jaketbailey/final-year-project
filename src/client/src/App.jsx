@@ -4,6 +4,7 @@ import './App.css';
 import ElevationChart from './ElevationChart/ElevationChart';
 import { useState } from 'react';
 import OptionsPanel from './OptionsPanel/OptionsPanel';
+import RoutePreferencesPanel from './RoutePreferencesPanel/RoutePreferencesPanel';
 
 function App() {
   const [coordinates, setCoordinates] = useState([]);
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <div>
+
       <Map 
         coordinates={coordinates}
         setCoordinates={setCoordinates}
@@ -32,6 +34,10 @@ function App() {
         mapRef={map}
       />
       <WeatherPanel />
+      <RoutePreferencesPanel
+        geoJSONLink={geoJSONLink} 
+        gpxLink={gpxLink}
+      />
     </div>
   );
 }
