@@ -8,7 +8,6 @@ const RoutePreferencesPanel = (props) => {
 
   useEffect(() => {
     const checkboxes = document.querySelectorAll('.checkbox-input');
-    console.log(checkboxes)
     for (const checkbox of checkboxes) {
       checkbox.addEventListener('change', (event) => {
         if (event.target.checked) {
@@ -26,9 +25,6 @@ const RoutePreferencesPanel = (props) => {
       return;
     }
     const filterAvoidFeatures = [...new Set(avoidFeatures)];
-    console.log(filterAvoidFeatures + "filterAvoidFeatures")
-    console.log(props.control.current)
-    console.log(props.control.current.getRouter()) 
     props.control.current.getRouter().options.routingQueryParams.options.avoid_features = filterAvoidFeatures;
     props.control.current.route();
   }, [avoidFeatures]);
@@ -42,7 +38,6 @@ const RoutePreferencesPanel = (props) => {
   }
 
   const saveGPX = () => {
-      console.log(props.gpxLink)
       props.gpxLink.click();
   }
 
