@@ -6,6 +6,7 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
 import './Map.css'
+import { useEffect } from 'react';
 
 /**
  * @function createRoutingMachineLayer
@@ -28,6 +29,9 @@ const createRoutingMachineLayer = (props) => {
                 "avgspeed",
                 "percentage",
             ],
+            options: {
+                avoid_features: [],
+            },
             language: "en",
             maneuvers: "true",
             preference: "recommended",
@@ -188,6 +192,8 @@ const createRoutingMachineLayer = (props) => {
     exportGeoJSON(geoJSON);
     exportGPX(gpx);
   });
+
+  props.control.current = instance;
 
   return instance;
 }
