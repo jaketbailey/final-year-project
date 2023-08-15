@@ -31,7 +31,6 @@
     "create-react-app": "^5.0.1",
     "enzyme": "^3.11.0",
     "eslint-plugin-react": "^7.32.2",
-    "jest-environment-jsdom": "^29.6.2",
     "jest-fetch-mock": "^3.0.3",
     "jsdoc": "^4.0.2",
     "openrouteservice-js": "^0.3.0"
@@ -48,6 +47,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.3",
     "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.6.2",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.6"
   },
