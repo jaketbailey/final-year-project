@@ -7,7 +7,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install modules
       run: npm install
-      working-directory: ./final-year-project/src/client
+      working-directory: ./src/client
     - name: Run tests
       run: npm run test
-      working-directory: ./final-year-project/
+      working-directory: ./
