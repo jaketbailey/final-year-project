@@ -1,5 +1,5 @@
 import RoutePreferencesPanel from "../src/RoutePreferencesPanel/RoutePreferencesPanel";
-import { render, act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 describe("RoutePreferencesPanel", () => {
     it("should render", () => {
