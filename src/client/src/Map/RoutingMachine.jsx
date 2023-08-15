@@ -16,7 +16,8 @@ import { useEffect } from 'react';
  * @returns RoutingMachineLayer instance
  */
 const createRoutingMachineLayer = (props) => {
-  const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
+  // const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
+  const apiKey = "5b3ce3597851110001cf6248b6ff7d6cab1c42b0a902f23e68a53ce6";
   const router = new L.Routing.OpenRouteService(apiKey, {
     timeout: 30 * 1000, // 30",
         format: "json",                          
