@@ -6,8 +6,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
-      run: npm install
-      run: npm install --save-dev jest
+      run: npm install && npm install --global jest
       working-directory: ./src/client
     - name: Run tests
       run: npm run test
