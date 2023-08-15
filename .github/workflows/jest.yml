@@ -6,6 +6,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
-      run: yarn
+      run: npm install
+      working-directory: ./final-year-project/src/client
     - name: Run tests
-      run: yarn test
+      run: npm run test
+      working-directory: ./final-year-project/
