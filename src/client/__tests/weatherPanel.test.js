@@ -16,6 +16,7 @@ describe('WeatherPanel', () => {
             getCurrentPosition: jest.fn(),
             watchPosition: jest.fn()
         };
+        
         Object.defineProperty(global.navigator, 'geolocation', {
             value: mockGeolocation,
             writable: true
