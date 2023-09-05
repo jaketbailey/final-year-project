@@ -2,13 +2,19 @@
 
 const DailyForecast = (props) => {
 
-  class DailyItem {
-    constructor(day) {
-      this.date = new Date(day.dt * 1000);
-      this.temp = Math.round(day.temp.day - 273.15);
-      this.icon = day.weather[0].icon;
-      this.desc = day.weather[0].main;
-    }     
+  const DailyItem = (props) => {
+    const getFullDate = () => {
+      const date = new Date(props.day.dt * 1000);
+      return `${date.getDay()}/${date.getMonth()}`
+    }
+    return(
+      <div id={`daily-item-${props.id}`} className="daily-item">
+          <div>{getFullDate()}</div>
+          <div>{Math.round(props.day.temp.day - 273.15)}°C</div>
+          <div>{props.day.weather[0].icon}</div>
+          <div>{props.day.weather[0].main}</div>
+      </div>
+    )
   }
 
   console.log(props.daily)
@@ -19,15 +25,16 @@ const DailyForecast = (props) => {
 
   for (const [i, day] of props.daily.entries()) {
     if (i !== 0) {
-      const dailyItem = new DailyItem(day);
-      console.log(dailyItem);
-      forecastArray.push(<DailyItem key={i} day={day} />);
+      forecastArray.push(<DailyItem id={i} day={day} />);
     }
   }
 
   return (
     <div>
       <h1>This Week's Forecast</h1>
+      <div className="week-forecast">
+        {forecastArray}
+      </div>
     </div>
   )
 }
