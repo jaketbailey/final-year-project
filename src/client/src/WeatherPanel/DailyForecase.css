@@ -1,5 +1,0 @@
-div.week-forecast, div.daily-item {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-}

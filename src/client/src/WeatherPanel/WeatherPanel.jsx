@@ -201,6 +201,7 @@ const WeatherPanel = () => {
           </button>
           <div className="weather-panel__body__left">
             {checkWeather()}
+            <hr/>
             <DailyForecast 
               daily={weather.daily}
             />
