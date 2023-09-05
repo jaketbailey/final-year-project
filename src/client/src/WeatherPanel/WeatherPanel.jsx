@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import './WeatherPanel.css'
 
+import DailyForecast from './DailyForecast';
+
 const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')
@@ -14,7 +16,7 @@ const WeatherPanel = () => {
     })
   }, [])
 
-  const API_KEY = 'cd23bb1d782fea9749efa44fa624ad6f'
+  const API_KEY = import.meta.env.VITE_OPEN_WEATHER_MAP_API_KEY
 
   /**
    * @function getCurrentWeather
@@ -27,7 +29,6 @@ const WeatherPanel = () => {
     // const data = await response.json()
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
-    console.log(data)
     setWeather(data)
   }
 
@@ -137,7 +138,6 @@ const WeatherPanel = () => {
 
   // Fetch the weather on page load
   useEffect(() => {
-    console.log(geoLocation)
     getCurrentWeather(geoLocation);
   }, [geoLocation])
   
@@ -153,7 +153,7 @@ const WeatherPanel = () => {
       <>
       <div className="weather-panel__header">
         <h1>
-          Weather 
+          Today's Forecast 
         </h1>
       </div>
       <div className='panel-body'>
@@ -201,6 +201,9 @@ const WeatherPanel = () => {
           </button>
           <div className="weather-panel__body__left">
             {checkWeather()}
+            <DailyForecast 
+              daily={weather.daily}
+            />
           </div>
         </div>
       </div>
