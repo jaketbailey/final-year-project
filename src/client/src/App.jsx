@@ -17,6 +17,7 @@ function App() {
 
   useEffect(() => {
     console.log(avoidFeatures)
+    fetch('/api/ping')
   }, [avoidFeatures]);
 
   return (
