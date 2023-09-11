@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "go run main.go",
-    "test": "jest && go test -v ./src/back-end/__tests",
+    "test": "jest --env=jsdom",
     "lint:fix": "eslint src/**/*.js --fix",
     "lint": "eslint src/**/*.js",
     "prettify": "prettier src/**/*.js --write",
@@ -25,12 +25,23 @@
   },
   "homepage": "https://github.com/jaketbailey/final-year-project#readme",
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-proposal-decorators": "^7.22.10",
+    "@testing-library/react": "^14.0.0",
     "create-react-app": "^5.0.1",
+    "enzyme": "^3.11.0",
     "eslint-plugin-react": "^7.32.2",
+    "jest-environment-jsdom": "^29.6.4",
+    "jest-fetch-mock": "^3.0.3",
     "jsdoc": "^4.0.2",
     "openrouteservice-js": "^0.3.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/plugin-transform-modules-commonjs": "^7.22.5",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-react": "^7.22.5",
     "eslint": "^8.36.0",
     "eslint-config-portsoc": "^1.0.1",
     "eslint-config-prettier": "^8.8.0",
@@ -66,5 +77,12 @@
   },
   "lint-staged": {
     "*.js": "npm run lint:fix"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "\\.(scss|sass|css)$": "identity-obj-proxy",
+      "react-leaflet": "<rootDir>/src/client/__tests/__mocks__/reactLeafletMock.js",
+      "leaflet-routing-machine": "<rootDir>/src/client/__tests/__mocks__/leafletRoutingMachineMock.js"
+    }
   }
 }

@@ -4,6 +4,11 @@ import svgr from 'vite-plugin-svgr';
 
 export default defineConfig(() => {
   return {
+    server: {
+      proxy: {
+        '/api': 'http://localhost:8080',
+      }
+    },
     define: {
         'process.env': {},
     },
