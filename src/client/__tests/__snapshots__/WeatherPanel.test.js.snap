@@ -23,7 +23,9 @@ exports[`WeatherPanel should render correctly 1`] = `
             <div
               class="weather-panel__body__left"
               style="width: 0px; height: 0px;"
-            />
+            >
+              <hr />
+            </div>
           </div>
         </div>
       </div>
@@ -48,7 +50,9 @@ exports[`WeatherPanel should render correctly 1`] = `
           <div
             class="weather-panel__body__left"
             style="width: 0px; height: 0px;"
-          />
+          >
+            <hr />
+          </div>
         </div>
       </div>
     </div>
