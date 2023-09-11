@@ -1,0 +1,81 @@
+.leaflet-right, .leaflet-top, .leaflet-control {
+  margin-top: 0;
+}
+
+.routing-container {
+  font: 0.8rem Poppins;
+  /* height: 98vh; */
+  all: none;
+  
+}
+
+.leaflet-routing-container {
+  /* background-color: red; */
+  /* font: 0.8rem Poppins; */
+  /* height: 98vh; */
+  /* all: none; */
+}
+  
+.leaflet-routing-geocoders {
+  /* background-color: blue; */
+}
+
+.leaflet-routing-geocoder {
+  /* background-color: green; */
+}
+
+.leaflet-routing-remove-waypoint {
+  font: 0.8rem Poppins;
+  width: 0.3rem;
+  margin: 1rem;
+  cursor: pointer;
+}
+
+leaflet-routing-collapse-btn {
+  cursor: pointer;
+}
+
+
+.leaflet-routing-geocoders button {
+  font: bold 18px 'Poppins', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  margin: 0;
+  margin-right: 3px;
+  float: right;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+input {
+  /* background-color: orange; */
+  font: 0.8rem Poppins;
+}
+
+.leaflet-routing-add-waypoint  {
+  /* background-color: purple; */
+}
+
+.leaflet-routing-alternatives-container {
+  /* background-color: pink; */
+  height: 100%;
+}
+
+.leaflet-routing-alt {
+  /* background-color: brown; */
+  height: 100%;
+}
+
+table {
+  height: 100%;
+}
+
+tr {
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+#map {
+  position: fixed;
+}

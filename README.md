@@ -1,5 +1,15 @@
 # Cycling Route Planner
 
+# Workflow Status
+![Jest Tests](https://github.com/jaketbailey/final-year-project/.github/workflows/jest.yml/badge.svg)
+![Go Tests](https://github.com/jaketbailey/final-year-project/.github/workflows/go.yml/badge.svg)
+
+## Docker Setup OSRM
+https://www.npmjs.com/package/osrm
+
+
+## Continue
+
 The idea is to create a Web Application which will be a cycling route planner.
 
 I came up with this idea as I was thinking back to when I planned the route to cycle Land’s End to John O’Groats, and at the time, I couldn’t find a sufficient application to allow for a quicker route planning solution for the whole ride, including stops across the journey.

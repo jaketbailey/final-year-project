@@ -1,0 +1,76 @@
+.btn-container {
+    width: auto;
+    position: fixed;
+}
+
+.weather-panel {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    background-color: transparent;
+    color: black;
+    position: fixed;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.45rem;
+    font-weight: 400;
+
+}
+
+.weather-panel > div {
+    background-color: white;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    height: auto;
+    color: black;
+    border: 1px solid #ccc;
+}
+
+.weather-panel > div > div {
+    margin: 0rem;
+}
+
+.weather-panel__body__left {
+    overflow: hidden;
+    margin: 0;
+}
+
+.panel-body {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    display: table;
+}
+
+p {
+    font-size: 0.75rem;
+}
+
+.panel-body > p {
+    display: table-row;
+    margin: 0;
+}
+.panel-body > p > span {
+    display: table-cell;
+    padding: 0.25rem;
+}
+
+img {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    background-color: white;
+    border: 0;
+}
+
+p .main {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.minor-icon {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}

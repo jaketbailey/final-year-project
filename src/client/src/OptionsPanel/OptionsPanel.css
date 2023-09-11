@@ -1,0 +1,35 @@
+.options-panel__container {
+    width: 3rem;
+    position: fixed; 
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    background-color: transparent;
+    margin-bottom: 2rem;
+    margin-right: 0.5rem;
+    padding: 0;
+}
+
+.options-panel {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 0;
+}
+
+.options-panel__button {
+    font: 0.5rem Poppins;
+    padding: 0.5rem;
+}
+
+.options-panel__button:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+img {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}
