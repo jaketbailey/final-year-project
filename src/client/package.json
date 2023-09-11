@@ -62,9 +62,18 @@
     "crypto": false
   },
   "proxy": "http://localhost:8080",
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest"
+    }
+  },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.22.11",
     "@vitejs/plugin-react": "^4.0.4",
-    "vite": "^4.4.9"
+    "vite": "^4.4.9",
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "@babel/preset-react": "^7.22.5"
   }
 }

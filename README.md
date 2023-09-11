@@ -1,5 +1,9 @@
 # Cycling Route Planner
 
+# Workflow Status
+![Jest Tests](https://github.com/jaketbailey/final-year-project/.github/workflows/jest.yml/badge.svg)
+![Go Tests](https://github.com/jaketbailey/final-year-project/.github/workflows/go.yml/badge.svg)
+
 ## Docker Setup OSRM
 https://www.npmjs.com/package/osrm
 
