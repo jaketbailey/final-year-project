@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect } from 'react';
 
@@ -26,7 +26,7 @@ const SharePanel = (props) => {
     console.log(routeGeoJSON)
 
     message.current = {
-      to: 'up2002753@myport.ac.uk',
+      to: 'jake.bailey2801@gmail.com',
       from: 'up2002753@myport.ac.uk',
       subject: 'Route',
       text: 'Planned Route using the UP2002753 Route Planner',
@@ -53,30 +53,6 @@ const SharePanel = (props) => {
     shareEmailButton.addEventListener('click', clickHandler);
   }, []);
 
-  // const getContentFromURL = (URL, type) => {
-  //   try {
-  //     const reader = new FileReader();
-  //     reader.readAsText(URL);
-  //     reader.onload = function(event){
-  //       if (type === 'geojson') {
-  //         routeGeoJSON.current = event.target.result;
-  //       } else if (type === 'gpx') {
-  //         routeGPX.current = event.target.result;
-  //       }
-  //     }
-  //   }
-  //   catch (err) {
-  //     console.log(err);
-  //   }
-  // }
-
-  // getContentFromURL(props.geoJSONBlob, 'geojson');
-  // getContentFromURL(props.gpxBlob, 'gpx');
-  
-  // useEffect(() => {
-    
-  // }, [routeGeoJSON.current, routeGPX.current])
-
   const sendEmail = async () => {
     if (message.current === null) {
       return;
@@ -102,10 +78,6 @@ const SharePanel = (props) => {
       sendEmail();
     };
   };
-
-  // useEffect(() => {
-
-  // }, []);
 
   return (
     <div className="share-panel__preferences">

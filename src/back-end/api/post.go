@@ -43,7 +43,7 @@ func PostSendEmail(c *gin.Context) {
 		client := sendgrid.NewSendClient(API_KEY)
 		sendgridMessage := mail.NewV3Mail()
 
-		from := mail.NewEmail("FloodX", "floodxalerts@gmail.com")
+		from := mail.NewEmail(message.From, message.From)
 		to := mail.NewEmail(message.To, message.To)
 		text := mail.NewContent("text/plain", message.Text)
 
@@ -65,9 +65,6 @@ func PostSendEmail(c *gin.Context) {
 		personalization.Subject = message.Subject
 
 		sendgridMessage.AddPersonalizations(personalization)
-		sendgridMessage.Headers = map[string]string{
-			"Access-Control-Allow-Origin": "*",
-		}
 
 		if res, err := client.Send(sendgridMessage); err != nil {
 			fmt.Println(err)
@@ -79,9 +76,10 @@ func PostSendEmail(c *gin.Context) {
 		} else {
 			fmt.Println(res)
 			c.JSON(http.StatusOK, gin.H{
-				"status":  "Good",
-				"message": "Email sent",
-				"data":    message,
+				"status": "Good",
+				// "message":  "Email sent",
+				"data":     message,
+				"response": res,
 			})
 		}
 	}
