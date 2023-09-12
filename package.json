@@ -15,7 +15,7 @@
     "lint:fix": "eslint src/**/*.js --fix",
     "lint": "eslint src/**/*.js",
     "prettify": "prettier src/**/*.js --write",
-    "doc": "jsdoc -c jsdoc.conf.json -r ./src/ -d ./docs/jsdoc/ | godoc -http=:6060 | start http://localhost:6060/pkg/cycling-route-planner/"
+    "doc": "jsdoc -c jsdoc.conf.json -r ./src/ -d ./docs/jsdoc/ | google-chrome-stable http://localhost:6060/pkg/cycling-route-planner/ | godoc -http=:6060"
   },
   "repository": {
     "type": "git",
