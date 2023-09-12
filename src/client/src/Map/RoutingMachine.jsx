@@ -107,7 +107,7 @@ const createRoutingMachineLayer = (props) => {
     const link = document.createElement('a');
     link.download = 'route.gpx';
     link.href = url;
-    props.setGPXBlob(gpx);
+    props.setGPX(gpx);
     props.setGPXLink(link);
   }
 
@@ -158,7 +158,7 @@ const createRoutingMachineLayer = (props) => {
     const link = document.createElement('a');
     link.download = 'route.geojson';
     link.href = url;
-    props.setGeoJSONBlob(data);
+    props.setGeoJSON(data);
     props.setGeoJSONLink(link); 
   }
 

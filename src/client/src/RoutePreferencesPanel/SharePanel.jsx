@@ -15,13 +15,13 @@ const SharePanel = (props) => {
   }, [props.showPanel]);
 
   const message = useRef(null);
-  const routeGeoJSON = useRef(props.geoJSONBlob);
-  const routeGPX = useRef(props.gpxBlob);
+  const routeGeoJSON = useRef(props.geoJSON);
+  const routeGPX = useRef(props.gpx);
 
   useEffect(() => {
     console.log('update to route')
-    routeGeoJSON.current = props.geoJSONBlob;
-    routeGPX.current = props.gpxBlob;
+    routeGeoJSON.current = props.geoJSON;
+    routeGPX.current = props.gpx;
     console.log(routeGPX)
     console.log(routeGeoJSON)
 
@@ -46,7 +46,7 @@ const SharePanel = (props) => {
       ]
     }
     console.log(message)
-  }, [props.geoJSONBlob, props.gpxBlob]);
+  }, [props.geoJSON, props.gpx]);
 
   useEffect(() => {
     const shareEmailButton = document.querySelector('#shareEmailButton');

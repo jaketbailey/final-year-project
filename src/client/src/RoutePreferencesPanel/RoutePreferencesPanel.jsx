@@ -97,8 +97,8 @@ const RoutePreferencesPanel = (props) => {
           </div>
         </div>
         <SharePanel 
-          geoJSONBlob={props.geoJSONBlob} 
-          gpxBlob={props.gpxBlob} 
+          geoJSON={props.geoJSON} 
+          gpx={props.gpx} 
           showPanel={showSharePanel}
         />
       </div>

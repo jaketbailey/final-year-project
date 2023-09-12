@@ -12,9 +12,9 @@ function App() {
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSONLink, setGeoJSONLink] = useState(null);
-  const [geoJSONBlob, setGeoJSONBlob] = useState(null);
+  const [geoJSON, setGeoJSON] = useState(null);
   const [gpxLink, setGPXLink] = useState(null);
-  const [gpxBlob, setGPXBlob] = useState(null);
+  const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
 
   useEffect(() => {
@@ -30,9 +30,9 @@ function App() {
         setSummary={setSummary}
         setMap={setMap}
         setGeoJSONLink={setGeoJSONLink}
-        setGeoJSONBlob={setGeoJSONBlob}
+        setGeoJSON={setGeoJSON}
         setGPXLink={setGPXLink}
-        setGPXBlob={setGPXBlob}
+        setGPX={setGPX}
         control={control}
         avoidFeatures={avoidFeatures}
       />
@@ -49,8 +49,8 @@ function App() {
       <RoutePreferencesPanel
         geoJSONLink={geoJSONLink} 
         gpxLink={gpxLink}
-        geoJSONBlob={geoJSONBlob} 
-        gpxBlob={gpxBlob}
+        geoJSON={geoJSON} 
+        gpx={gpx}
         setAvoidFeatures={setAvoidFeatures}
         avoidFeatures={avoidFeatures}
         control={control}
