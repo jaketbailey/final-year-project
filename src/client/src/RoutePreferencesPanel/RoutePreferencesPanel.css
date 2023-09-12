@@ -16,7 +16,7 @@
     font: 0.8rem Poppins;
 }
 
-  .checkbox-list {
+  .checkbox-list, .button-list {
     display: flex;
     flex-direction: column;
   }
