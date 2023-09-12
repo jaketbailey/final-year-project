@@ -23,7 +23,7 @@ type EmailMessage struct {
 	From        string        `json:"from"`
 	Subject     string        `json:"subject"`
 	Text        string        `json:"text"`
-	Attachments [2]Attachment `json:"attachments`
+	Attachments [2]Attachment `json:"attachments"`
 }
 
 type Attachment struct {
