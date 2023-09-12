@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
+import SharePanel from './SharePanel';
 
 /**
  * @function RoutePreferencesPanel
@@ -10,6 +11,7 @@ import 'leaflet-routing-machine';
  */
 const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
+  const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
 
   useEffect(() => {
@@ -26,7 +28,6 @@ const RoutePreferencesPanel = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log('')
     if (props.control.current === null) {
       return;
     }
@@ -37,6 +38,10 @@ const RoutePreferencesPanel = (props) => {
 
   const togglePanel = () => {
     setShowPanel(!showPanel);
+  }
+
+  const toggleSharePanel = () => {
+    setShowSharePanel(!showSharePanel);
   }
 
   const saveGeoJSON = () => {
@@ -69,6 +74,9 @@ const RoutePreferencesPanel = (props) => {
         <button className="route-preferences-panel__button" onClick={saveGPX} >
           Export Route as GPX
         </button> 
+        <button className="route-preferences-panel__button" onClick={toggleSharePanel} >
+          Share
+        </button>
         <div className="route-preferences-panel__preferences">
           <div className="route-preferences-panel__preferences__preference">
             <p>Avoid:</p>
@@ -88,6 +96,11 @@ const RoutePreferencesPanel = (props) => {
             </div>
           </div>
         </div>
+        <SharePanel 
+          geoJSONBlob={props.geoJSONBlob} 
+          gpxBlob={props.gpxBlob} 
+          showPanel={showSharePanel}
+        />
       </div>
   );
 }
