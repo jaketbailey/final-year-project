@@ -27,3 +27,6 @@ cycling-route-planner
 
 # Open Source Routing Machine (OSRM) binaries
 osrm/
+
+# Bun lockfile
+bun.lockb
