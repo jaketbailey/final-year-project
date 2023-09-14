@@ -100,6 +100,9 @@ const RoutePreferencesPanel = (props) => {
           geoJSON={props.geoJSON} 
           gpx={props.gpx} 
           showPanel={showSharePanel}
+          setShow={props.setShow}
+          show={props.show}
+          data={props.emailData}
         />
       </div>
   );

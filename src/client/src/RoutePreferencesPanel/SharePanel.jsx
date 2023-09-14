@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect } from 'react';
+import Modal from '../Modal/Modal';
 
 const SharePanel = (props) => {
   useEffect(() => {
@@ -26,20 +27,20 @@ const SharePanel = (props) => {
     console.log(routeGeoJSON)
 
     message.current = {
-      to: 'jake.bailey2801@gmail.com',
-      from: 'up2002753@myport.ac.uk',
+      to: '',
+      from: 'jake@jaketbailey.co.uk',
       subject: 'Route',
       text: 'Planned Route using the UP2002753 Route Planner',
       attachments: [
         {
           content: routeGeoJSON.current,
-          filename: 'route.geojson',
+          filename: '',
           type: 'application/geojson',
           disposition: 'attachment'
         },
         {
           content: routeGPX.current,
-          filename: 'route.gpx',
+          filename: '',
           type: 'application/gpx+xml',
           disposition: 'attachment'
         }
@@ -47,6 +48,15 @@ const SharePanel = (props) => {
     }
     console.log(message)
   }, [props.geoJSON, props.gpx]);
+
+  useEffect(() => {
+    message.current.to = props.data.to;
+    message.current.attachments[0].filename = `${props.data.filename}.geojson`;
+    message.current.attachments[1].filename = `${props.data.filename}.gpx`;
+    console.log('hello message')
+    console.log(message.current)
+    sendEmail();
+  },[props.data]);
 
   useEffect(() => {
     const shareEmailButton = document.querySelector('#shareEmailButton');
@@ -70,12 +80,19 @@ const SharePanel = (props) => {
     const res = await response.json();
     console.log(res);
   }
+
+  const hideEmailModal = () => {
+    const modal = document.querySelector('.modal');
+    modal.style.display = 'none';
+  }
   
+  // const [show, setShow] = useState(false);
+
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
       console.log('email');
-      sendEmail();
+      props.setShow(!props.show);
     };
   };
 
