@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect } from 'react';
-import Modal from '../Modal/Modal';
 
 const SharePanel = (props) => {
   useEffect(() => {
@@ -23,15 +22,13 @@ const SharePanel = (props) => {
     console.log('update to route')
     routeGeoJSON.current = props.geoJSON;
     routeGPX.current = props.gpx;
-    console.log(routeGPX)
-    console.log(routeGeoJSON)
 
     message.current = {
       to: '',
       from: 'jake@jaketbailey.co.uk',
       subject: 'Route',
       text: 'Planned Route using the UP2002753 Route Planner',
-      attachments: [
+      attachments:[
         {
           content: routeGeoJSON.current,
           filename: '',
@@ -46,16 +43,36 @@ const SharePanel = (props) => {
         }
       ]
     }
+
     console.log(message)
   }, [props.geoJSON, props.gpx]);
-
+  
   useEffect(() => {
     message.current.to = props.data.to;
     message.current.attachments[0].filename = `${props.data.filename}.geojson`;
     message.current.attachments[1].filename = `${props.data.filename}.gpx`;
-    console.log('hello message')
-    console.log(message.current)
-    sendEmail();
+    
+    const backup = {}
+    backup.to = message.current.to;
+    backup.from = message.current.from;
+    backup.subject = message.current.subject;
+    backup.text = message.current.text;
+    backup.attachments = [];
+
+    if (!props.data.includeGPX) {
+      backup.attachments.push(message.current.attachments[0])
+    }
+
+    if(!props.data.includeGeoJSON) {
+      backup.attachments.push(message.current.attachments[1])
+    }
+
+    if(props.data.includeGeoJSON && props.data.includeGPX) {
+      backup.attachments.push(message.current.attachments[0])
+      backup.attachments.push(message.current.attachments[1])
+    }
+
+    sendEmail(backup);
   },[props.data]);
 
   useEffect(() => {
@@ -63,12 +80,14 @@ const SharePanel = (props) => {
     shareEmailButton.addEventListener('click', clickHandler);
   }, []);
 
-  const sendEmail = async () => {
-    if (message.current === null) {
+  const sendEmail = async (data) => {
+    if (data === null) {
       return;
     }
 
-    const body = JSON.stringify(message.current);
+    console.log(data)
+    console.log('data')
+    const body = JSON.stringify(data);
     console.log(body);
     const response = await fetch('/api/send-email', {
       method: 'POST',
@@ -78,15 +97,18 @@ const SharePanel = (props) => {
       body: body,
     });
     const res = await response.json();
-    console.log(res);
+    if(res.response.StatusCode === 202 || res.response.StatusCode === 202) {
+      const sendBtn = document.querySelector('#send-email');
+      sendBtn.classList.add('success');
+      sendBtn.textContent = 'Email Sent';
+      setTimeout(() => {
+        sendBtn.classList.remove('success');
+        sendBtn.textContent = 'Send';
+      }, 1000)
+    } else {
+      console.log(res);
+    }
   }
-
-  const hideEmailModal = () => {
-    const modal = document.querySelector('.modal');
-    modal.style.display = 'none';
-  }
-  
-  // const [show, setShow] = useState(false);
 
   const clickHandler = (event) => {
     const id = event.target.id;

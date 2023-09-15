@@ -22,11 +22,11 @@ func PostTest(c *gin.Context) {
 }
 
 type EmailMessage struct {
-	To          string        `json:"to"`
-	From        string        `json:"from"`
-	Subject     string        `json:"subject"`
-	Text        string        `json:"text"`
-	Attachments [2]Attachment `json:"attachments"`
+	To          string       `json:"to"`
+	From        string       `json:"from"`
+	Subject     string       `json:"subject"`
+	Text        string       `json:"text"`
+	Attachments []Attachment `json:"attachments"`
 }
 
 // type Attachments []string

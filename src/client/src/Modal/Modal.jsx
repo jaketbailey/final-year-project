@@ -7,13 +7,52 @@ const Modal = (props) => {
   }
 
   const handleClick = () => {
+    
+    const buttonUpdate = (text) => {
+      const sendBtn = document.querySelector('#send-email');
+      sendBtn.classList.add('fail')
+      sendBtn.textContent = text
+      setTimeout(() => {
+        sendBtn.classList.remove('fail');
+        sendBtn.textContent = 'Send';
+      },1000);
+      return;
+    }
+
+    const validateEmail = (email) => {
+      return email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+    };  
+
+    function isBlank(str) {
+      return (!str || /^\s*$/.test(str));
+    }
+
     console.log('clicked')
-    props.setEmailData({
+    const emailData = {
       to: document.querySelector('#input-to').value,
       filename: document.querySelector('#input-filename').value,
       includeGPX: document.querySelector('#input-gpx').checked,
       includeGeoJSON: document.querySelector('#input-geojson').checked
-    })
+    }
+
+    if(!validateEmail(emailData.to)) {
+      buttonUpdate('Invalid Email Address');
+      return;
+    }
+
+    if(emailData.filename.trim() === '') {
+      buttonUpdate('Filename is blank');
+      return;
+    }
+
+    if(!emailData.includeGPX && !emailData.includeGeoJSON) {
+      buttonUpdate('File Type not selected');
+      return;
+    }
+
+    props.setEmailData(emailData)
   }
 
   useEffect(() => {
@@ -25,14 +64,20 @@ const Modal = (props) => {
     if (props.type === 'email') {
       return (
         <div>
+          <div className='block'>
           <label htmlFor='input-to'>To</label>
-          <input id='input-to' name='input-to' type='text' placeholder='example@myport.ac.uk'/> <br/>
+          <input id='input-to' name='input-to' type='text' placeholder='example@myport.ac.uk'/>
+          </div>
+          <div className='block'>
           <label htmlFor='input-filename'>Filename</label>
-          <input id='input-filename' name='input-filename' type='text' placeholder='myroute'/><br/>
+          <input id='input-filename' name='input-filename' type='text' placeholder='myroute'/>
+          </div>
+          <div className='block'>
           <label htmlFor='input-gpx'>Include GPX?</label>
-          <input id='input-gpx' name='input-gpx'type='checkbox'/><br/>
+          <input id='input-gpx' name='input-gpx'type='checkbox'/>
           <label htmlFor='input-geojson'>Include GeoJSON?</label>
-          <input id='input-geojson' name='input-geojson'type='checkbox'/><br/>
+          <input id='input-geojson' name='input-geojson'type='checkbox'/>
+          </div>
           <button id='send-email' className='share'>Send</button>
         </div>
       )
@@ -49,7 +94,7 @@ const Modal = (props) => {
           {getContent()}
         </div>
         <div className="modal-footer">
-          <button className="share" onClick={() => props.setShow(!props.show)}>Close</button>
+          <button className="close" onClick={() => props.setShow(!props.show)}>Close</button>
         </div>
       </div>
     </div>
