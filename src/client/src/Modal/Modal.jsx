@@ -1,13 +1,18 @@
 import { useEffect } from 'react'
 import './Modal.css'
 
+/**
+ * @function Modal
+ * @description Universal modal component
+ * @param {*} props 
+ * @returns Modal component
+ */
 const Modal = (props) => {
   if (!props.show) {
     return null
   }
 
   const handleClick = () => {
-
     const buttonUpdate = (text) => {
       const sendBtn = document.querySelector('#send-email');
       sendBtn.classList.add('fail')
@@ -25,17 +30,14 @@ const Modal = (props) => {
       );
     };  
 
-    function isBlank(str) {
-      return (!str || /^\s*$/.test(str));
-    }
-
-    console.log('clicked')
     const emailData = {
       to: document.querySelector('#input-to').value,
       filename: document.querySelector('#input-filename').value,
       includeGPX: document.querySelector('#input-gpx').checked,
       includeGeoJSON: document.querySelector('#input-geojson').checked
     }
+
+    // Input validation in the below 3 if statements.
 
     if(!validateEmail(emailData.to)) {
       buttonUpdate('Invalid Email Address');
@@ -52,6 +54,7 @@ const Modal = (props) => {
       return;
     }
 
+    // Sets the email data after input validation which is used within the SharePanel component
     props.setEmailData(emailData)
   }
 
@@ -60,6 +63,12 @@ const Modal = (props) => {
     button.addEventListener('click', handleClick);
   }, [])
 
+
+  /**
+   * @function getContent
+   * @description Used to get the content based on the type of modal being used
+   * @returns Modal Content
+   */
   const getContent = () => {
     if (props.type === 'email') {
       return (

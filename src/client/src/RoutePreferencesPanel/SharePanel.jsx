@@ -2,6 +2,12 @@ import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect } from 'react';
 
+/**
+ * @function SharePanel
+ * @description Share Panel is a sub-component of RoutePreferencesPanel which provides the share functionality of the application.
+ * @param {*} props 
+ * @returns SharePanel component
+ */
 const SharePanel = (props) => {
   useEffect(() => {
     const sharePanelContainer = document.querySelector('.share-panel__preferences');
@@ -23,6 +29,7 @@ const SharePanel = (props) => {
     routeGeoJSON.current = props.geoJSON;
     routeGPX.current = props.gpx;
 
+    // Sets the email message with the corresponding route data
     message.current = {
       to: '',
       from: 'jake@jaketbailey.co.uk',
@@ -44,14 +51,19 @@ const SharePanel = (props) => {
       ]
     }
 
-    console.log(message)
   }, [props.geoJSON, props.gpx]);
   
   useEffect(() => {
+    if (!props.data) {
+      return;
+    }
+
+    // Updates the filenames for the route data to be emailed
     message.current.to = props.data.to;
     message.current.attachments[0].filename = `${props.data.filename}.geojson`;
     message.current.attachments[1].filename = `${props.data.filename}.gpx`;
     
+    // Creates a local copy of the message to add/remove attachments depending on the user input
     const backup = {}
     backup.to = message.current.to;
     backup.from = message.current.from;
@@ -80,13 +92,18 @@ const SharePanel = (props) => {
     shareEmailButton.addEventListener('click', clickHandler);
   }, []);
 
+  /**
+   * @function sendEmail
+   * @description Parses the data object and converts to a JSON string to be sent as in the 
+   * body of the POST request to the back-end GIN server to call SENDGRID to send the email.
+   * @param {*} data 
+   * @returns 
+   */
   const sendEmail = async (data) => {
     if (data === null) {
       return;
     }
 
-    console.log(data)
-    console.log('data')
     const body = JSON.stringify(data);
     console.log(body);
     const response = await fetch('/api/send-email', {
@@ -96,6 +113,8 @@ const SharePanel = (props) => {
       },
       body: body,
     });
+
+    // Checks the HTTP status code and updates the style of the send button based on whether the email was sent successfully
     const res = await response.json();
     if(res.response.StatusCode === 202 || res.response.StatusCode === 202) {
       const sendBtn = document.querySelector('#send-email');
@@ -113,7 +132,6 @@ const SharePanel = (props) => {
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
-      console.log('email');
       props.setShow(!props.show);
     };
   };
