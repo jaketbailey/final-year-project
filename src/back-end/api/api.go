@@ -19,6 +19,7 @@ func Init(router *gin.Engine) {
 
 		// POST Routes
 		api.POST("/test", PostTest)
+		api.POST("/send-email", PostSendEmail)
 
 		// PUT Routes
 		api.PUT("/test", PutTest)

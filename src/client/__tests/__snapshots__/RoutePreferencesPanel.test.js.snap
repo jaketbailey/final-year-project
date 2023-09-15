@@ -23,6 +23,11 @@ exports[`RoutePreferencesPanel should render 1`] = `
         >
           Export Route as GPX
         </button>
+        <button
+          class="route-preferences-panel__button"
+        >
+          Share
+        </button>
         <div
           class="route-preferences-panel__preferences"
           style="width: 0px; height: 0px;"
@@ -90,6 +95,26 @@ exports[`RoutePreferencesPanel should render 1`] = `
             </div>
           </div>
         </div>
+        <div
+          class="share-panel__preferences"
+          style="width: 0px; height: 0px;"
+        >
+          <div
+            class="share-panel__preferences__preference"
+          >
+            <div
+              class="checkbox-list"
+            >
+              <button
+                class="share-panel__button"
+                id="shareEmailButton"
+                type="button"
+              >
+                Email
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>,
@@ -111,6 +136,11 @@ exports[`RoutePreferencesPanel should render 1`] = `
         class="route-preferences-panel__button"
       >
         Export Route as GPX
+      </button>
+      <button
+        class="route-preferences-panel__button"
+      >
+        Share
       </button>
       <div
         class="route-preferences-panel__preferences"
@@ -176,6 +206,26 @@ exports[`RoutePreferencesPanel should render 1`] = `
                 Fords
               </label>
             </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="share-panel__preferences"
+        style="width: 0px; height: 0px;"
+      >
+        <div
+          class="share-panel__preferences__preference"
+        >
+          <div
+            class="checkbox-list"
+          >
+            <button
+              class="share-panel__button"
+              id="shareEmailButton"
+              type="button"
+            >
+              Email
+            </button>
           </div>
         </div>
       </div>

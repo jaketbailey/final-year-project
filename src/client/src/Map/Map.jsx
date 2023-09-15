@@ -31,7 +31,9 @@ const Map = (props) => {
         setCoordinates={props.setCoordinates}
         setSummary={props.setSummary}
         setGeoJSONLink={props.setGeoJSONLink} 
+        setGeoJSON={props.setGeoJSON}
         setGPXLink={props.setGPXLink} 
+        setGPX={props.setGPX}
         control={props.control}
       />
     </MapContainer>

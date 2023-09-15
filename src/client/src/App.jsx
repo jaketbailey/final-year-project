@@ -5,6 +5,7 @@ import ElevationChart from './ElevationChart/ElevationChart';
 import { useEffect, useRef, useState } from 'react';
 import OptionsPanel from './OptionsPanel/OptionsPanel';
 import RoutePreferencesPanel from './RoutePreferencesPanel/RoutePreferencesPanel';
+import Modal from './Modal/Modal';
 
 function App() {
   const control = useRef(null);
@@ -12,8 +13,12 @@ function App() {
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSONLink, setGeoJSONLink] = useState(null);
+  const [geoJSON, setGeoJSON] = useState(null);
   const [gpxLink, setGPXLink] = useState(null);
+  const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
+  const [show, setShow] = useState(false);
+  const [emailData, setEmailData] = useState({});
 
   useEffect(() => {
     console.log(avoidFeatures)
@@ -28,10 +33,13 @@ function App() {
         setSummary={setSummary}
         setMap={setMap}
         setGeoJSONLink={setGeoJSONLink}
+        setGeoJSON={setGeoJSON}
         setGPXLink={setGPXLink}
+        setGPX={setGPX}
         control={control}
         avoidFeatures={avoidFeatures}
       />
+      
       <OptionsPanel 
         geoJSONLink={geoJSONLink} 
         gpxLink={gpxLink}
@@ -45,9 +53,21 @@ function App() {
       <RoutePreferencesPanel
         geoJSONLink={geoJSONLink} 
         gpxLink={gpxLink}
+        geoJSON={geoJSON} 
+        gpx={gpx}
         setAvoidFeatures={setAvoidFeatures}
         avoidFeatures={avoidFeatures}
         control={control}
+        setShow={setShow}
+        emailData={emailData}
+      />
+      <Modal 
+        id='ShareEmailModal' 
+        show={show} 
+        setShow={setShow} 
+        modalTitle='Share route by email'
+        type='email'
+        setEmailData={setEmailData}
       />
     </div>
   );
