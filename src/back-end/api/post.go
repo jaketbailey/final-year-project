@@ -27,25 +27,28 @@ func PostTest(c *gin.Context) {
 	})
 }
 
+type EmailMessage struct {
+	To          string       `json:"to"`
+	From        string       `json:"from"`
+	Subject     string       `json:"subject"`
+	Text        string       `json:"text"`
+	Attachments []Attachment `json:"attachments"`
+}
+
+// type Attachments []string
+type Attachment struct {
+	Content     string `json:"content"`
+	Filename    string `json:"filename"`
+	Type        string `json:"type"`
+	Disposition string `json:"disposition"`
+}
+
+// @Function PostSendEmail
+// @Summary Handles request to send route attachments via email
+// @Description Parses the data sent within the JSON body of the post request and makes a call to the SendGrid API.
+
 func PostSendEmail(c *gin.Context) {
-	// type Attachments []string
-	type Attachment struct {
-		Content     string `json:"content"`
-		Filename    string `json:"filename"`
-		Type        string `json:"type"`
-		Disposition string `json:"disposition"`
-	}
-
-	type EmailMessage struct {
-		To          string        `json:"to"`
-		From        string        `json:"from"`
-		Subject     string        `json:"subject"`
-		Text        string        `json:"text"`
-		Attachments [2]Attachment `json:"attachments"`
-	}
-
 	API_KEY := config.GetDotEnvStr("SENDGRID_API_KEY")
-	fmt.Println(API_KEY)
 
 	var message EmailMessage
 	if c.BindJSON(&message) == nil {
@@ -77,18 +80,15 @@ func PostSendEmail(c *gin.Context) {
 		sendgridMessage.AddPersonalizations(personalization)
 
 		if res, err := client.Send(sendgridMessage); err != nil {
-			fmt.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"status":  "Bad",
 				"message": "Email not sent",
 				"data":    err,
 			})
 		} else {
-			fmt.Println(res)
 			c.JSON(http.StatusOK, gin.H{
-				"status": "Good",
-				// "message":  "Email sent",
-				"data":     message,
+				"status":   "Good",
+				"message":  "Email sent",
 				"response": res,
 			})
 		}

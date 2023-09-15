@@ -103,7 +103,11 @@ exports[`RoutePreferencesPanel should render 1`] = `
             class="share-panel__preferences__preference"
           >
             <div
+<<<<<<< HEAD
               class="button-list"
+=======
+              class="checkbox-list"
+>>>>>>> increment-2
             >
               <button
                 class="share-panel__button"
@@ -112,6 +116,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
               >
                 Email
               </button>
+<<<<<<< HEAD
               <button
                 class="share-panel__button"
                 id="shareStravaButton"
@@ -119,6 +124,8 @@ exports[`RoutePreferencesPanel should render 1`] = `
               >
                 Strava Activity
               </button>
+=======
+>>>>>>> increment-2
             </div>
           </div>
         </div>
@@ -224,7 +231,11 @@ exports[`RoutePreferencesPanel should render 1`] = `
           class="share-panel__preferences__preference"
         >
           <div
+<<<<<<< HEAD
             class="button-list"
+=======
+            class="checkbox-list"
+>>>>>>> increment-2
           >
             <button
               class="share-panel__button"
@@ -233,6 +244,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
             >
               Email
             </button>
+<<<<<<< HEAD
             <button
               class="share-panel__button"
               id="shareStravaButton"
@@ -240,6 +252,8 @@ exports[`RoutePreferencesPanel should render 1`] = `
             >
               Strava Activity
             </button>
+=======
+>>>>>>> increment-2
           </div>
         </div>
       </div>
