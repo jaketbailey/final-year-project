@@ -28,4 +28,4 @@ cycling-route-planner
 # Open Source Routing Machine (OSRM) binaries
 osrm/
 
-.VSCodeCounter/
+.VSCodeCounter/*
