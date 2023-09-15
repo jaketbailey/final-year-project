@@ -7,7 +7,7 @@ const Modal = (props) => {
   }
 
   const handleClick = () => {
-    
+
     const buttonUpdate = (text) => {
       const sendBtn = document.querySelector('#send-email');
       sendBtn.classList.add('fail')
@@ -56,8 +56,8 @@ const Modal = (props) => {
   }
 
   useEffect(() => {
-    const button = document.querySelector('#send-email')
-    button.addEventListener('click', handleClick)
+    const button = document.querySelector('#send-email');
+    button.addEventListener('click', handleClick);
   }, [])
 
   const getContent = () => {

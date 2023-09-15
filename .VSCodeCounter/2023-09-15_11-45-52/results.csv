@@ -1,0 +1,124 @@
+"filename", "language", "Go", "JavaScript", "JSON", "Go Module File", "Go Checksum File", "Markdown", "HTML", "YAML", "CSS", "JavaScript JSX", "SVG", "comment", "blank", "total"
+"/home/jakeb/go/src/github.com/final-year-project/.github/ISSUE_TEMPLATE/bug_report.md", "Markdown", 0, 0, 0, 0, 0, 30, 0, 0, 0, 0, 0, 0, 9, 39
+"/home/jakeb/go/src/github.com/final-year-project/.github/ISSUE_TEMPLATE/feature_request.md", "Markdown", 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 6, 21
+"/home/jakeb/go/src/github.com/final-year-project/.github/ISSUE_TEMPLATE/requirements-issue.md", "Markdown", 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 5, 15
+"/home/jakeb/go/src/github.com/final-year-project/.github/workflows/go.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 19, 0, 0, 0, 2, 8, 29
+"/home/jakeb/go/src/github.com/final-year-project/.github/workflows/jest.yml", "YAML", 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 16
+"/home/jakeb/go/src/github.com/final-year-project/README.md", "Markdown", 0, 0, 0, 0, 0, 74, 0, 0, 0, 0, 0, 0, 24, 98
+"/home/jakeb/go/src/github.com/final-year-project/babel.config.js", "JavaScript", 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 31
+"/home/jakeb/go/src/github.com/final-year-project/docs/docs.md", "Markdown", 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/go.mod", "Go Module File", 0, 0, 0, 39, 0, 0, 0, 0, 0, 0, 0, 0, 4, 43
+"/home/jakeb/go/src/github.com/final-year-project/go.sum", "Go Checksum File", 0, 0, 0, 0, 106, 0, 0, 0, 0, 0, 0, 0, 1, 107
+"/home/jakeb/go/src/github.com/final-year-project/jest.config.js", "JavaScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 11
+"/home/jakeb/go/src/github.com/final-year-project/jsdoc.conf.json", "JSON", 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11
+"/home/jakeb/go/src/github.com/final-year-project/main.go", "Go", 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 14
+"/home/jakeb/go/src/github.com/final-year-project/package.json", "JSON", 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 83
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/__tests/math_test.go", "Go", 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 18
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/api/api.go", "Go", 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 10, 33
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/api/delete.go", "Go", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/api/get.go", "Go", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/api/post.go", "Go", 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 17, 92
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/api/put.go", "Go", 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 14
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/config/config.go", "Go", 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 49
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/db/create.go", "Go", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/db/db.go", "Go", 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 10, 42
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/db/delete.go", "Go", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/db/select.go", "Go", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/db/update.go", "Go", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/server/router.go", "Go", 13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 19
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/server/server.go", "Go", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 11, 37
+"/home/jakeb/go/src/github.com/final-year-project/src/back-end/utils/logger/logger.go", "Go", 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 56
+"/home/jakeb/go/src/github.com/final-year-project/src/client/README.md", "Markdown", 0, 0, 0, 0, 0, 38, 0, 0, 0, 0, 0, 0, 33, 71
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/ElevationChart.test.js", "JavaScript", 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 36
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/OptionsPanel.test.js", "JavaScript", 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 18
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/RoutePreferencesPanel.test.js", "JavaScript", 0, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 37
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/WeatherPanel.test.js", "JavaScript", 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 33
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/__mocks__/leafletRoutingMachineMock.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/__mocks__/reactLeafletMock.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/sum.js", "JavaScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4
+"/home/jakeb/go/src/github.com/final-year-project/src/client/__tests/sum.test.js", "JavaScript", 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5
+"/home/jakeb/go/src/github.com/final-year-project/src/client/babel.config.js", "JavaScript", 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 31
+"/home/jakeb/go/src/github.com/final-year-project/src/client/index.html", "HTML", 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 0, 0, 1, 30
+"/home/jakeb/go/src/github.com/final-year-project/src/client/jest.config.js", "JavaScript", 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 11
+"/home/jakeb/go/src/github.com/final-year-project/src/client/package.json", "JSON", 0, 0, 67, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 68
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/clear-day.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/humidity.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/not-available.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/sunrise.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/sunset.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/thermometer-colder.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/thermometer-warmer.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-1.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-10.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-11.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-2.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-3.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-4.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-5.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-6.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-7.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-8.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index-9.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/uv-index.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-0.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-1.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-10.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-11.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-12.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-2.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-3.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-4.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-5.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-6.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-7.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-8.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind-beaufort-9.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/wind.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/all/windsock.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/01d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/01n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/02d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/02n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/03d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/03n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/04d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/04n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/09d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/09n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/10d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/10n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/11d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/11n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/13d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/13n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/50d.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/openweathermap/50n.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/preferences/settings-svgrepo-com.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 1, 0, 32
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/save-route/geojson-file.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/img/save-route/gpx-file.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 2
+"/home/jakeb/go/src/github.com/final-year-project/src/client/public/manifest.json", "JSON", 0, 0, 25, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 26
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/App.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 9, 53
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/App.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 71, 0, 0, 6, 77
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/ElevationChart/ElevationChart.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 1, 6, 49
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/ElevationChart/ElevationChart.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 158, 0, 54, 15, 227
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/Map/Map.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 54, 0, 0, 11, 16, 81
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/Map/Map.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 0, 6, 4, 43
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/Map/RoutingMachine.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 150, 0, 43, 19, 212
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/Modal/Modal.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 1, 14, 79
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/Modal/Modal.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0, 14, 104
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/OptionsPanel/OptionsPanel.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 4, 35
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/OptionsPanel/OptionsPanel.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 25, 0, 0, 4, 29
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/RoutePreferencesPanel/RoutePreferencesPanel.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 58, 0, 0, 2, 14, 74
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/RoutePreferencesPanel/RoutePreferencesPanel.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 95, 0, 6, 10, 111
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/RoutePreferencesPanel/SharePanel.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 115, 0, 0, 17, 132
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/WeatherPanel/DailyForecast.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 3, 20
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/WeatherPanel/DailyForecast.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 9, 55
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/WeatherPanel/WeatherPanel.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 11, 76
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/WeatherPanel/WeatherPanel.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 188, 0, 11, 16, 215
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/index.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 2, 14
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/index.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 0, 3, 3, 18
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/logo.svg", "SVG", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/reportWebVitals.js", "JavaScript", 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 14
+"/home/jakeb/go/src/github.com/final-year-project/src/client/src/setupTests.js", "JavaScript", 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 1, 6
+"/home/jakeb/go/src/github.com/final-year-project/src/client/vite.config.js", "JavaScript", 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 24
+"Total", "-", 295, 221, 185, 39, 106, 168, 29, 35, 387, 983, 88, 169, 421, 3126
