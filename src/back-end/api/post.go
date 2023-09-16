@@ -9,14 +9,13 @@ import (
 	"cycling-route-planner/src/back-end/utils/logger"
 	"encoding/base64"
 	"fmt"
-	"io"
 	"net/http"
-	"net/url"
-	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	strava "github.com/strava/go.strava"
 )
 
 var Logger = logger.New()
@@ -101,87 +100,28 @@ type Activity struct {
 	StartDate   string `json:"start_date_local"`
 	ElapsedTime int32  `json:"elapsed_time"`
 	Route       string `json:"route"`
+	AccessToken string `json:"access_token"`
 }
 
 func UploadGPXActivity(activity *Activity) {
+	fmt.Println("hello")
+	fmt.Println(activity.AccessToken)
+	stravaClient := strava.NewClient(activity.AccessToken)
 
-	// stravaClient, err := strava.NewAPIClient(ACCESS_TOKEN)
-	// if err != nil {
-	// 	Logger.Error().Println(err)
-	// }
+	uploadService := strava.NewUploadsService(stravaClient)
 
-	// stravaClient.Uploads.UploadActivity(postURL, activity.Route, "gpx")
-
-	// var opts = {
-	// 	'file': /path/to/file.txt, // {File} The uploaded file.
-	// 	'name': name_example, // {String} The desired name of the resulting activity.
-	// 	'description': description_example, // {String} The desired description of the resulting activity.
-	// 	'trainer': trainer_example, // {String} Whether the resulting activity should be marked as having been performed on a trainer.
-	// 	'commute': commute_example, // {String} Whether the resulting activity should be tagged as a commute.
-	// 	'dataType': dataType_example, // {String} The format of the uploaded file.
-	// 	'externalId': externalId_example // {String} The desired external identifier of the resulting activity.
-	// };
-
-	type Body struct {
-		File        string `json:"file"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		// Trainer bool `json:"trainer"`
-		Commute    bool   `json:"commute"`
-		DataType   string `json:"data_type"`
-		ExternalId string `json:"external_id"`
-	}
-
-	tempFile, err := os.CreateTemp("", "gpx_upload.gpx")
-	if err != nil {
-		Logger.Error().Println(err)
-	}
-	fmt.Println(tempFile.Name())
-
-	if _, err := tempFile.Write([]byte(activity.Route)); err != nil {
-		Logger.Fatal().Println(err)
-	}
-	if err := tempFile.Close(); err != nil {
-		Logger.Fatal().Println(err)
-	}
-
-	var body Body
-	body.File = tempFile.Name()
-	//@todo: use the actual file name
-	body.Name = "route"
-	body.Description = "description"
-	body.Commute = false
-	body.DataType = "gpx"
-	body.ExternalId = "external_id"
-
-	// CLIENT_SECRET := config.GetDotEnvStr("STRAVA_CLIENT_SECRET")
-	ACCESS_TOKEN := config.GetDotEnvStr("STRAVA_ACCESS_TOKEN")
-	// REFRESH_TOKEN := config.GetDotEnvStr("STRAVA_REFRESH_TOKEN")
-	postURL := "https://www.strava.com/api/v3/uploads"
-	params := url.Values{}
-	params.Add("access_token", ACCESS_TOKEN)
-	params.Add("file", tempFile.Name())
-	params.Add("name", activity.Name)
-	params.Add("data_type", "gpx")
-
-	resp, err := http.PostForm(postURL, params)
+	upload, err := uploadService.Create(strava.FileDataTypes.GPX, "route.gpx", strings.NewReader(activity.Route)).
+		ActivityType(strava.ActivityTypes.Ride).
+		Name("manual upload").
+		Description("description").
+		Do()
 
 	if err != nil {
 		Logger.Error().Println(err)
 		return
 	}
-	defer resp.Body.Close()
 
-	b, err := io.ReadAll(resp.Body)
-	if err != nil {
-		Logger.Error().Println(err)
-	}
-	fmt.Println(string(b))
-
-	// do something with responseString
-
-	// http.Post(postURL, "application/json", nil)
-	defer os.Remove(tempFile.Name())
+	fmt.Println(upload)
 }
 
 func PostCreateStravaActivity(c *gin.Context) {

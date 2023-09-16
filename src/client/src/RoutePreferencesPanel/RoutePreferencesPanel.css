@@ -1,4 +1,6 @@
-
+/* #shareStravaButton {
+  display: none;
+} */
 
 .route-preferences-panel, .share-panel {
     position: absolute; 

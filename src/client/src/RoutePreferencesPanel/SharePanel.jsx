@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
 import { act } from '@testing-library/react';
+import { create } from 'eslint-plugin-react/lib/rules/button-has-type';
 
 /**
  * @function SharePanel
@@ -10,8 +11,6 @@ import { act } from '@testing-library/react';
  * @returns SharePanel component
  */
 const SharePanel = (props) => {
-  const [stravaAuthCode, setStravaAuthCode] = useState(null)
-  const [stravaAccessToken, setStravaAccessToken] = useState(null)
 
   useEffect(() => {
     const sharePanelContainer = document.querySelector('.share-panel__preferences');
@@ -107,21 +106,6 @@ const SharePanel = (props) => {
     shareEmailButton.addEventListener('click', clickHandler);
     const shareStravaButton = document.querySelector('#shareStravaButton');
     shareStravaButton.addEventListener('click', clickHandler);
-    try {
-      const pathname = window.location.pathname;
-      if (pathname === '/exchange_token') {
-        const params = (new URL(document.location)).searchParams;
-        console.log(params)
-        setStravaAuthCode({
-          code: params.get('code'),
-          scope: params.get('scope'),
-        });
-        return;
-      }
-      return;
-    } catch (err) {
-      console.log(err);
-    }
   }, []);
 
   /**
@@ -161,42 +145,44 @@ const SharePanel = (props) => {
     }
   }
 
-  const getStravaAuthCode = () => {
-    const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
-    const REDIRECT_URI = import.meta.env.VITE_STRAVA_REDIRECT_URI;
-    const SCOPE = 'activity:write';
-    // Redirect to get auth code
-    const URL = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`
-    window.location.href = URL;
-  }
-
-  const getStravaAccessToken = async () => {
-    const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
-    const CLIENT_SECRET = import.meta.env.VITE_STRAVA_CLIENT_SECRET;
-    const CODE = stravaAuthCode.code;
-    const GRANT_TYPE = 'authorization_code';
-    const URL = `https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${CODE}&grant_type=${GRANT_TYPE}`
-    
-    const response = await fetch(URL, {
-      method: 'POST',
-    })
-    const res = await response.json();
-    setStravaAccessToken(res);
-
-  } 
-
   useEffect(() => {
-    if (stravaAuthCode === null) {
+    const createActivityButton = document.querySelector('#shareStravaButton');
+    console.log(props.stravaAccessToken)
+    if (props.stravaAccessToken === null) {
+      createActivityButton.disabled = true;
       return;
     }
-    getStravaAccessToken();
-  }, [stravaAuthCode]);
+
+    createActivityButton.disabled = false;
+    createActivityButton.addEventListener('click', createStravaActivity);
+    return;
+  }, [props.stravaAccessToken]);
 
   const createStravaActivity = async () => {
     if (activity.current  === null) {
       return;
     }
-    getStravaAuthCode();
+
+    if (props.stravaAccessToken === null) {
+      return;
+    }
+
+    const body = {
+      'access_token': props.stravaAccessToken.access_token,
+      'name': activity.current.name,
+      'type': activity.current.type,
+      'start_date_local': activity.current.start_date_local,
+      'elapsed_time': activity.current.elapsed_time,
+      'route': activity.current.route,
+    }
+    console.log('activity here')
+    console.log(body)
+    const response = fetch('/api/create-strava-activity', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
+    const res = await response.json();
+    console.log(res)
     console.log(activity.current)
     
   }

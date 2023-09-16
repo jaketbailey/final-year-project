@@ -13,6 +13,38 @@ const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
+  const [stravaAuthCode, setStravaAuthCode] = useState(null)
+  const [stravaAccessToken, setStravaAccessToken] = useState(null)
+
+  const getStravaAuthCode = () => {
+    const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
+    const REDIRECT_URI = import.meta.env.VITE_STRAVA_REDIRECT_URI;
+    const SCOPE = 'activity:read_all,activity:write';
+    // Redirect to get auth code
+    const URL = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${SCOPE}`
+    window.location.href = URL;
+  }
+
+  useEffect(() => {
+    if (stravaAuthCode === null) {
+      return;
+    }
+    getStravaAccessToken();
+  }, [stravaAuthCode]);
+
+  const getStravaAccessToken = async () => {
+    const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
+    const CLIENT_SECRET = import.meta.env.VITE_STRAVA_CLIENT_SECRET;
+    const CODE = stravaAuthCode.code;
+    const GRANT_TYPE = 'authorization_code';
+    const URL = `https://www.strava.com/api/v3/oauth/token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&code=${CODE}&grant_type=${GRANT_TYPE}`
+    
+    const response = await fetch(URL, {
+      method: 'POST',
+    })
+    const res = await response.json();
+    setStravaAccessToken(res);
+  } 
 
   useEffect(() => {
     const checkboxes = document.querySelectorAll('.checkbox-input');
@@ -24,6 +56,21 @@ const RoutePreferencesPanel = (props) => {
           setAvoidFeatures(avoidFeatures => avoidFeatures.filter(feature => feature !== event.target.value));
         }
       });
+    }
+    try {
+      const pathname = window.location.pathname;
+      if (pathname === '/exchange_token') {
+        const params = (new URL(document.location)).searchParams;
+        console.log(params)
+        setStravaAuthCode({
+          code: params.get('code'),
+          scope: params.get('scope'),
+        });
+        return;
+      }
+      return;
+    } catch (err) {
+      console.log(err);
     }
   }, []);
 
@@ -74,6 +121,9 @@ const RoutePreferencesPanel = (props) => {
         <button className="route-preferences-panel__button" onClick={saveGPX} >
           Export Route as GPX
         </button> 
+        <button className="route-preferences-panel__button" onClick={getStravaAuthCode}>
+          Log in to Strava 
+        </button>
         <button className="route-preferences-panel__button" onClick={toggleSharePanel} >
           Share
         </button>
@@ -103,6 +153,7 @@ const RoutePreferencesPanel = (props) => {
           setShow={props.setShow}
           show={props.show}
           data={props.emailData}
+          stravaAccessToken={stravaAccessToken}
         />
       </div>
   );
