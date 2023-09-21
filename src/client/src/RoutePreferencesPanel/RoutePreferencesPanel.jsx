@@ -43,7 +43,13 @@ const RoutePreferencesPanel = (props) => {
       method: 'POST',
     })
     const res = await response.json();
+    if (res.message === 'Bad Request') {
+      getStravaAuthCode();
+      return;
+    }
     setStravaAccessToken(res);
+    localStorage.setItem('strava_access_token', JSON.stringify(res));
+    return;
   } 
 
   useEffect(() => {
@@ -62,6 +68,7 @@ const RoutePreferencesPanel = (props) => {
       if (pathname === '/exchange_token') {
         const params = (new URL(document.location)).searchParams;
         console.log(params)
+        localStorage.setItem('strava_code', params.get('code'))
         setStravaAuthCode({
           code: params.get('code'),
           scope: params.get('scope'),
@@ -70,6 +77,7 @@ const RoutePreferencesPanel = (props) => {
       }
       return;
     } catch (err) {
+      console.log('test')
       console.log(err);
     }
   }, []);
