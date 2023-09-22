@@ -63,23 +63,22 @@ const RoutePreferencesPanel = (props) => {
         }
       });
     }
-    try {
-      const pathname = window.location.pathname;
-      if (pathname === '/exchange_token') {
-        const params = (new URL(document.location)).searchParams;
-        console.log(params)
-        localStorage.setItem('strava_code', params.get('code'))
-        setStravaAuthCode({
-          code: params.get('code'),
-          scope: params.get('scope'),
-        });
+    const pathname = window.location.pathname;
+    if (pathname === '/exchange_token') {
+      const params = (new URL(document.location)).searchParams;
+      console.log(params)
+      localStorage.setItem('strava_code', params.get('code'))
+      if (params.get('error')) {
+        console.log(params.get('error'))
         return;
       }
+      setStravaAuthCode({
+        code: params.get('code'),
+        scope: params.get('scope'),
+      });
       return;
-    } catch (err) {
-      console.log('test')
-      console.log(err);
     }
+    return;
   }, []);
 
   useEffect(() => {
@@ -160,6 +159,8 @@ const RoutePreferencesPanel = (props) => {
           showPanel={showSharePanel}
           setShow={props.setShow}
           show={props.show}
+          setShowStrava={props.setShowStrava}
+          showStrava={props.showStrava}
           data={props.emailData}
           stravaAccessToken={stravaAccessToken}
         />

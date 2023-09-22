@@ -193,7 +193,8 @@ const SharePanel = (props) => {
       props.setShow(!props.show);
     } else if (id === 'shareStravaButton') {
       console.log('strava');
-      createStravaActivity()
+      props.setShowStrava(!props.showStrava)
+      // createStravaActivity()
     }
   };
 

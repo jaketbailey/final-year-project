@@ -18,6 +18,7 @@ function App() {
   const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [show, setShow] = useState(false);
+  const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
 
   useEffect(() => {
@@ -58,7 +59,10 @@ function App() {
         setAvoidFeatures={setAvoidFeatures}
         avoidFeatures={avoidFeatures}
         control={control}
+        show={show}
         setShow={setShow}
+        showStrava={showStrava}
+        setShowStrava={setShowStrava}
         emailData={emailData}
       />
       <Modal 
@@ -69,6 +73,14 @@ function App() {
         type='email'
         setEmailData={setEmailData}
       />
+      <Modal 
+        id='ShareStravaModal' 
+        show={showStrava} 
+        setShow={setShowStrava} 
+        modalTitle='Create Strava Activity'
+        type='strava'
+      />
+      
     </div>
   );
 }

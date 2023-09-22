@@ -12,16 +12,21 @@ const Modal = (props) => {
     return null
   }
 
-  const handleClick = () => {
-    const buttonUpdate = (text) => {
-      const sendBtn = document.querySelector('#send-email');
-      sendBtn.classList.add('fail')
-      sendBtn.textContent = text
-      setTimeout(() => {
-        sendBtn.classList.remove('fail');
-        sendBtn.textContent = 'Send';
-      },1000);
+  const handleClick = (type) => {
+    if (type === "strava") {
+      console.log('strava activity clicked')
       return;
+    }
+
+    const buttonUpdate = (text) => {
+        const sendBtn = document.querySelector('#send-email');
+        sendBtn.classList.add('fail')
+        sendBtn.textContent = text
+        setTimeout(() => {
+          sendBtn.classList.remove('fail');
+          sendBtn.textContent = 'Send';
+        },1000);
+        return;
     }
 
     const validateEmail = (email) => {
@@ -59,8 +64,14 @@ const Modal = (props) => {
   }
 
   useEffect(() => {
-    const button = document.querySelector('#send-email');
-    button.addEventListener('click', handleClick);
+    let button;
+    console.log(props.type)
+    if (props.type === "email") {
+      button = document.querySelector('#send-email');
+    } else if (props.type === "strava") {
+      button = document.querySelector('#create-activity-btn');
+    } 
+    button.addEventListener('click', () => {handleClick(props.type)});
   }, [])
 
 
@@ -88,6 +99,25 @@ const Modal = (props) => {
           <input id='input-geojson' name='input-geojson'type='checkbox'/>
           </div>
           <button id='send-email' className='share'>Send</button>
+        </div>
+      )
+    } else if (props.type === 'strava') {
+      const today = new Date().toLocaleDateString('en-gb')
+      return (
+        <div>
+          <div className='block'>
+          <label htmlFor='input-activity-name'>Activity Name</label>
+          <input id='input-activity-name' name='input-activity-name' type='text' placeholder='myactivity'/>
+          </div>
+          <div className='block'>
+          <label htmlFor='input-start'>Start Date Time</label>
+          <input id='input-start' name='input-start' type='datetime-local' max={today}/>
+          </div>
+          <div className='block'>
+          <label htmlFor='input-end'>End Date Time</label>
+          <input id='input-end' name='input-end' type='datetime-local' max={today}/>
+          </div>
+          <button id='create-activity-btn' className='share'>Create Activity</button>
         </div>
       )
     }
