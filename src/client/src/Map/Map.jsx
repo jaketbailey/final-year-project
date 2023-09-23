@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState } from 'react';
+import { getGPX } from './routeHelpers';
 
 /**
  * @function Map
@@ -9,9 +10,17 @@ import { useEffect, useState } from 'react';
  * @returns Map component
  */
 const Map = (props) => {
+  const [instructions, setInstructions] = useState([]);
+
   useEffect(() => {
-    console.log(props.coordinates)
-  }, [props.coordinates])
+    if (!props.stravaData || !instructions || !props.coordinates) {
+      return;
+    }
+    console.log(instructions)
+    console.log(props.stravaData)
+    const GPX = getGPX(instructions, props.coordinates, props.stravaData);
+    props.setGPX(GPX);
+  }, [props.stravaData])
 
 
   return (
@@ -35,7 +44,7 @@ const Map = (props) => {
         setGPXLink={props.setGPXLink} 
         setGPX={props.setGPX}
         control={props.control}
-        dateTime={props.dateTime}
+        setInstructions={setInstructions}
       />
     </MapContainer>
   )

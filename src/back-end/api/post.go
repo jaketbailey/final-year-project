@@ -104,15 +104,13 @@ type Activity struct {
 }
 
 func UploadGPXActivity(activity *Activity) {
-	fmt.Println("hello")
-	fmt.Println(activity.AccessToken)
 	stravaClient := strava.NewClient(activity.AccessToken)
 
 	uploadService := strava.NewUploadsService(stravaClient)
 
 	upload, err := uploadService.Create(strava.FileDataTypes.GPX, "route.gpx", strings.NewReader(activity.Route)).
 		ActivityType(strava.ActivityTypes.Ride).
-		Name("manual upload").
+		Name(activity.Name).
 		Description("description").
 		Do()
 

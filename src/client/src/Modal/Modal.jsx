@@ -14,9 +14,14 @@ const Modal = (props) => {
 
   const handleClick = (type) => {
     if (type === "strava") {
+      const activityName = document.querySelector('#input-activity-name').value;
       const startDate = Date.parse(document.querySelector('#input-start').value);
-      const endDate = Date.parse(document.querySelector('#input-end').value);
-      console.log(`startDate: ${startDate}, endDate: ${endDate}`)
+      const avgSpeed = document.querySelector('#input-speed').value;
+      props.setStravaData({
+        name: activityName,
+        start: startDate,
+        speed: avgSpeed,
+      })
       console.log('strava activity clicked')
       return;
     }
@@ -68,7 +73,6 @@ const Modal = (props) => {
 
   useEffect(() => {
     let button;
-    console.log(props.type)
     if (props.type === "email") {
       button = document.querySelector('#send-email');
     } else if (props.type === "strava") {
@@ -113,12 +117,12 @@ const Modal = (props) => {
           <input id='input-activity-name' name='input-activity-name' type='text' placeholder='myactivity'/>
           </div>
           <div className='block'>
-          <label htmlFor='input-start'>Start Date Time</label>
+          <label htmlFor='input-start'>Start Date & Time</label>
           <input id='input-start' name='input-start' type='datetime-local' max={today}/>
           </div>
           <div className='block'>
-          <label htmlFor='input-end'>End Date Time</label>
-          <input id='input-end' name='input-end' type='datetime-local' max={today}/>
+          <label htmlFor='input-speed'>Average Speed (km/h) </label>
+          <input id='input-speed' name='input-speed' type='number' placeholder="24.0" min="5.0" max="39.0"/>
           </div>
           <button id='create-activity-btn' className='share'>Create Activity</button>
         </div>

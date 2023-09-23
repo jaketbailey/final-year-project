@@ -55,17 +55,19 @@ const SharePanel = (props) => {
       ]
     }
     console.log(message)
+    console.log(props.stravaData)
+    console.log('syuwghughduih')
 
     activity.current = {
-      name: 'Up2002753 Route Planner',
+      name: props.stravaData.name,
       type: 'Ride',
-      start_date_local: '2022-04-25T10:00:00Z',
+      start_date_local: new Date(props.stravaData.start * 1000)||new Date().toLocaleDateString('en-gb'),
       elapsed_time: 0,
       route: routeGPX.current,
     };
     console.log(activity)
 
-  }, [props.geoJSON, props.gpx]);
+  }, [props.geoJSON, props.gpx, props.stravaData]);
   
   useEffect(() => {
     if (!props.data) {
@@ -154,38 +156,40 @@ const SharePanel = (props) => {
     }
 
     createActivityButton.disabled = false;
-    createActivityButton.addEventListener('click', createStravaActivity);
     return;
   }, [props.stravaAccessToken]);
 
-  const createStravaActivity = async () => {
-    if (activity.current  === null) {
-      return;
+  useEffect(() => {
+    const createStravaActivity = async () => {
+      if (activity.current  === null) {
+        return;
+      }
+  
+      if (props.stravaAccessToken === null) {
+        return;
+      }
+  
+      const body = {
+        'access_token': props.stravaAccessToken.access_token,
+        'name': activity.current.name,
+        'type': activity.current.type,
+        'start_date_local': activity.current.start_date_local,
+        'elapsed_time': activity.current.elapsed_time,
+        'route': activity.current.route,
+      }
+      console.log('activity here')
+      console.log(body)
+      const response = fetch('/api/create-strava-activity', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      })
+      const res = await response.json();
+      console.log(res)
+      console.log(activity.current)
     }
 
-    if (props.stravaAccessToken === null) {
-      return;
-    }
-
-    const body = {
-      'access_token': props.stravaAccessToken.access_token,
-      'name': activity.current.name,
-      'type': activity.current.type,
-      'start_date_local': activity.current.start_date_local,
-      'elapsed_time': activity.current.elapsed_time,
-      'route': activity.current.route,
-    }
-    console.log('activity here')
-    console.log(body)
-    const response = fetch('/api/create-strava-activity', {
-      method: 'POST',
-      body: JSON.stringify(body),
-    })
-    const res = await response.json();
-    console.log(res)
-    console.log(activity.current)
-    
-  }
+    createStravaActivity();
+  }, [activity.current])
 
   const clickHandler = (event) => {
     const id = event.target.id;

@@ -163,6 +163,7 @@ const RoutePreferencesPanel = (props) => {
           showStrava={props.showStrava}
           data={props.emailData}
           stravaAccessToken={stravaAccessToken}
+          stravaData={props.stravaData}
         />
       </div>
   );

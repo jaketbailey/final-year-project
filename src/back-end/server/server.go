@@ -27,6 +27,7 @@ func Init(mode string) {
 
 	router := NewRouter()
 	router.Use(static.Serve("/", static.LocalFile("./src/client/build", true)))
+	router.Use(static.Serve("/exchange_token", static.LocalFile("./src/client/build", true)))
 
 	api.Init(router)
 

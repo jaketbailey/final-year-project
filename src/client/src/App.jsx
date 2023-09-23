@@ -20,7 +20,7 @@ function App() {
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
-  const [dateTime, setDateTime] = useState({});
+  const [stravaData, setStravaData] = useState({});
 
   useEffect(() => {
     console.log(avoidFeatures)
@@ -40,7 +40,7 @@ function App() {
         setGPX={setGPX}
         control={control}
         avoidFeatures={avoidFeatures}
-        dateTime={dateTime}
+        stravaData={stravaData}
       />
       
       <OptionsPanel 
@@ -66,6 +66,7 @@ function App() {
         showStrava={showStrava}
         setShowStrava={setShowStrava}
         emailData={emailData}
+        stravaData={stravaData}
       />
       <Modal 
         id='ShareEmailModal' 
@@ -81,7 +82,7 @@ function App() {
         setShow={setShowStrava} 
         modalTitle='Create Strava Activity'
         type='strava'
-        setDateTime={setDateTime}
+        setStravaData={setStravaData}
       />
       
     </div>
