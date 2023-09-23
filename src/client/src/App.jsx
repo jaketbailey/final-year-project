@@ -20,6 +20,7 @@ function App() {
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
+  const [dateTime, setDateTime] = useState({});
 
   useEffect(() => {
     console.log(avoidFeatures)
@@ -39,6 +40,7 @@ function App() {
         setGPX={setGPX}
         control={control}
         avoidFeatures={avoidFeatures}
+        dateTime={dateTime}
       />
       
       <OptionsPanel 
@@ -79,6 +81,7 @@ function App() {
         setShow={setShowStrava} 
         modalTitle='Create Strava Activity'
         type='strava'
+        setDateTime={setDateTime}
       />
       
     </div>

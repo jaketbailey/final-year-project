@@ -191,6 +191,8 @@ const createRoutingMachineLayer = (props) => {
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
+    console.log(props.dateTime);
+    console.log('datetime')
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
     exportGeoJSON(geoJSON);
     exportGPX(gpx);

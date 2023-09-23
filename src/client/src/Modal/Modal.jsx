@@ -14,6 +14,9 @@ const Modal = (props) => {
 
   const handleClick = (type) => {
     if (type === "strava") {
+      const startDate = Date.parse(document.querySelector('#input-start').value);
+      const endDate = Date.parse(document.querySelector('#input-end').value);
+      console.log(`startDate: ${startDate}, endDate: ${endDate}`)
       console.log('strava activity clicked')
       return;
     }

@@ -35,6 +35,7 @@ const Map = (props) => {
         setGPXLink={props.setGPXLink} 
         setGPX={props.setGPX}
         control={props.control}
+        dateTime={props.dateTime}
       />
     </MapContainer>
   )
