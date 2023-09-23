@@ -24,12 +24,10 @@ const SharePanel = (props) => {
   }, [props.showPanel]);
 
   const message = useRef(null);
-  const activity = useRef(null);
   const routeGeoJSON = useRef(props.geoJSON);
   const routeGPX = useRef(props.gpx);
 
   useEffect(() => {
-    console.log('update to route')
     routeGeoJSON.current = props.geoJSON;
     routeGPX.current = props.gpx;
 
@@ -54,20 +52,7 @@ const SharePanel = (props) => {
         }
       ]
     }
-    console.log(message)
-    console.log(props.stravaData)
-    console.log('syuwghughduih')
-
-    activity.current = {
-      name: props.stravaData.name,
-      type: 'Ride',
-      start_date_local: new Date(props.stravaData.start * 1000)||new Date().toLocaleDateString('en-gb'),
-      elapsed_time: 0,
-      route: routeGPX.current,
-    };
-    console.log(activity)
-
-  }, [props.geoJSON, props.gpx, props.stravaData]);
+  }, [props.geoJSON, props.gpx]);
   
   useEffect(() => {
     if (!props.data) {
@@ -108,6 +93,11 @@ const SharePanel = (props) => {
     shareEmailButton.addEventListener('click', clickHandler);
     const shareStravaButton = document.querySelector('#shareStravaButton');
     shareStravaButton.addEventListener('click', clickHandler);
+
+    return () => {
+      shareEmailButton.removeEventListener('click', clickHandler);
+      shareStravaButton.removeEventListener('click', clickHandler);
+    }
   }, []);
 
   /**
@@ -118,12 +108,12 @@ const SharePanel = (props) => {
    * @returns 
    */
   const sendEmail = async (data) => {
-    if (data === null) {
+    if (data.to === undefined) {
       return;
     }
 
     const body = JSON.stringify(data);
-    console.log(body);
+
     const response = await fetch('/api/send-email', {
       method: 'POST',
       headers: {
@@ -149,7 +139,6 @@ const SharePanel = (props) => {
 
   useEffect(() => {
     const createActivityButton = document.querySelector('#shareStravaButton');
-    console.log(props.stravaAccessToken)
     if (props.stravaAccessToken === null) {
       createActivityButton.disabled = true;
       return;
@@ -159,38 +148,6 @@ const SharePanel = (props) => {
     return;
   }, [props.stravaAccessToken]);
 
-  useEffect(() => {
-    const createStravaActivity = async () => {
-      if (activity.current  === null) {
-        return;
-      }
-  
-      if (props.stravaAccessToken === null) {
-        return;
-      }
-  
-      const body = {
-        'access_token': props.stravaAccessToken.access_token,
-        'name': activity.current.name,
-        'type': activity.current.type,
-        'start_date_local': activity.current.start_date_local,
-        'elapsed_time': activity.current.elapsed_time,
-        'route': activity.current.route,
-      }
-      console.log('activity here')
-      console.log(body)
-      const response = fetch('/api/create-strava-activity', {
-        method: 'POST',
-        body: JSON.stringify(body),
-      })
-      const res = await response.json();
-      console.log(res)
-      console.log(activity.current)
-    }
-
-    createStravaActivity();
-  }, [activity.current])
-
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
@@ -198,7 +155,6 @@ const SharePanel = (props) => {
     } else if (id === 'shareStravaButton') {
       console.log('strava');
       props.setShowStrava(!props.showStrava)
-      // createStravaActivity()
     }
   };
 

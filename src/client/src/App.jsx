@@ -21,9 +21,10 @@ function App() {
   const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
   const [stravaData, setStravaData] = useState({});
+  const [stravaAccessToken, setStravaAccessToken] = useState(null)
+  const [instructions, setInstructions] = useState([]);
 
   useEffect(() => {
-    console.log(avoidFeatures)
     fetch('/api/ping')
   }, [avoidFeatures]);
 
@@ -41,6 +42,8 @@ function App() {
         control={control}
         avoidFeatures={avoidFeatures}
         stravaData={stravaData}
+        instructions={instructions}
+        setInstructions={setInstructions}
       />
       
       <OptionsPanel 
@@ -67,6 +70,8 @@ function App() {
         setShowStrava={setShowStrava}
         emailData={emailData}
         stravaData={stravaData}
+        stravaAccessToken={stravaAccessToken}
+        setStravaAccessToken={setStravaAccessToken}
       />
       <Modal 
         id='ShareEmailModal' 
@@ -83,6 +88,10 @@ function App() {
         modalTitle='Create Strava Activity'
         type='strava'
         setStravaData={setStravaData}
+        stravaData={stravaData}
+        instructions={instructions}
+        coordinates={coordinates}
+        stravaAccessToken={stravaAccessToken}
       />
       
     </div>

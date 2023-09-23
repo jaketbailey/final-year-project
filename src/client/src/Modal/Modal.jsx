@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import './Modal.css'
+import { getGPX, createStravaActivity } from '../Map/routeHelpers'
 
 /**
  * @function Modal
@@ -17,12 +18,26 @@ const Modal = (props) => {
       const activityName = document.querySelector('#input-activity-name').value;
       const startDate = Date.parse(document.querySelector('#input-start').value);
       const avgSpeed = document.querySelector('#input-speed').value;
-      props.setStravaData({
+      const stravaData = {
         name: activityName,
         start: startDate,
         speed: avgSpeed,
-      })
+      }
+      props.setStravaData(stravaData)
       console.log('strava activity clicked')
+
+      console.log(props.stravaData)
+      console.log(props.instructions)
+      console.log(props.coordinates)
+      console.log('testing here')
+      if (!props.stravaData || !props.instructions || !props.coordinates) {
+        return;
+      }
+  
+      const GPX = getGPX(props.instructions, props.coordinates, stravaData);
+      console.log(GPX)
+      console.log('creating activity')
+      createStravaActivity(GPX, stravaData, props.stravaAccessToken);  
       return;
     }
 
@@ -79,6 +94,9 @@ const Modal = (props) => {
       button = document.querySelector('#create-activity-btn');
     } 
     button.addEventListener('click', () => {handleClick(props.type)});
+    return () => {
+      button.removeEventListener('click', () => {handleClick(props.type)});
+    }
   }, [])
 
 

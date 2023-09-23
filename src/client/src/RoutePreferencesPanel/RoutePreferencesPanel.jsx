@@ -14,7 +14,6 @@ const RoutePreferencesPanel = (props) => {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
-  const [stravaAccessToken, setStravaAccessToken] = useState(null)
 
   const getStravaAuthCode = () => {
     const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
@@ -47,7 +46,7 @@ const RoutePreferencesPanel = (props) => {
       getStravaAuthCode();
       return;
     }
-    setStravaAccessToken(res);
+    props.setStravaAccessToken(res);
     localStorage.setItem('strava_access_token', JSON.stringify(res));
     return;
   } 
@@ -162,7 +161,7 @@ const RoutePreferencesPanel = (props) => {
           setShowStrava={props.setShowStrava}
           showStrava={props.showStrava}
           data={props.emailData}
-          stravaAccessToken={stravaAccessToken}
+          stravaAccessToken={props.stravaAccessToken}
           stravaData={props.stravaData}
         />
       </div>

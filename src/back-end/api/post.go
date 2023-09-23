@@ -103,33 +103,44 @@ type Activity struct {
 	AccessToken string `json:"access_token"`
 }
 
-func UploadGPXActivity(activity *Activity) {
+func UploadGPXActivity(activity *Activity) (upload *strava.UploadSummary, err error) {
 	stravaClient := strava.NewClient(activity.AccessToken)
 
 	uploadService := strava.NewUploadsService(stravaClient)
 
-	upload, err := uploadService.Create(strava.FileDataTypes.GPX, "route.gpx", strings.NewReader(activity.Route)).
+	stravaUpload, e := uploadService.Create(strava.FileDataTypes.GPX, "route.gpx", strings.NewReader(activity.Route)).
 		ActivityType(strava.ActivityTypes.Ride).
 		Name(activity.Name).
 		Description("description").
 		Do()
 
 	if err != nil {
-		Logger.Error().Println(err)
+		Logger.Error().Println(e)
 		return
 	}
-
-	fmt.Println(upload)
+	fmt.Println(stravaUpload)
+	return
 }
 
 func PostCreateStravaActivity(c *gin.Context) {
 	var activity Activity
 	if c.BindJSON(&activity) == nil {
-		UploadGPXActivity(&activity)
+
+		upload, err := UploadGPXActivity(&activity)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "Bad",
+				"message": "Activity not created",
+				"data":    err,
+			})
+			return
+		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"status": "Good",
-			"data":   activity,
+			"status":   "Good",
+			"data":     activity,
+			"response": upload,
 		})
 	}
 }

@@ -126,6 +126,7 @@ export const getGPX = (instructions, coordinates, stravaData) => {
         const minutes = Math.trunc((time - hours) * 60);
         const seconds = Math.trunc((time - hours - (minutes / 60)) * 3600);
 
+        console.log(stravaData.start)
         const startDate = new Date(stravaData.start);
         startDate.setHours(startDate.getHours() + hours);
         startDate.setMinutes(startDate.getMinutes() + minutes);
@@ -166,4 +167,33 @@ export const exportGeoJSON = (geoJSON, setGeoJSON, setGeoJSONLink) => {
   link.href = url;
   setGeoJSON(data);
   setGeoJSONLink(link); 
+}
+
+export const createStravaActivity = async (gpx, stravaData, stravaAccessToken) => {
+  console.log('create func called')
+
+  if (stravaAccessToken === null) {
+    return;
+  }
+  console.log(stravaData)
+  if (stravaData === null) {
+    return;
+  }
+
+  const body = {
+    'access_token': stravaAccessToken.access_token,
+    'name': stravaData.name,
+    'type': 'Ride',
+    'start_date_local': new Date(stravaData.start).toISOString(),
+    'route': gpx,
+  }
+
+  console.log('activity here')
+  console.log(body)
+  console.log(fetch('/api/create-strava-activity', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  }))
+  // const res = await response;
+  // console.log(res)
 }
