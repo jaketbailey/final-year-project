@@ -127,7 +127,7 @@ const RoutePreferencesPanel = (props) => {
         <button className="route-preferences-panel__button" onClick={saveGPX} >
           Export Route as GPX
         </button> 
-        <button className="route-preferences-panel__button" onClick={getStravaAuthCode}>
+        <button id="stava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
           Log in to Strava 
         </button>
         <button className="route-preferences-panel__button" onClick={toggleSharePanel} >
