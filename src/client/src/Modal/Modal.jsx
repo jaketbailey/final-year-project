@@ -117,7 +117,6 @@ const Modal = (props) => {
         button.removeEventListener('click', () => {handleClick(props.type)});
       }
     }
-
   }, [])
 
 
