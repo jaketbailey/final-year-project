@@ -13,43 +13,59 @@ const Modal = (props) => {
     return null
   }
 
+  const buttonUpdate = (text, type) => {
+    let sendBtn = document.querySelector('#send-email');
+    if (type === 'strava') {
+      sendBtn = document.querySelector('#create-activity-btn');
+    }
+    sendBtn.classList.add('fail')
+    sendBtn.textContent = text
+    setTimeout(() => {
+      sendBtn.classList.remove('fail');
+      sendBtn.textContent = 'Send';
+    },1000);
+    return;
+  }
+
   const handleClick = (type) => {
     if (type === "strava") {
       const activityName = document.querySelector('#input-activity-name').value;
       const startDate = Date.parse(document.querySelector('#input-start').value);
       const avgSpeed = document.querySelector('#input-speed').value;
+
+      if (activityName.trim() === '') {
+        buttonUpdate('Activity name is blank', 'strava');
+        return;
+      }
+
+      if (!new Date(startDate).getTime()) {
+        buttonUpdate('Invalid date', 'strava');
+        return;
+      }
+
+      if (avgSpeed.trim() === '') {
+        buttonUpdate('Average speed is blank', 'strava');
+        return;
+      }
+
       const stravaData = {
         name: activityName,
         start: startDate,
         speed: avgSpeed,
       }
+
+
+      console.log(stravaData)
       props.setStravaData(stravaData)
       console.log('strava activity clicked')
 
-      console.log(props.stravaData)
-      console.log(props.instructions)
-      console.log(props.coordinates)
-      console.log('testing here')
       if (!props.stravaData || !props.instructions || !props.coordinates) {
         return;
       }
   
       const GPX = getGPX(props.instructions, props.coordinates, stravaData);
-      console.log(GPX)
-      console.log('creating activity')
-      createStravaActivity(GPX, stravaData, props.stravaAccessToken);  
+      createStravaActivity(GPX, stravaData, props.stravaAccessToken);
       return;
-    }
-
-    const buttonUpdate = (text) => {
-        const sendBtn = document.querySelector('#send-email');
-        sendBtn.classList.add('fail')
-        sendBtn.textContent = text
-        setTimeout(() => {
-          sendBtn.classList.remove('fail');
-          sendBtn.textContent = 'Send';
-        },1000);
-        return;
     }
 
     const validateEmail = (email) => {

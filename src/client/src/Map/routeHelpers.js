@@ -190,10 +190,27 @@ export const createStravaActivity = async (gpx, stravaData, stravaAccessToken) =
 
   console.log('activity here')
   console.log(body)
-  console.log(fetch('/api/create-strava-activity', {
+  const response = fetch('/api/create-strava-activity', {
     method: 'POST',
     body: JSON.stringify(body),
-  }))
-  // const res = await response;
-  // console.log(res)
+  })
+  const res = await response;
+  console.log(res)
+  
+  const createActivityBtn = document.querySelector('#create-activity-btn');
+  if (res.status === 200) {
+    console.log('Successfully created activity')
+    createActivityBtn.classList.add('success');
+    createActivityBtn.textContent = 'Activity Created';
+  }
+  if (res.status === 404) {
+    console.log('Failed');
+    createActivityBtn.classList.add('fail');
+    createActivityBtn.textContent = 'Activity not created';
+  }
+  setTimeout(() => {
+    createActivityBtn.classList.remove('success');
+    createActivityBtn.classList.remove('fail');
+    createActivityBtn.textContent = 'Create Activity';
+  }, 1000);
 }
