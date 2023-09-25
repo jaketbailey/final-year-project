@@ -24,10 +24,6 @@ function App() {
   const [stravaAccessToken, setStravaAccessToken] = useState(null)
   const [instructions, setInstructions] = useState([]);
 
-  useEffect(() => {
-    fetch('/api/ping')
-  }, []);
-
   return (
     <div>
       <Map 
