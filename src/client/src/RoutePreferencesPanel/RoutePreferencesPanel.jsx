@@ -21,8 +21,10 @@ const RoutePreferencesPanel = (props) => {
     const response = await fetch(URL, {
       method: 'POST',
     })
-    const res = await response.json();
+    const res = await response.json();;
     console.log(res)
+    localStorage.removeItem('strava_auth_code');
+    localStorage.removeItem('strava_access_token');
     setStravaAuthCode(null);
     props.setStravaAccessToken(null);
   }
@@ -45,6 +47,7 @@ const RoutePreferencesPanel = (props) => {
 
   useEffect(() => {
     if (stravaAuthCode === null) {
+      localStorage.removeItem('strava_auth_code');
       return;
     }
     getStravaAccessToken();
@@ -59,7 +62,7 @@ const RoutePreferencesPanel = (props) => {
     
     const response = await fetch(URL, {
       method: 'POST',
-    })
+    });
     const res = await response.json();
     if (res.message === 'Bad Request') {
       getStravaAuthCode();
@@ -81,11 +84,23 @@ const RoutePreferencesPanel = (props) => {
         }
       });
     }
+
+    const stravaAccessToken = JSON.parse(localStorage.getItem('strava_access_token'));
+    if (stravaAccessToken) {
+      props.setStravaAccessToken(stravaAccessToken);
+      const stravaBtn = document.querySelector("#strava-login");
+      if (stravaBtn !== null) {
+        stravaBtn.innerText = 'Log out of Strava';
+        stravaBtn.classList.add('strava-logout');
+      }
+      return;
+    }
+
     const pathname = window.location.pathname;
     if (pathname === '/exchange_token') {
       const params = (new URL(document.location)).searchParams;
       console.log(params)
-      localStorage.setItem('strava_code', params.get('code'))
+      localStorage.setItem('strava_auth_code', params.get('code'))
       if (params.get('error')) {
         console.log(params.get('error'))
         return;
@@ -95,10 +110,13 @@ const RoutePreferencesPanel = (props) => {
         stravaBtn.innerText = 'Log out of Strava';
         stravaBtn.classList.add('strava-logout');
       }
-      setStravaAuthCode({
-        code: params.get('code'),
-        scope: params.get('scope'),
-      });
+      const code = {
+         code: params.get('code'),
+         scope: params.get('scope'),
+      }
+
+      localStorage.setItem('strava_auth_code', JSON.stringify(code));
+      setStravaAuthCode(code);
       return;
     }
     return;

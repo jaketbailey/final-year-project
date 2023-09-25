@@ -25,6 +25,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
         </button>
         <button
           class="route-preferences-panel__button"
+          id="strava-login"
         >
           Log in to Strava
         </button>
@@ -151,6 +152,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
       </button>
       <button
         class="route-preferences-panel__button"
+        id="strava-login"
       >
         Log in to Strava
       </button>
