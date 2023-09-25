@@ -14,8 +14,27 @@ const RoutePreferencesPanel = (props) => {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
+ 
+  const deauthoriseStrava = async () => {
+    const ACCESS_TOKEN = props.stravaAccessToken.access_token;
+    const URL = `https://www.strava.com/oauth/deauthorize?access_token=${ACCESS_TOKEN}`
+    const response = await fetch(URL, {
+      method: 'POST',
+    })
+    const res = await response.json();
+    console.log(res)
+    setStravaAuthCode(null);
+    props.setStravaAccessToken(null);
+  }
 
   const getStravaAuthCode = () => {
+    const stravaBtn = document.querySelector('#strava-login');
+    if (stravaBtn.classList.contains('strava-logout')) {
+      deauthoriseStrava();
+      stravaBtn.textContent = 'Log in to Strava'
+      stravaBtn.classList.remove('strava-logout');
+      return;
+    }
     const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
     const REDIRECT_URI = import.meta.env.VITE_STRAVA_REDIRECT_URI;
     const SCOPE = 'activity:read_all,activity:write';
@@ -70,6 +89,11 @@ const RoutePreferencesPanel = (props) => {
       if (params.get('error')) {
         console.log(params.get('error'))
         return;
+      }
+      const stravaBtn = document.querySelector("#strava-login");
+      if (stravaBtn !== null) {
+        stravaBtn.innerText = 'Log out of Strava';
+        stravaBtn.classList.add('strava-logout');
       }
       setStravaAuthCode({
         code: params.get('code'),
@@ -127,7 +151,7 @@ const RoutePreferencesPanel = (props) => {
         <button className="route-preferences-panel__button" onClick={saveGPX} >
           Export Route as GPX
         </button> 
-        <button id="stava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
+        <button id="strava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
           Log in to Strava 
         </button>
         <button className="route-preferences-panel__button" onClick={toggleSharePanel} >

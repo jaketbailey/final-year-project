@@ -3,7 +3,7 @@ import WeatherPanel from './WeatherPanel/WeatherPanel';
 import './App.css';
 import ElevationChart from './ElevationChart/ElevationChart';
 import { useEffect, useRef, useState } from 'react';
-import OptionsPanel from './OptionsPanel/OptionsPanel';
+import ExportPanel from './ExportPanel/ExportPanel';
 import RoutePreferencesPanel from './RoutePreferencesPanel/RoutePreferencesPanel';
 import Modal from './Modal/Modal';
 
@@ -26,7 +26,7 @@ function App() {
 
   useEffect(() => {
     fetch('/api/ping')
-  }, [avoidFeatures]);
+  }, []);
 
   return (
     <div>
@@ -46,7 +46,7 @@ function App() {
         setInstructions={setInstructions}
       />
       
-      <OptionsPanel 
+      <ExportPanel 
         geoJSONLink={geoJSONLink} 
         gpxLink={gpxLink}
       />
