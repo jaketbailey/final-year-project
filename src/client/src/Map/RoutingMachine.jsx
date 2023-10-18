@@ -23,7 +23,7 @@ const createRoutingMachineLayer = (props) => {
         host: "https://api.openrouteservice.org",
         service: "directions",                   
         api_version: "v2",                       
-        profile: "cycling-road",                 
+        profile: "cycling-regular",                 
         routingQueryParams: {
             attributes: [
                 "avgspeed",
