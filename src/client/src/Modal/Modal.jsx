@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import './Modal.css'
 import { getGPX, createStravaActivity } from '../Map/routeHelpers'
 
@@ -102,16 +102,20 @@ const Modal = (props) => {
     props.setEmailData(emailData)
   }
 
+  const executeOnce = useRef(true);
   useEffect(() => {
-    let button;
-    if (props.type === "email") {
-      button = document.querySelector('#send-email');
-    } else if (props.type === "strava") {
-      button = document.querySelector('#create-activity-btn');
-    } 
-    button.addEventListener('click', () => {handleClick(props.type)});
-    return () => {
-      button.removeEventListener('click', () => {handleClick(props.type)});
+    if (executeOnce.current) {
+      executeOnce.current = false;
+      let button;
+      if (props.type === "email") {
+        button = document.querySelector('#send-email');
+      } else if (props.type === "strava") {
+        button = document.querySelector('#create-activity-btn');
+      } 
+      button.addEventListener('click', () => {handleClick(props.type)});
+      return () => {
+        button.removeEventListener('click', () => {handleClick(props.type)});
+      }
     }
   }, [])
 
