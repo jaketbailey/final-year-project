@@ -9,6 +9,8 @@ export default defineConfig(() => {
         '/api': 'http://localhost:8080',
       }
     },
+    root: 'src/client',
+    envDir: '../../',
     define: {
         'process.env': {},
     },

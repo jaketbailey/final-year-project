@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState } from 'react';
+import { getGPX, createStravaActivity } from './routeHelpers';
 
 /**
  * @function Map
@@ -9,11 +10,7 @@ import { useEffect, useState } from 'react';
  * @returns Map component
  */
 const Map = (props) => {
-  useEffect(() => {
-    console.log(props.coordinates)
-  }, [props.coordinates])
-
-
+  const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   return (
     <MapContainer 
       id="map" 
@@ -25,7 +22,8 @@ const Map = (props) => {
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        url={`https://tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=${OpenCycleAPIKey}`}
       />
       <RoutingMachine
         setCoordinates={props.setCoordinates}
@@ -35,6 +33,7 @@ const Map = (props) => {
         setGPXLink={props.setGPXLink} 
         setGPX={props.setGPX}
         control={props.control}
+        setInstructions={props.setInstructions}
       />
     </MapContainer>
   )

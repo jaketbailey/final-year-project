@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import './Modal.css'
+import { getGPX, createStravaActivity } from '../Map/routeHelpers'
 
 /**
  * @function Modal
@@ -12,15 +13,58 @@ const Modal = (props) => {
     return null
   }
 
-  const handleClick = () => {
-    const buttonUpdate = (text) => {
-      const sendBtn = document.querySelector('#send-email');
-      sendBtn.classList.add('fail')
-      sendBtn.textContent = text
-      setTimeout(() => {
-        sendBtn.classList.remove('fail');
-        sendBtn.textContent = 'Send';
-      },1000);
+  const buttonUpdate = (text, type) => {
+    let sendBtn = document.querySelector('#send-email');
+    if (type === 'strava') {
+      sendBtn = document.querySelector('#create-activity-btn');
+    }
+    sendBtn.classList.add('fail')
+    sendBtn.textContent = text
+    setTimeout(() => {
+      sendBtn.classList.remove('fail');
+      sendBtn.textContent = 'Send';
+    },1000);
+    return;
+  }
+
+  const handleClick = (type) => {
+    if (type === "strava") {
+      const activityName = document.querySelector('#input-activity-name').value;
+      const startDate = Date.parse(document.querySelector('#input-start').value);
+      const avgSpeed = document.querySelector('#input-speed').value;
+
+      if (activityName.trim() === '') {
+        buttonUpdate('Activity name is blank', 'strava');
+        return;
+      }
+
+      if (!new Date(startDate).getTime()) {
+        buttonUpdate('Invalid date', 'strava');
+        return;
+      }
+
+      if (avgSpeed.trim() === '') {
+        buttonUpdate('Average speed is blank', 'strava');
+        return;
+      }
+
+      const stravaData = {
+        name: activityName,
+        start: startDate,
+        speed: avgSpeed,
+      }
+
+
+      console.log(stravaData)
+      props.setStravaData(stravaData)
+      console.log('strava activity clicked')
+
+      if (!props.stravaData || !props.instructions || !props.coordinates) {
+        return;
+      }
+  
+      const GPX = getGPX(props.instructions, props.coordinates, stravaData);
+      createStravaActivity(GPX, stravaData, props.stravaAccessToken);
       return;
     }
 
@@ -58,9 +102,21 @@ const Modal = (props) => {
     props.setEmailData(emailData)
   }
 
+  const executeOnce = useRef(true);
   useEffect(() => {
-    const button = document.querySelector('#send-email');
-    button.addEventListener('click', handleClick);
+    if (executeOnce.current) {
+      executeOnce.current = false;
+      let button;
+      if (props.type === "email") {
+        button = document.querySelector('#send-email');
+      } else if (props.type === "strava") {
+        button = document.querySelector('#create-activity-btn');
+      } 
+      button.addEventListener('click', () => {handleClick(props.type)});
+      return () => {
+        button.removeEventListener('click', () => {handleClick(props.type)});
+      }
+    }
   }, [])
 
 
@@ -88,6 +144,25 @@ const Modal = (props) => {
           <input id='input-geojson' name='input-geojson'type='checkbox'/>
           </div>
           <button id='send-email' className='share'>Send</button>
+        </div>
+      )
+    } else if (props.type === 'strava') {
+      const today = new Date().toLocaleDateString('en-gb')
+      return (
+        <div>
+          <div className='block'>
+          <label htmlFor='input-activity-name'>Activity Name</label>
+          <input id='input-activity-name' name='input-activity-name' type='text' placeholder='myactivity'/>
+          </div>
+          <div className='block'>
+          <label htmlFor='input-start'>Start Date & Time</label>
+          <input id='input-start' name='input-start' type='datetime-local' max={today}/>
+          </div>
+          <div className='block'>
+          <label htmlFor='input-speed'>Average Speed (km/h) </label>
+          <input id='input-speed' name='input-speed' type='number' placeholder="24.0" min="5.0" max="39.0"/>
+          </div>
+          <button id='create-activity-btn' className='share'>Create Activity</button>
         </div>
       )
     }

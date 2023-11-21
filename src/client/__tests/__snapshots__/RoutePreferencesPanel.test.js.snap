@@ -25,6 +25,12 @@ exports[`RoutePreferencesPanel should render 1`] = `
         </button>
         <button
           class="route-preferences-panel__button"
+          id="strava-login"
+        >
+          Log in to Strava
+        </button>
+        <button
+          class="route-preferences-panel__button"
         >
           Share
         </button>
@@ -103,7 +109,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
             class="share-panel__preferences__preference"
           >
             <div
-              class="checkbox-list"
+              class="button-list"
             >
               <button
                 class="share-panel__button"
@@ -111,6 +117,13 @@ exports[`RoutePreferencesPanel should render 1`] = `
                 type="button"
               >
                 Email
+              </button>
+              <button
+                class="share-panel__button"
+                id="shareStravaButton"
+                type="button"
+              >
+                Strava Activity
               </button>
             </div>
           </div>
@@ -136,6 +149,12 @@ exports[`RoutePreferencesPanel should render 1`] = `
         class="route-preferences-panel__button"
       >
         Export Route as GPX
+      </button>
+      <button
+        class="route-preferences-panel__button"
+        id="strava-login"
+      >
+        Log in to Strava
       </button>
       <button
         class="route-preferences-panel__button"
@@ -217,7 +236,7 @@ exports[`RoutePreferencesPanel should render 1`] = `
           class="share-panel__preferences__preference"
         >
           <div
-            class="checkbox-list"
+            class="button-list"
           >
             <button
               class="share-panel__button"
@@ -225,6 +244,13 @@ exports[`RoutePreferencesPanel should render 1`] = `
               type="button"
             >
               Email
+            </button>
+            <button
+              class="share-panel__button"
+              id="shareStravaButton"
+              type="button"
+            >
+              Strava Activity
             </button>
           </div>
         </div>

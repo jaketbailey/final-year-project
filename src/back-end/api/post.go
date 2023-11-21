@@ -6,13 +6,19 @@ package api
 
 import (
 	"cycling-route-planner/src/back-end/config"
+	"cycling-route-planner/src/back-end/utils/logger"
 	"encoding/base64"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	strava "github.com/strava/go.strava"
 )
+
+var Logger = logger.New()
 
 func PostTest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
@@ -86,5 +92,55 @@ func PostSendEmail(c *gin.Context) {
 			})
 		}
 	}
+}
 
+type Activity struct {
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	StartDate   string `json:"start_date_local"`
+	ElapsedTime int32  `json:"elapsed_time"`
+	Route       string `json:"route"`
+	AccessToken string `json:"access_token"`
+}
+
+func UploadGPXActivity(activity *Activity) (upload *strava.UploadSummary, err error) {
+	stravaClient := strava.NewClient(activity.AccessToken)
+
+	uploadService := strava.NewUploadsService(stravaClient)
+
+	stravaUpload, e := uploadService.Create(strava.FileDataTypes.GPX, "route.gpx", strings.NewReader(activity.Route)).
+		ActivityType(strava.ActivityTypes.Ride).
+		Name(activity.Name).
+		Description("description").
+		Do()
+
+	if err != nil {
+		Logger.Error().Println(e)
+		return
+	}
+	fmt.Println(stravaUpload)
+	return
+}
+
+func PostCreateStravaActivity(c *gin.Context) {
+	var activity Activity
+	if c.BindJSON(&activity) == nil {
+
+		upload, err := UploadGPXActivity(&activity)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status":  "Bad",
+				"message": "Activity not created",
+				"data":    err,
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"status":   "Good",
+			"data":     activity,
+			"response": upload,
+		})
+	}
 }

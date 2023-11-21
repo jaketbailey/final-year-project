@@ -1,6 +1,6 @@
-import './OptionsPanel.css';
+import './ExportPanel.css';
 
-const OptionsPanel = (props) => {
+const ExportPanel = (props) => {
     const saveGeoJSON = () => {
         props.geoJSONLink.click();
     }
@@ -26,4 +26,4 @@ const OptionsPanel = (props) => {
     )
 }
 
-export default OptionsPanel;
+export default ExportPanel;

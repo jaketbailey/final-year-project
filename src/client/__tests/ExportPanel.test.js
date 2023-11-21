@@ -1,13 +1,13 @@
 import { render } from "@testing-library/react";
-import OptionsPanel from "../src/OptionsPanel/OptionsPanel";
+import ExportPanel from "../src/ExportPanel/ExportPanel";
 
-describe('Options Panel', () => {
+describe('Export Panel', () => {
     it('Should render successfully', () => {
         const geoJSONLink = '';
         const gpxLink = ''; 
         
         const component = render(
-            <OptionsPanel 
+            <ExportPanel 
                 geoJSONLink={geoJSONLink} 
                 gpxLink={gpxLink}
             />

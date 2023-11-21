@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { act } from '@testing-library/react';
+import { create } from 'eslint-plugin-react/lib/rules/button-has-type';
 
 /**
  * @function SharePanel
@@ -9,6 +11,7 @@ import { useEffect } from 'react';
  * @returns SharePanel component
  */
 const SharePanel = (props) => {
+
   useEffect(() => {
     const sharePanelContainer = document.querySelector('.share-panel__preferences');
     if (props.showPanel) {
@@ -25,7 +28,6 @@ const SharePanel = (props) => {
   const routeGPX = useRef(props.gpx);
 
   useEffect(() => {
-    console.log('update to route')
     routeGeoJSON.current = props.geoJSON;
     routeGPX.current = props.gpx;
 
@@ -50,7 +52,6 @@ const SharePanel = (props) => {
         }
       ]
     }
-
   }, [props.geoJSON, props.gpx]);
   
   useEffect(() => {
@@ -90,6 +91,13 @@ const SharePanel = (props) => {
   useEffect(() => {
     const shareEmailButton = document.querySelector('#shareEmailButton');
     shareEmailButton.addEventListener('click', clickHandler);
+    const shareStravaButton = document.querySelector('#shareStravaButton');
+    shareStravaButton.addEventListener('click', clickHandler);
+
+    return () => {
+      shareEmailButton.removeEventListener('click', clickHandler);
+      shareStravaButton.removeEventListener('click', clickHandler);
+    }
   }, []);
 
   /**
@@ -100,12 +108,12 @@ const SharePanel = (props) => {
    * @returns 
    */
   const sendEmail = async (data) => {
-    if (data === null) {
+    if (data.to === undefined) {
       return;
     }
 
     const body = JSON.stringify(data);
-    console.log(body);
+
     const response = await fetch('/api/send-email', {
       method: 'POST',
       headers: {
@@ -129,18 +137,33 @@ const SharePanel = (props) => {
     }
   }
 
+  useEffect(() => {
+    const createActivityButton = document.querySelector('#shareStravaButton');
+    if (props.stravaAccessToken === null) {
+      createActivityButton.disabled = true;
+      return;
+    }
+
+    createActivityButton.disabled = false;
+    return;
+  }, [props.stravaAccessToken]);
+
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
       props.setShow(!props.show);
-    };
+    } else if (id === 'shareStravaButton') {
+      console.log('strava');
+      props.setShowStrava(!props.showStrava)
+    }
   };
 
   return (
     <div className="share-panel__preferences">
       <div className="share-panel__preferences__preference">
-        <div className='checkbox-list'>
+        <div className='button-list'>
           <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
+          <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
         </div>
       </div>
     </div>

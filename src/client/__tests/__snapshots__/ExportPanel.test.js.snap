@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Options Panel Should render successfully 1`] = `
+exports[`Export Panel Should render successfully 1`] = `
 {
   "asFragment": [Function],
   "baseElement": <body>

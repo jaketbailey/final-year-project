@@ -3,7 +3,7 @@ import WeatherPanel from './WeatherPanel/WeatherPanel';
 import './App.css';
 import ElevationChart from './ElevationChart/ElevationChart';
 import { useEffect, useRef, useState } from 'react';
-import OptionsPanel from './OptionsPanel/OptionsPanel';
+import ExportPanel from './ExportPanel/ExportPanel';
 import RoutePreferencesPanel from './RoutePreferencesPanel/RoutePreferencesPanel';
 import Modal from './Modal/Modal';
 
@@ -18,12 +18,11 @@ function App() {
   const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [show, setShow] = useState(false);
+  const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
-
-  useEffect(() => {
-    console.log(avoidFeatures)
-    fetch('/api/ping')
-  }, [avoidFeatures]);
+  const [stravaData, setStravaData] = useState({});
+  const [stravaAccessToken, setStravaAccessToken] = useState(null)
+  const [instructions, setInstructions] = useState([]);
 
   return (
     <div>
@@ -38,9 +37,12 @@ function App() {
         setGPX={setGPX}
         control={control}
         avoidFeatures={avoidFeatures}
+        stravaData={stravaData}
+        instructions={instructions}
+        setInstructions={setInstructions}
       />
       
-      <OptionsPanel 
+      <ExportPanel 
         geoJSONLink={geoJSONLink} 
         gpxLink={gpxLink}
       />
@@ -58,8 +60,14 @@ function App() {
         setAvoidFeatures={setAvoidFeatures}
         avoidFeatures={avoidFeatures}
         control={control}
+        show={show}
         setShow={setShow}
+        showStrava={showStrava}
+        setShowStrava={setShowStrava}
         emailData={emailData}
+        stravaData={stravaData}
+        stravaAccessToken={stravaAccessToken}
+        setStravaAccessToken={setStravaAccessToken}
       />
       <Modal 
         id='ShareEmailModal' 
@@ -69,6 +77,19 @@ function App() {
         type='email'
         setEmailData={setEmailData}
       />
+      <Modal 
+        id='ShareStravaModal' 
+        show={showStrava} 
+        setShow={setShowStrava} 
+        modalTitle='Create Strava Activity'
+        type='strava'
+        setStravaData={setStravaData}
+        stravaData={stravaData}
+        instructions={instructions}
+        coordinates={coordinates}
+        stravaAccessToken={stravaAccessToken}
+      />
+      
     </div>
   );
 }
