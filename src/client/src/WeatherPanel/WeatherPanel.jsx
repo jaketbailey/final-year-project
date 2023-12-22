@@ -7,7 +7,7 @@ import DailyForecast from './DailyForecast';
 const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')
-  const [showWeather, setShowWeather] = useState(false);
+  const [showWeather, setShowWeather] = useState(true);
   const [geoLocation, setGeoLocation] = useState({});
 
   useEffect(() => {
@@ -194,12 +194,12 @@ const WeatherPanel = () => {
     <div className='weather-container'>
       <div className='weather-panel'>
         <div className="weather-panel__body">
-          <button onClick={() => setShowWeather(!showWeather)}>
+          {/* <button onClick={() => setShowWeather(!showWeather)}>
             <img src="/img/all/clear-day.svg" alt="weather button" />
-          </button>
+          </button> */}
           <div className="weather-panel__body__left">
             {checkWeather()}
-            <hr/>
+            {/* <hr/> */}
             <DailyForecast 
               daily={weather.daily}
             />

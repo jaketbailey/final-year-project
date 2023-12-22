@@ -1,6 +1,7 @@
-import './ExportPanel.css';
+import './LeftPanel.css';
+import WeatherPanel from '../WeatherPanel/WeatherPanel';
 
-const ExportPanel = (props) => {
+const LeftPanel = (props) => {
     const saveGeoJSON = () => {
         props.geoJSONLink.click();
     }
@@ -21,9 +22,11 @@ const ExportPanel = (props) => {
                          <img src="/img/save-route/gpx-file.svg" alt="Save Route as GPX" title="Save Route as GPX"/>    
                     </button> 
                 </div> 
-            </div>
+                <hr/>
+                <WeatherPanel/>
+            </div> 
         </div>
     )
 }
 
-export default ExportPanel;
+export default LeftPanel;
