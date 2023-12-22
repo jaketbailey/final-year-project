@@ -14,7 +14,7 @@ const LeftPanel = (props) => {
     return (
         <div className="options-panel__container">
             <div className="options-panel">
-               <div>
+               {/* <div>
                     <button className="options-panel__button" onClick={saveGeoJSON} >
                          <img src="/img/save-route/geojson-file.svg" alt="Save Route as GeoJSON" title="Save Route as GeoJSON"/>    
                     </button>
@@ -22,7 +22,7 @@ const LeftPanel = (props) => {
                          <img src="/img/save-route/gpx-file.svg" alt="Save Route as GPX" title="Save Route as GPX"/>    
                     </button> 
                 </div> 
-                <hr/>
+                <hr/> */}
                 <WeatherPanel/>
             </div> 
         </div>
