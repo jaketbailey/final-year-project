@@ -25,8 +25,6 @@ const WeatherPanel = () => {
    * @async
    */
   const getCurrentWeather = async (currentGeoLocation) => {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
-    // const data = await response.json()
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
     setWeather(data)
