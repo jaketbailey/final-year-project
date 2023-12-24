@@ -58,12 +58,30 @@ tr {
 }
 
 .map-outer {
-  width: 80vw;
   right: 0;
 }
 
 #map {
   position: fixed;
-  width: 85vw;
   right: 0;
+}
+
+@media (min-width: 2350px) {
+  #map {
+    width: 85vw;
+  }
+
+  .map-outer {
+    width: 85vw;
+  }
+}
+
+@media (max-width: 2350px) {
+  #map {
+    width: 80vw;
+  }
+
+  .map-outer {
+    width: 80vw;
+  }
 }

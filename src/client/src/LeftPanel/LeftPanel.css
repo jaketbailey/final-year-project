@@ -1,5 +1,5 @@
 .left-panel__container {
-    width: 20vw;
+    width: 30vw;
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
@@ -9,7 +9,7 @@
   
 .left-panel {
   background-color: white;
-  width: 20vw;
+  width: 30vw;
   padding: 0;
 }
 
@@ -28,4 +28,24 @@ img {
     height: 3rem;
     margin: 0;
     padding: 0;
+}
+
+@media (min-width: 2350px) {
+    .left-panel__container {
+        width: 15vw;
+    }
+        
+    .left-panel {
+        width: 15vw;
+    }
+}
+  
+@media (max-width: 2350px) {
+    .left-panel__container {
+        width: 20vw;
+    }
+        
+    .left-panel {
+        width: 20vw;
+    }
 }
