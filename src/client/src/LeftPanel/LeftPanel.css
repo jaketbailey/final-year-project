@@ -1,4 +1,4 @@
-.options-panel__container {
+.left-panel__container {
     width: 20vw;
     display: flex;
     justify-content: center;
@@ -7,19 +7,19 @@
     height: 100vh;
 }
   
-.options-panel {
+.left-panel {
   background-color: white;
   width: 20vw;
   padding: 0;
 }
 
-.options-panel__button {
+.left-panel__button {
     background-color: white;
     font: 0.5rem Poppins;
     padding: 0.5rem;
 }
 
-.options-panel__button:hover {
+.left-panel__button:hover {
     background-color: #ccc;
     cursor: pointer;
 }

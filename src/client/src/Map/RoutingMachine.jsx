@@ -46,7 +46,7 @@ const createRoutingMachineLayer = (props) => {
       L.latLng(50.789560,-1.055250)
     ],
     lineOptions: {
-      styles: [{color: '#3454D1', opacity: 1, weight: 3}]
+      styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
     },
     altLineOptions: {
       styles: [{opacity: 0.5, weight: 3}]
@@ -58,8 +58,32 @@ const createRoutingMachineLayer = (props) => {
     fitSelectedRoutes: false,
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
-    collapsible: true,
+    collapsible: false,
     containerClassName: 'routing-container',
+    createMarker: function (i, waypoint, n) {
+      const marker = L.marker(waypoint.latLng, {
+        draggable: true,
+        bounceOnAdd: false,
+        bounceOnAddOptions: {
+          duration: 1000,
+          height: 800,
+          function() {
+            (bindPopup(myPopup).openOn(map))
+          }
+        },
+        icon: L.icon({
+          iconUrl: '/img/routing/waypoint.svg',
+          iconSize: [30, 110],
+          iconAnchor: [15, 68],
+          popupAnchor: [-3, -76],
+          // shadowUrl: '/img/routing/waypoint.svg',
+          // shadowSize: [68, 95],
+          // shadowAnchor: [22, 94]
+        })
+      });
+      return marker;
+    }
+
   });
 
   instance.on('routesfound', (e) => {

@@ -19,7 +19,6 @@ const ElevationChart = (props) => {
   useEffect(() => {
     
     let circle = new L.circle();
-    let zoom = 0;
 
     /**
      * @function onHover
@@ -36,7 +35,7 @@ const ElevationChart = (props) => {
       localMapRef.current.removeLayer(circle);
       const coordinate = getCoordinate(chartElement);
       if (!coordinate) return;
-      circle = L.circle([coordinate.lat, coordinate.lng], {radius: 100}).addTo(localMapRef.current);
+      circle = L.circle([coordinate.lat, coordinate.lng], {radius: 100, color: "#C70039"}).addTo(localMapRef.current);
     }
 
     const onHoverOut = (event, chartElement) => {
@@ -100,7 +99,8 @@ const ElevationChart = (props) => {
         spanGaps: true,
         data: getData(),
         backgroundColor: [
-          'rgba(148, 221, 188, 0.6)'
+          'rgba(215, 76, 116, 0.6)'
+          // 'rgba(148, 221, 188, 0.6)'
         ],
         fill: 'start',
       }]
@@ -158,6 +158,9 @@ const ElevationChart = (props) => {
             }
           },
           plugins: {
+            legend: {
+              display: false,
+            },
             zoom: {
               zoom: {
                 wheel: {

@@ -1,28 +1,10 @@
 import './LeftPanel.css';
-import WeatherPanel from '../WeatherPanel/WeatherPanel';
+import WeatherPanel from './WeatherPanel/WeatherPanel';
 
 const LeftPanel = (props) => {
-    const saveGeoJSON = () => {
-        props.geoJSONLink.click();
-    }
-
-    const saveGPX = () => {
-        console.log(props.gpxLink)
-        props.gpxLink.click();
-    }
-
     return (
-        <div className="options-panel__container">
-            <div className="options-panel">
-               {/* <div>
-                    <button className="options-panel__button" onClick={saveGeoJSON} >
-                         <img src="/img/save-route/geojson-file.svg" alt="Save Route as GeoJSON" title="Save Route as GeoJSON"/>    
-                    </button>
-                    <button className="options-panel__button" onClick={saveGPX} >
-                         <img src="/img/save-route/gpx-file.svg" alt="Save Route as GPX" title="Save Route as GPX"/>    
-                    </button> 
-                </div> 
-                <hr/> */}
+        <div className="left-panel__container">
+            <div className="left-panel">
                 <WeatherPanel/>
             </div> 
         </div>
