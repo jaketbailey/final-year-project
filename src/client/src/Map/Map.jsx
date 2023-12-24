@@ -33,6 +33,29 @@ const Map = (props) => {
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
   const StravaPolicy = import.meta.env.VITE_STRAVA_HEATMAP_POLICY;
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
+  const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
+
+
+  //needs updating (await, and to plot latlng on map layer)
+  const lat = 50.78956078620279
+  const lng = -1.055254632044787
+  const radius = 8046
+  const categories = 19009
+  
+  console.log(FoursquareAPIKey);
+  const url = `https://api.foursquare.com/v3/places/search?ll=${lat}%2C${lng}&radius=${radius}&categories=${categories}`;
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: FoursquareAPIKey
+    }
+  };
+
+  fetch(url, options)
+    .then(res => res.json())
+    .then(json => console.log(json))
+    .catch(err => console.error('error:' + err));
 
   return (
     <div className='map-outer'>
