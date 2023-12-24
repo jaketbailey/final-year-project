@@ -1,0 +1,51 @@
+.left-panel__container {
+    width: 30vw;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    background-color: transparent;
+    height: 100vh;
+}
+  
+.left-panel {
+  background-color: white;
+  width: 30vw;
+  padding: 0;
+}
+
+.left-panel__button {
+    background-color: white;
+    font: 0.5rem Poppins;
+    padding: 0.5rem;
+}
+
+.left-panel__button:hover {
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+img {
+    height: 3rem;
+    margin: 0;
+    padding: 0;
+}
+
+@media (min-width: 2350px) {
+    .left-panel__container {
+        width: 15vw;
+    }
+        
+    .left-panel {
+        width: 15vw;
+    }
+}
+  
+@media (max-width: 2350px) {
+    .left-panel__container {
+        width: 20vw;
+    }
+        
+    .left-panel {
+        width: 20vw;
+    }
+}

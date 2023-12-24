@@ -7,7 +7,7 @@ import DailyForecast from './DailyForecast';
 const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')
-  const [showWeather, setShowWeather] = useState(false);
+  const [showWeather, setShowWeather] = useState(true);
   const [geoLocation, setGeoLocation] = useState({});
 
   useEffect(() => {
@@ -25,8 +25,6 @@ const WeatherPanel = () => {
    * @async
    */
   const getCurrentWeather = async (currentGeoLocation) => {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
-    // const data = await response.json()
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
     setWeather(data)
@@ -196,12 +194,12 @@ const WeatherPanel = () => {
     <div className='weather-container'>
       <div className='weather-panel'>
         <div className="weather-panel__body">
-          <button onClick={() => setShowWeather(!showWeather)}>
+          {/* <button onClick={() => setShowWeather(!showWeather)}>
             <img src="/img/all/clear-day.svg" alt="weather button" />
-          </button>
+          </button> */}
           <div className="weather-panel__body__left">
             {checkWeather()}
-            <hr/>
+            {/* <hr/> */}
             <DailyForecast 
               daily={weather.daily}
             />
