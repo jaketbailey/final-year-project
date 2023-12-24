@@ -42,7 +42,6 @@ const Map = (props) => {
   const radius = 8046
   const categories = 19009
   
-  console.log(FoursquareAPIKey);
   const url = `https://api.foursquare.com/v3/places/search?ll=${lat}%2C${lng}&radius=${radius}&categories=${categories}`;
   const options = {
     method: 'GET',
