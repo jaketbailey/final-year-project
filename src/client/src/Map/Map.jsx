@@ -38,9 +38,50 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
+  const getDistance = (coords1, coords2, index, previousDistance) => {
+    const deg2rad = (deg) => {
+      return deg * (Math.PI/180)
+    }
+
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(coords2.lat-coords1.lat);
+    const dLon = deg2rad(coords2.lon-coords1.lon);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(coords1.lat)) * Math.cos(deg2rad(coords2.lat)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; // Distance in km
+    return d;
+  }
+
   const setRouteVia = (coords) => {
-    console.log(control.current)
-    control.current.spliceWaypoints(1,0, L.latLng(coords))
+    console.log(control.current.options.waypoints)
+    const currentWaypoints = control.current.options.waypoints;
+    let previousDistance = 0;
+    let spliceIndex = 0;
+    debugger
+    currentWaypoints.forEach((waypoint, index) => {
+      if (index === 0) {
+        previousDistance = getDistance(waypoint, coords, index, previousDistance);
+        spliceIndex = index + 1;
+      } else {
+        const currentDistance = getDistance(waypoint, coords, index, previousDistance);
+        if (currentDistance < previousDistance) {
+          previousDistance = currentDistance;
+          if (index === currentWaypoints.length - 1) {
+            spliceIndex = index - 1;
+          } else {
+            spliceIndex = index;
+          }
+        } else {
+          previousDistance = currentDistance;
+        }
+      }
+    })
+    console.log(spliceIndex)
+    control.current.spliceWaypoints(spliceIndex,0, L.latLng(coords))
   }
 
   useEffect(() => {
