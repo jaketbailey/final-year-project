@@ -48,9 +48,10 @@ const Map = (props) => {
 
   useEffect(() => {
     const radius = 8046 // 5 miles
-    const categories = 19009 // Hotels
+    const accommodation = 19009
+    const attractions = 16000
     const getPOI = async () => {
-      const url = `https://api.foursquare.com/v3/places/search?ll=${mapCenter.lat}%2C${mapCenter.lng}&radius=${radius}&categories=${categories}`;
+      const url = `https://api.foursquare.com/v3/places/search?ll=${mapCenter.lat}%2C${mapCenter.lng}&radius=${radius}&categories=${accommodation},${attractions}&limit=30`;
       const options = {
         method: 'GET',
         headers: {
@@ -67,35 +68,67 @@ const Map = (props) => {
   }, [mapCenter])
 
   useEffect(() => {
-    const accommodationIcon = L.icon({
-      iconUrl: '/img/routing/accommodation.svg',
-      iconSize: [30, 110],
-      iconAnchor: [15, 68],
-      popupAnchor: [-3, -76],
-    });
-
     if (keyPOI) {
       console.log(keyPOI);
-      const markerArr = [];
+      const markerArr = {
+        accommodation: [],
+        attractions: [],
+      };
       for (const POI of keyPOI.results) {
-        markerArr.push(
-          <Marker 
-            position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
-            key={POI.fsq_id}
-            icon={accommodationIcon}
-            >
-            <Popup>
-              <h3>{POI.name}</h3>
-              <ul>
-                <li>Open: {POI.closed_bucket}</li>
-                <li>{POI.location.address}</li>
-                <li>{POI.location.locality}</li>
-                <li>{POI.location.region}</li>
-                <li>{POI.location.postcode}</li>
-              </ul>
-            </Popup>
-          </Marker>
-        )
+        const category = (POI.categories[0].id.toString()).slice(0,2);
+        if (category === '19') {
+          const icon = L.icon({
+            iconUrl: '/img/routing/accommodation.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          markerArr.accommodation.push(
+            <Marker 
+              position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
+              key={POI.fsq_id}
+              icon={icon}
+              >
+              <Popup>
+                <h3>{POI.name}</h3>
+                <ul>
+                  <li>Open: {POI.closed_bucket}</li>
+                  <li>{POI.location.address}</li>
+                  <li>{POI.location.locality}</li>
+                  <li>{POI.location.region}</li>
+                  <li>{POI.location.postcode}</li>
+                </ul>
+              </Popup>
+            </Marker>
+          )
+        } else if (category === '16') {
+          const icon = L.icon({
+            iconUrl: '/img/routing/attractions.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          markerArr.attractions.push(
+            <Marker 
+              position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
+              key={POI.fsq_id}
+              icon={icon}
+              >
+              <Popup>
+                <h3>{POI.name}</h3>
+                <ul>
+                  <li>Open: {POI.closed_bucket}</li>
+                  <li>{POI.location.address}</li>
+                  <li>{POI.location.locality}</li>
+                  <li>{POI.location.region}</li>
+                  <li>{POI.location.postcode}</li>
+                </ul>
+              </Popup>
+            </Marker>
+          )
+        }
       }
       console.log(markerArr)
       setKeyPOIMarkers(markerArr);
@@ -141,7 +174,12 @@ const Map = (props) => {
           </LayersControl.Overlay>
           <LayersControl.Overlay name="Key POI - Acommodation">
             <LayerGroup>
-              {keyPOIMarkers} 
+              {keyPOIMarkers.accommodation} 
+            </LayerGroup>
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Key POI - Attractions">
+            <LayerGroup>
+              {keyPOIMarkers.attractions} 
             </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>
