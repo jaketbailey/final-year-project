@@ -137,16 +137,14 @@ const Map = (props) => {
               >
               <Popup>
                 <h3>{POI.name}</h3>
-                <ul>
+                <ul className='popup'>
                   <li>Open: {POI.closed_bucket}</li>
                   <li>{POI.location.address}</li>
                   <li>{POI.location.locality}</li>
                   <li>{POI.location.region}</li>
                   <li>{POI.location.postcode}</li>
                 </ul>
-                <button onClick={() => {
-                  console.log('route via accommodation')
-                  console.log({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                <button className='popup' onClick={() => {
                   setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
                 }}>
                   Route Via
@@ -170,16 +168,14 @@ const Map = (props) => {
               >
               <Popup>
                 <h3>{POI.name}</h3>
-                <ul>
+                <ul className='popup'>
                   <li>Open: {POI.closed_bucket}</li>
                   <li>{POI.location.address}</li>
                   <li>{POI.location.locality}</li>
                   <li>{POI.location.region}</li>
                   <li>{POI.location.postcode}</li>
                 </ul>
-                <button onClick={() => {
-                  console.log('route via attraction')
-                  console.log({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                <button className='popup' onClick={() => {
                   setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
                 }}>
                   Route Via
