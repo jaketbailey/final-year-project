@@ -1,4 +1,4 @@
-import { LayersControl, MapContainer, TileLayer } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState, useRef } from 'react';
 import { getGPX, createStravaActivity } from './routeHelpers';
@@ -16,6 +16,7 @@ import ElevationChart from '../ElevationChart/ElevationChart';
  */
 const Map = (props) => {
   const control = useRef(null);
+  const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
@@ -27,7 +28,9 @@ const Map = (props) => {
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
-  const [stravaAccessToken, setStravaAccessToken] = useState(null)
+  const [stravaAccessToken, setStravaAccessToken] = useState(null);
+  const [keyPOI, setKeyPOI] = useState(null);
+  const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -35,26 +38,69 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
+  useEffect(() => {
+    if (map) {
+        map.on("moveend" , () => {
+          setMapCenter(map.getCenter());
+        })
+      }
+  }, [map])
 
-  //needs updating (await, and to plot latlng on map layer)
-  const lat = 50.78956078620279
-  const lng = -1.055254632044787
-  const radius = 8046
-  const categories = 19009
-  
-  const url = `https://api.foursquare.com/v3/places/search?ll=${lat}%2C${lng}&radius=${radius}&categories=${categories}`;
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: FoursquareAPIKey
+  useEffect(() => {
+    const radius = 8046 // 5 miles
+    const categories = 19009 // Hotels
+    const getPOI = async () => {
+      const url = `https://api.foursquare.com/v3/places/search?ll=${mapCenter.lat}%2C${mapCenter.lng}&radius=${radius}&categories=${categories}`;
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: FoursquareAPIKey
+        }
+      };
+
+      const response = await fetch(url, options);
+      const res = await response.json();
+      setKeyPOI(res);
     }
-  };
+    getPOI();
+  }, [mapCenter])
 
-  fetch(url, options)
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));
+  useEffect(() => {
+    const accommodationIcon = L.icon({
+      iconUrl: '/img/routing/accommodation.svg',
+      iconSize: [30, 110],
+      iconAnchor: [15, 68],
+      popupAnchor: [-3, -76],
+    });
+
+    if (keyPOI) {
+      console.log(keyPOI);
+      const markerArr = [];
+      for (const POI of keyPOI.results) {
+        markerArr.push(
+          <Marker 
+            position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
+            key={POI.fsq_id}
+            icon={accommodationIcon}
+            >
+            <Popup>
+              <h3>{POI.name}</h3>
+              <ul>
+                <li>Open: {POI.closed_bucket}</li>
+                <li>{POI.location.address}</li>
+                <li>{POI.location.locality}</li>
+                <li>{POI.location.region}</li>
+                <li>{POI.location.postcode}</li>
+              </ul>
+            </Popup>
+          </Marker>
+        )
+      }
+      console.log(markerArr)
+      setKeyPOIMarkers(markerArr);
+    }
+  }, [keyPOI])
 
   return (
     <div className='map-outer'>
@@ -92,6 +138,11 @@ const Map = (props) => {
               url={`https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
               opacity="0.5"
             />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Key POI - Acommodation">
+            <LayerGroup>
+              {keyPOIMarkers} 
+            </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>
         <RoutingMachine
