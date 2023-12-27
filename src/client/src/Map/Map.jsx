@@ -38,7 +38,7 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
-  const getDistance = (coords1, coords2, index, previousDistance) => {
+  const getDistance = (coords1, coords2) => {
     const deg2rad = (deg) => {
       return deg * (Math.PI/180)
     }
