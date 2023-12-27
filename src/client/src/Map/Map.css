@@ -20,6 +20,9 @@ leaflet-routing-collapse-btn {
   cursor: pointer;
 }
 
+h3.popup {
+  font: bold 14px 'Poppins', sans-serif;
+}
 
 button.popup {
   font: 12px 'Poppins', sans-serif;

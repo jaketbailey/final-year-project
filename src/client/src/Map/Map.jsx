@@ -56,9 +56,14 @@ const Map = (props) => {
     return d;
   }
 
-  const setRouteVia = (coords) => {
-    console.log(control.current.options.waypoints)
+  const setRouteWaypoint = (coords, to) => {
     const currentWaypoints = control.current.options.waypoints;
+    if (to) {
+      const length = currentWaypoints.length;
+      control.current.spliceWaypoints(length-1,1, L.latLng(coords))
+      return;
+    }
+    
     let previousDistance = 0;
     let spliceIndex = 0;
     debugger
@@ -136,7 +141,7 @@ const Map = (props) => {
               icon={icon}
               >
               <Popup>
-                <h3>{POI.name}</h3>
+                <h3 className='popup'>{POI.name}</h3>
                 <ul className='popup'>
                   <li>Open: {POI.closed_bucket}</li>
                   <li>{POI.location.address}</li>
@@ -145,9 +150,14 @@ const Map = (props) => {
                   <li>{POI.location.postcode}</li>
                 </ul>
                 <button className='popup' onClick={() => {
-                  setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
                 }}>
                   Route Via
+                </button>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude}, true)
+                }}>
+                  Route To
                 </button>
               </Popup>
             </Marker>
@@ -176,9 +186,14 @@ const Map = (props) => {
                   <li>{POI.location.postcode}</li>
                 </ul>
                 <button className='popup' onClick={() => {
-                  setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
                 }}>
                   Route Via
+                </button>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude}, true)
+                }}>
+                  Route To
                 </button>
               </Popup>
             </Marker>
