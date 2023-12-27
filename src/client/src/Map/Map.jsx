@@ -38,6 +38,11 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
+  const setRouteVia = (coords) => {
+    console.log(control.current)
+    control.current.spliceWaypoints(1,0, L.latLng(coords))
+  }
+
   useEffect(() => {
     if (map) {
         map.on("moveend" , () => {
@@ -98,6 +103,13 @@ const Map = (props) => {
                   <li>{POI.location.region}</li>
                   <li>{POI.location.postcode}</li>
                 </ul>
+                <button onClick={() => {
+                  console.log('route via accommodation')
+                  console.log({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                  setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                }}>
+                  Route Via
+                </button>
               </Popup>
             </Marker>
           )
@@ -124,6 +136,13 @@ const Map = (props) => {
                   <li>{POI.location.region}</li>
                   <li>{POI.location.postcode}</li>
                 </ul>
+                <button onClick={() => {
+                  console.log('route via attraction')
+                  console.log({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                  setRouteVia({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                }}>
+                  Route Via
+                </button>
               </Popup>
             </Marker>
           )
