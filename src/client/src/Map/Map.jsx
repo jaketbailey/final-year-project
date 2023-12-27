@@ -69,7 +69,6 @@ const Map = (props) => {
 
   useEffect(() => {
     if (keyPOI) {
-      console.log(keyPOI);
       const markerArr = {
         accommodation: [],
         attractions: [],
@@ -130,7 +129,6 @@ const Map = (props) => {
           )
         }
       }
-      console.log(markerArr)
       setKeyPOIMarkers(markerArr);
     }
   }, [keyPOI])
