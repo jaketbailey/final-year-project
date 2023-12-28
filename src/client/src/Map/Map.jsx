@@ -58,7 +58,7 @@ const Map = (props) => {
 
   const setRouteWaypoint = (coords, to) => {
     const currentWaypoints = control.current.options.waypoints;
-
+    
     // Check if to boolean is present, final element in waypoint array is replaced with new coordinates
     if (to) {
       const length = currentWaypoints.length;
@@ -69,7 +69,6 @@ const Map = (props) => {
     // Otherwise, the waypoint is classed as via, therefore the distance between points along the route is calculated and new coordinates are spliced into the array at the relevant index
     let previousDistance = 0;
     let spliceIndex = 0;
-    debugger
     currentWaypoints.forEach((waypoint, index) => {
       if (index === 0) {
         previousDistance = getDistance(waypoint, coords, index, previousDistance);

@@ -31,3 +31,5 @@ osrm/
 # Bun lockfile
 bun.lockb
 .VSCodeCounter/*
+
+leaflet-routing-machine-openroute/

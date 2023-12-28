@@ -4,7 +4,8 @@ import 'leaflet-routing-machine';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
-import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
+// import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.js'
+import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.js'
 import './Map.css'
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 
@@ -28,6 +29,13 @@ const createRoutingMachineLayer = (props) => {
             attributes: [
                 "avgspeed",
                 "percentage",
+              ],
+            extra_info: [
+                "steepness",
+                "suitability",
+                "surface",
+                "waycategory",
+                "waytype"
             ],
             options: {
                 avoid_features: [],
