@@ -20,6 +20,22 @@ leaflet-routing-collapse-btn {
   cursor: pointer;
 }
 
+h3.popup {
+  font: bold 14px 'Poppins', sans-serif;
+}
+
+button.popup {
+  font: 12px 'Poppins', sans-serif;
+  border: 1px solid #acacac;
+  border-radius: 4px;
+  background-color: white;
+}
+
+ul.popup {
+  list-style-type: none;
+  font: 12px 'Poppins', sans-serif;
+  padding: 0;
+}
 
 .leaflet-routing-geocoders button {
   font: bold 18px 'Poppins', sans-serif;

@@ -1,3 +1,28 @@
+img.panelImg {
+    width: 2rem;
+}
+
+div.map-legend {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font: 15px 'Poppins', sans-serif;
+    align-items: center;
+
+}
+
+hr {
+    width: 60%;
+}
+
+h1.legend {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.9rem;
+    align-self:flex-start;
+}
+
 .left-panel__container {
     width: 30vw;
     display: flex;

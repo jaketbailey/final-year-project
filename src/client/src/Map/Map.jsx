@@ -1,4 +1,4 @@
-import { LayersControl, MapContainer, TileLayer } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState, useRef } from 'react';
 import { getGPX, createStravaActivity } from './routeHelpers';
@@ -16,6 +16,7 @@ import ElevationChart from '../ElevationChart/ElevationChart';
  */
 const Map = (props) => {
   const control = useRef(null);
+  const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
@@ -27,7 +28,9 @@ const Map = (props) => {
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [emailData, setEmailData] = useState({});
-  const [stravaAccessToken, setStravaAccessToken] = useState(null)
+  const [stravaAccessToken, setStravaAccessToken] = useState(null);
+  const [keyPOI, setKeyPOI] = useState(null);
+  const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -35,26 +38,175 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
-
-  //needs updating (await, and to plot latlng on map layer)
-  const lat = 50.78956078620279
-  const lng = -1.055254632044787
-  const radius = 8046
-  const categories = 19009
-  
-  const url = `https://api.foursquare.com/v3/places/search?ll=${lat}%2C${lng}&radius=${radius}&categories=${categories}`;
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: FoursquareAPIKey
+  const getDistance = (coords1, coords2) => {
+    const deg2rad = (deg) => {
+      return deg * (Math.PI/180)
     }
-  };
 
-  fetch(url, options)
-    .then(res => res.json())
-    .then(json => console.log(json))
-    .catch(err => console.error('error:' + err));
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(coords2.lat-coords1.lat);
+    const dLon = deg2rad(coords2.lon-coords1.lon);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(coords1.lat)) * Math.cos(deg2rad(coords2.lat)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    const d = R * c; // Distance in km
+    return d;
+  }
+
+  const setRouteWaypoint = (coords, to) => {
+    const currentWaypoints = control.current.options.waypoints;
+
+    // Check if to boolean is present, final element in waypoint array is replaced with new coordinates
+    if (to) {
+      const length = currentWaypoints.length;
+      control.current.spliceWaypoints(length-1,1, L.latLng(coords))
+      return;
+    }
+
+    // Otherwise, the waypoint is classed as via, therefore the distance between points along the route is calculated and new coordinates are spliced into the array at the relevant index
+    let previousDistance = 0;
+    let spliceIndex = 0;
+    debugger
+    currentWaypoints.forEach((waypoint, index) => {
+      if (index === 0) {
+        previousDistance = getDistance(waypoint, coords, index, previousDistance);
+        spliceIndex = index + 1;
+      } else {
+        const currentDistance = getDistance(waypoint, coords, index, previousDistance);
+        if (currentDistance < previousDistance) {
+          previousDistance = currentDistance;
+          if (index === currentWaypoints.length - 1) {
+            spliceIndex = index - 1;
+          } else {
+            spliceIndex = index;
+          }
+        } else {
+          previousDistance = currentDistance;
+        }
+      }
+    })
+    console.log(spliceIndex)
+    control.current.spliceWaypoints(spliceIndex,0, L.latLng(coords))
+  }
+
+  useEffect(() => {
+    if (map) {
+        map.on("moveend" , () => {
+          setMapCenter(map.getCenter());
+        })
+      }
+  }, [map])
+
+  useEffect(() => {
+    const radius = 8046 // 5 miles
+    const accommodation = 19009
+    const attractions = 16000
+    const getPOI = async () => {
+      const url = `https://api.foursquare.com/v3/places/search?ll=${mapCenter.lat}%2C${mapCenter.lng}&radius=${radius}&categories=${accommodation},${attractions}&limit=30`;
+      const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: FoursquareAPIKey
+        }
+      };
+
+      const response = await fetch(url, options);
+      const res = await response.json();
+      setKeyPOI(res);
+    }
+    getPOI();
+  }, [mapCenter])
+
+  useEffect(() => {
+    if (keyPOI) {
+      const markerArr = {
+        accommodation: [],
+        attractions: [],
+      };
+      for (const POI of keyPOI.results) {
+        const category = (POI.categories[0].id.toString()).slice(0,2);
+        const closed = POI.closed_bucket.match(/[A-Z][a-z]+/g).join(' ');
+        if (category === '19') {
+          const icon = L.icon({
+            iconUrl: '/img/routing/accommodation.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          markerArr.accommodation.push(
+            <Marker 
+              position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
+              key={POI.fsq_id}
+              icon={icon}
+              >
+              <Popup>
+                <h3 className='popup'>{POI.name}</h3>
+                <ul className='popup'>
+                  <li>Open: {closed}</li>
+                  <li>{POI.location.address}</li>
+                  <li>{POI.location.locality}</li>
+                  <li>{POI.location.region}</li>
+                  <li>{POI.location.postcode}</li>
+                </ul>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                }}>
+                  Route Via
+                </button>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude}, true)
+                }}>
+                  Route To
+                </button>
+              </Popup>
+            </Marker>
+          )
+        } else if (category === '16') {
+          const icon = L.icon({
+            iconUrl: '/img/routing/attractions.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          markerArr.attractions.push(
+            <Marker 
+              position={[POI.geocodes.main.latitude, POI.geocodes.main.longitude]} 
+              key={POI.fsq_id}
+              icon={icon}
+              >
+              <Popup>
+                <h3>{POI.name}</h3>
+                <ul className='popup'>
+                  <li>Open: {closed}</li> 
+                  <li>{POI.location.address}</li>
+                  <li>{POI.location.locality}</li>
+                  <li>{POI.location.region}</li>
+                  <li>{POI.location.postcode}</li>
+                </ul>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude})
+                }}>
+                  Route Via
+                </button>
+                <button className='popup' onClick={() => {
+                  setRouteWaypoint({lat: POI.geocodes.main.latitude, lng: POI.geocodes.main.longitude}, true)
+                }}>
+                  Route To
+                </button>
+              </Popup>
+            </Marker>
+          )
+        }
+      }
+      setKeyPOIMarkers(markerArr);
+    }
+  }, [keyPOI])
 
   return (
     <div className='map-outer'>
@@ -92,6 +244,16 @@ const Map = (props) => {
               url={`https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
               opacity="0.5"
             />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Key POI - Acommodation">
+            <LayerGroup>
+              {keyPOIMarkers.accommodation} 
+            </LayerGroup>
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Key POI - Attractions">
+            <LayerGroup>
+              {keyPOIMarkers.attractions} 
+            </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>
         <RoutingMachine

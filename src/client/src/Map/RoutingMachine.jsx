@@ -55,6 +55,7 @@ const createRoutingMachineLayer = (props) => {
     show: true,
     draggableWaypoints: true,
     addWaypoints: true,
+    waypointMode: 'connect',
     fitSelectedRoutes: false,
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
@@ -76,9 +77,6 @@ const createRoutingMachineLayer = (props) => {
           iconSize: [30, 110],
           iconAnchor: [15, 68],
           popupAnchor: [-3, -76],
-          // shadowUrl: '/img/routing/waypoint.svg',
-          // shadowSize: [68, 95],
-          // shadowAnchor: [22, 94]
         })
       });
       return marker;
