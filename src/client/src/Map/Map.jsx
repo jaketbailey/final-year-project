@@ -129,6 +129,7 @@ const Map = (props) => {
       };
       for (const POI of keyPOI.results) {
         const category = (POI.categories[0].id.toString()).slice(0,2);
+        const closed = POI.closed_bucket.match(/[A-Z][a-z]+/g).join(' ');
         if (category === '19') {
           const icon = L.icon({
             iconUrl: '/img/routing/accommodation.svg',
@@ -146,7 +147,7 @@ const Map = (props) => {
               <Popup>
                 <h3 className='popup'>{POI.name}</h3>
                 <ul className='popup'>
-                  <li>Open: {POI.closed_bucket}</li>
+                  <li>Open: {closed}</li>
                   <li>{POI.location.address}</li>
                   <li>{POI.location.locality}</li>
                   <li>{POI.location.region}</li>
@@ -182,7 +183,7 @@ const Map = (props) => {
               <Popup>
                 <h3>{POI.name}</h3>
                 <ul className='popup'>
-                  <li>Open: {POI.closed_bucket}</li>
+                  <li>Open: {closed}</li> 
                   <li>{POI.location.address}</li>
                   <li>{POI.location.locality}</li>
                   <li>{POI.location.region}</li>
