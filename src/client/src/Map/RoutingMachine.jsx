@@ -47,18 +47,74 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
+  function updateTime(select, input) {
+    if (!input.value) {
+      return;
+    };
+    //convert hours-minutes into seconds
+    const time = input.value.split(':')
+    const hours = parseInt(time[0]) * 3600
+    const minutes = parseInt(time[1]) * 60
+    const secondsTime = hours + minutes
+    console.log(secondsTime)
+    console.log(props.summary)
+    let leaveArrive,
+      seconds;
+    if (select.value === 'Leave Time') {
+      seconds = Math.round(secondsTime + props.summary.totalTime)
+      leaveArrive = 'Leave';
+    } else if (select.value === 'Arrive Time'){
+      seconds = Math.round(secondsTime - props.summary.totalTime)
+      leaveArrive = 'Arrive';
+    } else {
+      return;
+    };
+    const finalHours = Math.floor(seconds / 3600);
+    const finalMinutes = Math.floor((seconds - finalHours * 3600) / 60);
+    const finalTime = `${finalHours}:${finalMinutes}`;
+    console.log(`${leaveArrive} Time is ${finalTime}`);
+    const leafletRoutingAlt = document.querySelector('.leaflet-routing-alt');
+    const h3 = document.createElement('h3');
+    
+    if (leaveArrive === 'Leave') {
+      h3.textContent = `Expected arrival time: ${finalTime}`;
+    } else {
+      h3.textContent = `Approximate leave time: ${finalTime}`;
+    }
+
+    if (leafletRoutingAlt.childNodes[2].nodeName === 'H3') {
+      leafletRoutingAlt.removeChild(leafletRoutingAlt.childNodes[2]);
+    };
+    leafletRoutingAlt.insertBefore(h3, leafletRoutingAlt.childNodes[2]);
+  }
+
   function createTimeInput(container) {
     console.log(container)
     const select = L.DomUtil.create('select', '', container);
     const leaveTime = L.DomUtil.create('option', '', select);
     const arriveTime = L.DomUtil.create('option', '', select);
-    const btn = L.DomUtil.create('input', '', container);
+    select.setAttribute('id', 'select-time-dropdown')
     select.setAttribute('style', 'width: 6rem; height: 1.65rem')
     leaveTime.textContent = 'Leave Time';
     arriveTime.textContent = 'Arrive Time';
-    btn.setAttribute('type', 'time');
-    btn.setAttribute('style', 'width: 5rem; height: 1.60rem')
-    return btn;
+    
+    const input = L.DomUtil.create('input', '', container);
+    input.setAttribute('id', 'select-time-input')
+    input.setAttribute('type', 'time');
+    input.setAttribute('style', 'width: 5rem; height: 1.60rem')
+
+    // Add listeners
+    select.addEventListener('change', (e) => {
+      const inputData = document.querySelector('#select-time-input');
+      updateTime(e.target, inputData);
+    })
+
+    input.addEventListener('change', (e) => {
+      const selectData = document.querySelector('#select-time-dropdown');
+      updateTime(selectData, e.target);
+    })
+
+    return input;
   }
 
   const Plan = L.Routing.Plan.extend({
@@ -129,7 +185,6 @@ const createRoutingMachineLayer = (props) => {
     exportGeoJSON(geoJSON, props.setGeoJSON, props.setGeoJSONLink);
     exportGPX(gpx, props.setGPX, props.setGPXLink);
     setTimeout(() => {
-      // props.setSegmentDistance(routes[0].summary.totalDistance/1000)
       props.chartRef.current.resetZoom();
       props.chartRef.current.update();
     }, 500);
@@ -139,7 +194,6 @@ const createRoutingMachineLayer = (props) => {
 
   return instance;
 }
-
 
 /**
  * @function RoutingMachine

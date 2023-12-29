@@ -261,6 +261,7 @@ const Map = (props) => {
         </LayersControl>
         <RoutingMachine
           setCoordinates={setCoordinates}
+          summary={summary}
           setSummary={setSummary}
           setGeoJSONLink={props.setGeoJSONLink} 
           setGeoJSON={setGeoJSON}
