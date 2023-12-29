@@ -16,6 +16,8 @@ import ElevationChart from '../ElevationChart/ElevationChart';
  */
 const Map = (props) => {
   const control = useRef(null);
+  const chartRef = useRef(null);
+
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
@@ -264,10 +266,12 @@ const Map = (props) => {
           setGPX={setGPX}
           control={control}
           setInstructions={setInstructions}
+          chartRef={chartRef}
         />
       </MapContainer>
 
       <ElevationChart
+        chartRef={chartRef}
         coordinates={coordinates}
         summary={summary}
         mapRef={map}

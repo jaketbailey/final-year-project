@@ -16,7 +16,6 @@ const ElevationChart = (props) => {
 
   const dataRef = useRef([]);
   const localMapRef = useRef(null);
-  const chartRef = useRef(null);
   
   useEffect(() => {
     
@@ -128,7 +127,7 @@ const ElevationChart = (props) => {
      */
     try {
       const chartInstance = ChartJS.getChart('elevation-chart');
-      chartRef.current = chartInstance;
+      props.chartRef.current = chartInstance;
       chartInstance.data = data;
       chartInstance.update();
     } catch (error) {
@@ -250,8 +249,8 @@ const ElevationChart = (props) => {
       </div>
       <div id="main-chart">
         <button className="btn btn-primary" onClick={() => {
-          chartRef.current.resetZoom();
-          chartRef.current.update();
+          props.chartRef.current.resetZoom();
+          props.chartRef.current.update();
         }}>Reset Zoom</button>
         <canvas id="elevation-chart" className="chart"></canvas>
       </div>

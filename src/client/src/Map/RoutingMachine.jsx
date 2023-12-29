@@ -97,6 +97,8 @@ const createRoutingMachineLayer = (props) => {
     props.setCoordinates(routes[0].coordinates);
     props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
+    props.chartRef.current.resetZoom();
+    props.chartRef.current.update();
     routes[0].name = 'Route Summary';
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
