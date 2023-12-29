@@ -103,7 +103,8 @@ const Map = (props) => {
   }, [map])
 
   useEffect(() => {
-    const radius = 8046 // 5 miles
+    // const radius = 8046 // 5 miles
+    const radius = 48280 // 5 miles
     const accommodation = 19009
     const attractions = 16000
     const getPOI = async () => {

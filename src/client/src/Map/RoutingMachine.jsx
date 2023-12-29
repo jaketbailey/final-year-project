@@ -47,22 +47,36 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
-  const instance = L.Routing.control({
-    router,
-    waypoints: [
+  function createTimeInput(container) {
+    const select = L.DomUtil.create('select', '', container);
+    const leaveTime = L.DomUtil.create('option', '', select);
+    const arriveTime = L.DomUtil.create('option', '', select);
+    const btn = L.DomUtil.create('input', '', container);
+    select.setAttribute('style', 'width: 6rem; height: 1.65rem')
+    leaveTime.textContent = 'Leave Time';
+    arriveTime.textContent = 'Arrive Time';
+    btn.setAttribute('type', 'time');
+    btn.setAttribute('style', 'width: 5rem; height: 1.60rem')
+    return btn;
+  }
+
+  const Plan = L.Routing.Plan.extend({
+    createGeocoders: function() {
+      const container = L.Routing.Plan.prototype.createGeocoders.call(this);
+      createTimeInput(container);
+      return container;
+    }
+  });
+
+  const plan = new Plan([
       L.latLng(50.798908,-1.091160),
       L.latLng(50.789560,-1.055250)
-    ],
-    lineOptions: {
-      styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
-    },
-    altLineOptions: {
-      styles: [{opacity: 0.5, weight: 3}]
-    },
+    ], {
     routeWhileDragging: false,
     show: true,
     draggableWaypoints: true,
     addWaypoints: true,
+    reverseWaypoints: true,
     waypointMode: 'connect',
     fitSelectedRoutes: false,
     showAlternatives: true,
@@ -89,7 +103,18 @@ const createRoutingMachineLayer = (props) => {
       });
       return marker;
     }
+  });
 
+
+  const instance = L.Routing.control({
+    router,
+    plan,
+    lineOptions: {
+      styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
+    },
+    altLineOptions: {
+      styles: [{opacity: 0.5, weight: 3}]
+    },
   });
 
   instance.on('routesfound', (e) => {
@@ -113,6 +138,7 @@ const createRoutingMachineLayer = (props) => {
 
   return instance;
 }
+
 
 /**
  * @function RoutingMachine
