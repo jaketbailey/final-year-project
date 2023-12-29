@@ -15,7 +15,9 @@ import ElevationChart from '../ElevationChart/ElevationChart';
  * @returns Map component
  */
 const Map = (props) => {
+  const chartRef = useRef(null);
   const control = useRef(null);
+
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
@@ -31,6 +33,7 @@ const Map = (props) => {
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
+  const [segmentDistance, setSegmentDistance] = useState(0);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -264,13 +267,18 @@ const Map = (props) => {
           setGPX={setGPX}
           control={control}
           setInstructions={setInstructions}
+          chartRef={chartRef}
+          setSegmentDistance={setSegmentDistance}
         />
       </MapContainer>
 
       <ElevationChart
+        chartRef={chartRef}
         coordinates={coordinates}
         summary={summary}
         mapRef={map}
+        segmentDistance={segmentDistance}
+        setSegmentDistance={setSegmentDistance}
       />
       <RoutePreferencesPanel
         geoJSONLink={props.geoJSONLink} 

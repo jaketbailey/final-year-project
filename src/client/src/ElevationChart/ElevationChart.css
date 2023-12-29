@@ -32,8 +32,12 @@
   margin: 0.2rem;
 }
 
+#main-chart {
+  font: 0.8rem Poppins;
+}
+
 .chart-hidden {
-  display: none;
+  display: block;
 }
 
 .chart-container > div {

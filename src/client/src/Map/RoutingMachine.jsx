@@ -102,6 +102,11 @@ const createRoutingMachineLayer = (props) => {
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
     exportGeoJSON(geoJSON, props.setGeoJSON, props.setGeoJSONLink);
     exportGPX(gpx, props.setGPX, props.setGPXLink);
+    setTimeout(() => {
+      // props.setSegmentDistance(routes[0].summary.totalDistance/1000)
+      props.chartRef.current.resetZoom();
+      props.chartRef.current.update();
+    }, 500);
   });
 
   props.control.current = instance;
