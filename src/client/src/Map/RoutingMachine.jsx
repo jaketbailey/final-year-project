@@ -48,6 +48,7 @@ const createRoutingMachineLayer = (props) => {
   })
 
   function createTimeInput(container) {
+    console.log(container)
     const select = L.DomUtil.create('select', '', container);
     const leaveTime = L.DomUtil.create('option', '', select);
     const arriveTime = L.DomUtil.create('option', '', select);
@@ -81,7 +82,6 @@ const createRoutingMachineLayer = (props) => {
     fitSelectedRoutes: false,
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
-    collapsible: false,
     containerClassName: 'routing-container',
     createMarker: function (i, waypoint, n) {
       const marker = L.marker(waypoint.latLng, {
@@ -109,6 +109,7 @@ const createRoutingMachineLayer = (props) => {
   const instance = L.Routing.control({
     router,
     plan,
+    collapsible: false,
     lineOptions: {
       styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
     },
