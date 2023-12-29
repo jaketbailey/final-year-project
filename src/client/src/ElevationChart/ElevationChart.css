@@ -33,7 +33,7 @@
 }
 
 .chart-hidden {
-  display: none;
+  display: block;
 }
 
 .chart-container > div {

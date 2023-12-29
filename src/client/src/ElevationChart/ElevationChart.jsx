@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import './ElevationChart.css'
 import { Chart as ChartJS, registerables} from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
+
 import L from 'leaflet';
 ChartJS.register(...registerables, zoomPlugin);
 
@@ -15,6 +16,7 @@ const ElevationChart = (props) => {
 
   const dataRef = useRef([]);
   const localMapRef = useRef(null);
+  const chartRef = useRef(null);
   
   useEffect(() => {
     
@@ -50,9 +52,19 @@ const ElevationChart = (props) => {
      * @returns false if no coordinate is found
      */
     const onClick = (event, chartElement) => {
+      console.log(chartElement)
       const coordinate = getCoordinate(chartElement);
       if (!coordinate) return;
       localMapRef.current.flyTo([coordinate.lat, coordinate.lng], 15);
+    }
+
+    const onZoomComplete = ({chart}) => {
+      console.log(chart)
+      const {min, max} = chart.scales.x;
+      const coordinates = getCoordinate([], [min, max])
+      console.log(coordinates)
+      console.log('Fetched data between ' + min + ' and ' + max);
+      localMapRef.current.flyToBounds(coordinates)
     }
   
     /**
@@ -61,7 +73,11 @@ const ElevationChart = (props) => {
      * @param {*} chartElement 
      * @returns coordinate object if chartElement exists, otherwise returns false
      */
-    const getCoordinate = (chartElement) => {
+    const getCoordinate = (chartElement, minMax) => {
+      if (minMax) {
+        const coordinates = [[dataRef.current[minMax[0]]],[dataRef.current[minMax[1]]]]
+        return coordinates;
+      }
       if (!chartElement[0]) return;
       const index = chartElement[0].index;
       const coordinate = dataRef.current[index];
@@ -100,7 +116,7 @@ const ElevationChart = (props) => {
         data: getData(),
         backgroundColor: [
           'rgba(215, 76, 116, 0.6)'
-          // 'rgba(148, 221, 188, 0.6)'
+        //   // 'rgba(148, 221, 188, 0.6)'
         ],
         fill: 'start',
       }]
@@ -112,6 +128,7 @@ const ElevationChart = (props) => {
      */
     try {
       const chartInstance = ChartJS.getChart('elevation-chart');
+      chartRef.current = chartInstance;
       chartInstance.data = data;
       chartInstance.update();
     } catch (error) {
@@ -163,12 +180,19 @@ const ElevationChart = (props) => {
             },
             zoom: {
               zoom: {
-                wheel: {
+                drag: {
                   enabled: true,
+                  backgroundColor: "rgba(245, 40, 145, 0.8)",
+                  borderColor: "rgba(255, 20, 255, 0.8)",
+                  modifierKey: 'ctrl',
                 },
-                pinch: {
-                  enabled: true
-                },
+                onZoomComplete: (chart) => {onZoomComplete(chart)},
+                // wheel: {
+                //   enabled: true,
+                // },
+                // pinch: {
+                //   enabled: true
+                // },
                 mode: 'x',
               },
               pan: {
@@ -185,6 +209,8 @@ const ElevationChart = (props) => {
           },
         },
       });
+
+      chartRef.current = chartInstance;
       chartInstance.update();
     }
   }, [props.coordinates, props.summary.totalDistance, props.mapRef])
@@ -193,7 +219,7 @@ const ElevationChart = (props) => {
    * @constant showChart
    * @description Sets the display of the chart
    */
-  const [showChart, setShowChart] = useState(false);
+  const [showChart, setShowChart] = useState(true);
 
   useEffect(() => {
     const chart = document.getElementById('main-chart');
@@ -207,10 +233,12 @@ const ElevationChart = (props) => {
       setShowChart(!showChart);
     })
     if (showChart) {
-      chart.style.display = 'block';
+      chart.style.height = "11rem"
+      chart.style.paddingBottom = "2rem"
       showBtn.innerText = 'Hide Elevation Chart';
     } else {
-      chart.style.display = 'none';
+      chart.style.height = "0px"
+      chart.style.paddingBottom = "0px"
       showBtn.innerText = 'Show Elevation Chart';
     }
   }, [showChart])
@@ -221,6 +249,10 @@ const ElevationChart = (props) => {
         <button id="elev-chart-show" className="btn btn-primary">Show</button>
       </div>
       <div id="main-chart">
+        <button className="btn btn-primary" onClick={() => {
+          chartRef.current.resetZoom();
+          chartRef.current.update();
+        }}>Reset Zoom</button>
         <canvas id="elevation-chart" className="chart"></canvas>
       </div>
     </div>
