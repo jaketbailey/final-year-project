@@ -18,7 +18,6 @@ const ElevationChart = (props) => {
   const localMapRef = useRef(null);
   
   useEffect(() => {
-    
     let circle = new L.circle();
 
     /**
@@ -59,7 +58,11 @@ const ElevationChart = (props) => {
 
     const onZoomComplete = ({chart}) => {
       const {min, max} = chart.scales.x;
-      console.log(chart.scales.x)
+      const ticks = chart.scales.x.ticks;
+      const startDistance = ticks[0].label;
+      const endDistance = ticks[ticks.length - 1].label;
+      props.setSegmentDistance(Math.round((endDistance - startDistance)*100)/100);
+      console.log(props.segmentDistance)
       const coordinates = getCoordinate([], [min, max])
       localMapRef.current.flyToBounds(coordinates)
     }
@@ -118,6 +121,7 @@ const ElevationChart = (props) => {
         fill: 'start',
       }]
     }
+    console.log(data)
 
     /**
      * Try to get the chart instance and update the data
@@ -250,6 +254,7 @@ const ElevationChart = (props) => {
           props.chartRef.current.resetZoom();
           props.chartRef.current.update();
         }}>Reset Zoom</button>
+        Segment Distance: {props.segmentDistance}km
         <canvas id="elevation-chart" className="chart"></canvas>
       </div>
     </div>
