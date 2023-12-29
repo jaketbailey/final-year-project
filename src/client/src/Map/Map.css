@@ -36,14 +36,16 @@ ul.popup {
   font: 12px 'Poppins', sans-serif;
   padding: 0;
 }
-
+.leaflet-routing-geocoder > input{
+  width: 15rem;
+}
 .leaflet-routing-geocoders button {
   font: bold 18px 'Poppins', sans-serif;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
-  margin: 0;
-  margin-right: 3px;
+  /* margin: 0; */
+  margin-right: 1rem;
   float: right;
   cursor: pointer;
   transition: background-color 0.2s ease;
