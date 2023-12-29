@@ -58,11 +58,9 @@ const ElevationChart = (props) => {
     }
 
     const onZoomComplete = ({chart}) => {
-      console.log(chart)
       const {min, max} = chart.scales.x;
+      console.log(chart.scales.x)
       const coordinates = getCoordinate([], [min, max])
-      console.log(coordinates)
-      console.log('Fetched data between ' + min + ' and ' + max);
       localMapRef.current.flyToBounds(coordinates)
     }
   
@@ -209,7 +207,7 @@ const ElevationChart = (props) => {
         },
       });
 
-      chartRef.current = chartInstance;
+      props.chartRef.current = chartInstance;
       chartInstance.update();
     }
   }, [props.coordinates, props.summary.totalDistance, props.mapRef])
