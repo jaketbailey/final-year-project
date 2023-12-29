@@ -60,10 +60,11 @@ const Map = (props) => {
   }
 
   const setRouteWaypoint = (coords, to) => {
-    const currentWaypoints = control.current.options.waypoints;
+    const currentWaypoints = control.current._plan._waypoints;
     
     // Check if to boolean is present, final element in waypoint array is replaced with new coordinates
     if (to) {
+      console.log(currentWaypoints)
       const length = currentWaypoints.length;
       control.current.spliceWaypoints(length-1,1, L.latLng(coords))
       return;
