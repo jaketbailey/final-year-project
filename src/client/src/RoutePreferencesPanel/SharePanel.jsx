@@ -229,18 +229,6 @@ const SharePanel = (props) => {
     } else if (id === 'shareGoogleDriveButton') {
       console.log('googleDrive');
       gapi.load('client:auth2', initClient);
-      // const gapiClient = loadClientAuth2(gapi, G_CLIENT_ID, SCOPES);
-  // console.log(gapiClient)
-      // console.log(gapiClient.drive.files.list({
-      //   'pageSize': 10,
-      //   'fields': 'files(id, name)',
-      // }));
-      // const files = response.result.files;
-      // if (!files || files.length == 0) {
-      //   document.getElementById('content').innerText = 'No files found.';
-      //   return;
-      // }
-
     }
   };
 
