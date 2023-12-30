@@ -28,6 +28,7 @@ const Modal = (props) => {
   }
 
   const handleClick = (type) => {
+    console.log('clicked')
     if (type === "strava") {
       const activityName = document.querySelector('#input-activity-name').value;
       const startDate = Date.parse(document.querySelector('#input-start').value);
@@ -102,22 +103,22 @@ const Modal = (props) => {
     props.setEmailData(emailData)
   }
 
-  const executeOnce = useRef(true);
-  useEffect(() => {
-    if (executeOnce.current) {
-      executeOnce.current = false;
-      let button;
-      if (props.type === "email") {
-        button = document.querySelector('#send-email');
-      } else if (props.type === "strava") {
-        button = document.querySelector('#create-activity-btn');
-      } 
-      button.addEventListener('click', () => {handleClick(props.type)});
-      return () => {
-        button.removeEventListener('click', () => {handleClick(props.type)});
-      }
-    }
-  }, [])
+  // // const executeOnce = useRef(true);
+  // useEffect(() => {
+  //   // if (executeOnce.current) {
+  //     // executeOnce.current = false;
+  //     let button;
+  //     if (props.type === "email") {
+  //       button = document.querySelector('#send-email');
+  //     } else if (props.type === "strava") {
+  //       button = document.querySelector('#create-activity-btn');
+  //     } 
+  //     button.addEventListener('click', () => {handleClick(props.type)});
+  //     return () => {
+  //       button.removeEventListener('click', () => {handleClick(props.type)});
+  //     }
+  //   // }
+  // }, [])
 
 
   /**
@@ -143,7 +144,7 @@ const Modal = (props) => {
           <label htmlFor='input-geojson'>Include GeoJSON?</label>
           <input id='input-geojson' name='input-geojson'type='checkbox'/>
           </div>
-          <button id='send-email' className='share'>Send</button>
+          <button id='send-email' className='share' onClick={() => {handleClick(props.type)}}>Send</button>
         </div>
       )
     } else if (props.type === 'strava') {
@@ -162,7 +163,7 @@ const Modal = (props) => {
           <label htmlFor='input-speed'>Average Speed (km/h) </label>
           <input id='input-speed' name='input-speed' type='number' placeholder="24.0" min="5.0" max="39.0"/>
           </div>
-          <button id='create-activity-btn' className='share'>Create Activity</button>
+          <button id='create-activity-btn' className='share' onClick={() => {handleClick(props.type)}}>Create Activity</button>
         </div>
       )
     }
