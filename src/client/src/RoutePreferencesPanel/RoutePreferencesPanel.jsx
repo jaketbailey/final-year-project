@@ -14,7 +14,11 @@ const RoutePreferencesPanel = (props) => {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
+  const [GLoginLogout, setGLoginLogout] = useState(true);
+
  
+  
+
   const deauthoriseStrava = async () => {
     const ACCESS_TOKEN = props.stravaAccessToken.access_token;
     const URL = `https://www.strava.com/oauth/deauthorize?access_token=${ACCESS_TOKEN}`
@@ -159,7 +163,7 @@ const RoutePreferencesPanel = (props) => {
   }, [showPanel]);
 
   return (
-      <div className="route-preferences-panel">
+      <div className="route-preferences-panel">        
         <button className="route-preferences-panel__button" onClick={togglePanel}>
           Route Preferences 
         </button>

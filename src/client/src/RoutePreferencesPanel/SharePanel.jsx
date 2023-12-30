@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
-import { act } from '@testing-library/react';
-import { create } from 'eslint-plugin-react/lib/rules/button-has-type';
+import { gapi, loadClientAuth2 } from 'gapi-script';
+
 
 /**
  * @function SharePanel
@@ -26,6 +26,7 @@ const SharePanel = (props) => {
   const message = useRef(null);
   const routeGeoJSON = useRef(props.geoJSON);
   const routeGPX = useRef(props.gpx);
+  
 
   useEffect(() => {
     routeGeoJSON.current = props.geoJSON;
@@ -148,6 +149,76 @@ const SharePanel = (props) => {
     return;
   }, [props.stravaAccessToken]);
 
+  const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
+  const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
+  const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
+  const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+  const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
+  const [signedInUser, setSignedInUser] = useState(null);
+  const [isFetchingGoogleDriveFiles, setIsFetchingGoogleDriveFiles] = useState(null);
+  const [listDocumentsVisibility, setListDocumentsVisibility] = useState(null);
+
+  const updateSigninStatus = (isSignedIn) => {
+    if (isSignedIn) {
+      // Set the signed in user
+      console.log(gapi.auth2.getAuthInstance().currentUser)
+      setSignedInUser(gapi.auth2.getAuthInstance().currentUser.le);
+      setIsLoadingGoogleDriveApi(false);
+      // list files if user is authenticated
+      listFiles();
+    } else {
+      // prompt user to sign in
+      handleAuthClick();
+    }
+  };
+  
+   /**
+   * List files.
+   */
+  const listFiles = (searchTerm = null) => {
+    setIsFetchingGoogleDriveFiles(true);
+    gapi.client.drive.files
+      .list({
+        pageSize: 10,
+        fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
+        q: searchTerm,
+      })
+      .then(function (response) {
+        setIsFetchingGoogleDriveFiles(false);
+        setListDocumentsVisibility(true);
+        const res = JSON.parse(response.body);
+        console.log(res);
+      });
+  };
+
+  /**
+   *  Sign in the user upon button click.
+   */
+  const handleAuthClick = (event) => {
+    gapi.auth2.getAuthInstance().signIn();
+  };
+
+  const initClient = () => {
+    setIsLoadingGoogleDriveApi(true);
+    gapi.client
+      .init({
+        apiKey: G_API_ID,
+        clientId: G_CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      })
+      .then(
+        function () {
+          // Listen for sign-in state changes.
+          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+          // Handle the initial sign-in state.
+          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+        },
+        function (error) {}
+      );
+  };  
+
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
@@ -155,6 +226,21 @@ const SharePanel = (props) => {
     } else if (id === 'shareStravaButton') {
       console.log('strava');
       props.setShowStrava(!props.showStrava)
+    } else if (id === 'shareGoogleDriveButton') {
+      console.log('googleDrive');
+      gapi.load('client:auth2', initClient);
+      // const gapiClient = loadClientAuth2(gapi, G_CLIENT_ID, SCOPES);
+  // console.log(gapiClient)
+      // console.log(gapiClient.drive.files.list({
+      //   'pageSize': 10,
+      //   'fields': 'files(id, name)',
+      // }));
+      // const files = response.result.files;
+      // if (!files || files.length == 0) {
+      //   document.getElementById('content').innerText = 'No files found.';
+      //   return;
+      // }
+
     }
   };
 
@@ -164,6 +250,7 @@ const SharePanel = (props) => {
         <div className='button-list'>
           <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
+          <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
         </div>
       </div>
     </div>

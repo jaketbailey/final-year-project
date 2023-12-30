@@ -7,6 +7,13 @@ import LeftPanel from './LeftPanel/LeftPanel';
 function App() {
   const [gpxLink, setGPXLink] = useState(null);
   const [geoJSONLink, setGeoJSONLink] = useState(null);
+  const [GToken, setGToken] = useState(null);
+
+  useEffect(() => {
+    if (GToken) {
+      console.log(GToken);
+    }
+  }, [GToken]);
 
   return (
     <div>
@@ -14,6 +21,7 @@ function App() {
         <LeftPanel 
           geoJSONLink={geoJSONLink} 
           gpxLink={gpxLink}
+          setGToken={setGToken}
         />
         <Map 
           setGeoJSONLink={setGeoJSONLink}
