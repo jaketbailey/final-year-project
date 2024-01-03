@@ -1,8 +1,6 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
-import { gapi, loadClientAuth2 } from 'gapi-script';
-
 
 /**
  * @function SharePanel
@@ -149,75 +147,39 @@ const SharePanel = (props) => {
     return;
   }, [props.stravaAccessToken]);
 
-  const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
-  const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
-  const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-  const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
-  const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
-  const [signedInUser, setSignedInUser] = useState(null);
-  const [isFetchingGoogleDriveFiles, setIsFetchingGoogleDriveFiles] = useState(null);
-  const [listDocumentsVisibility, setListDocumentsVisibility] = useState(null);
-
-  const updateSigninStatus = (isSignedIn) => {
-    if (isSignedIn) {
-      // Set the signed in user
-      console.log(gapi.auth2.getAuthInstance().currentUser)
-      setSignedInUser(gapi.auth2.getAuthInstance().currentUser.le);
-      setIsLoadingGoogleDriveApi(false);
-      // list files if user is authenticated
-      listFiles();
+  useEffect(() => {
+    const googleShare = document.querySelector('#shareGoogleDriveButton');
+    if (props.GLoginLogout === true) {
+      googleShare.disabled = false;
     } else {
-      // prompt user to sign in
-      handleAuthClick();
+      googleShare.disabled = true;
     }
-  };
-  
-   /**
-   * List files.
-   */
-  const listFiles = (searchTerm = null) => {
-    setIsFetchingGoogleDriveFiles(true);
-    gapi.client.drive.files
-      .list({
-        pageSize: 10,
-        fields: 'nextPageToken, files(id, name, mimeType, modifiedTime)',
-        q: searchTerm,
-      })
-      .then(function (response) {
-        setIsFetchingGoogleDriveFiles(false);
-        setListDocumentsVisibility(true);
-        const res = JSON.parse(response.body);
-        console.log(res);
-      });
-  };
+  }, [props.GLoginLogout]);
 
-  /**
-   *  Sign in the user upon button click.
-   */
-  const handleAuthClick = (event) => {
-    gapi.auth2.getAuthInstance().signIn();
-  };
+  const createFiles = async (type = 'GPX') => {
+    
+  const file = new Blob([props.gpx], {type: 'text/xml'});
+    const metadata = {
+      'name': 'test.gpx',
+      'mimeType': 'application/gpx',
+      "parents": ['root']
+    };
 
-  const initClient = () => {
-    setIsLoadingGoogleDriveApi(true);
-    gapi.client
-      .init({
-        apiKey: G_API_ID,
-        clientId: G_CLIENT_ID,
-        discoveryDocs: DISCOVERY_DOCS,
-        scope: SCOPES,
-      })
-      .then(
-        function () {
-          // Listen for sign-in state changes.
-          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+    console.log(gapi)
+    const accessToken = gapi.auth.getToken().access_token;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+    form.append('file', file);
 
-          // Handle the initial sign-in state.
-          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
-        },
-        function (error) {}
-      );
-  };  
+    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true', {
+      method: 'POST',
+      headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+      body: form,
+    });
+    const res = await response.json();
+    console.log(res);
+  }
+
 
   const clickHandler = (event) => {
     const id = event.target.id;
@@ -227,8 +189,8 @@ const SharePanel = (props) => {
       console.log('strava');
       props.setShowStrava(!props.showStrava)
     } else if (id === 'shareGoogleDriveButton') {
-      console.log('googleDrive');
-      gapi.load('client:auth2', initClient);
+      createFiles();
+      // listFiles();
     }
   };
 

@@ -26,9 +26,11 @@ const Map = (props) => {
   const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaData, setStravaData] = useState({});
+  const [googleData, setGoogleData] = useState({});
   const [instructions, setInstructions] = useState([]);
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
+  const [showGoogle, setShowGoogle] = useState(false);
   const [emailData, setEmailData] = useState({});
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
@@ -319,6 +321,17 @@ const Map = (props) => {
         instructions={instructions}
         coordinates={coordinates}
         stravaAccessToken={stravaAccessToken}
+      />
+      <Modal 
+        id='ShareGoogleModal' 
+        show={showGoogle} 
+        setShow={setShowGoogle} 
+        modalTitle='Save to Google Drive'
+        type='strava'
+        setGoogleData={setGoogleData}
+        googleData={googleData}
+        instructions={instructions}
+        coordinates={coordinates}
       />
     </div>
   )

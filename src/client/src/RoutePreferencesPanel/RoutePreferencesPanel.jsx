@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
+// import { gapi, loadClientAuth2 } from 'gapi-script';
 
 /**
  * @function RoutePreferencesPanel
@@ -14,10 +15,60 @@ const RoutePreferencesPanel = (props) => {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
-  const [GLoginLogout, setGLoginLogout] = useState(true);
+  const [GLoginLogout, setGLoginLogout] = useState(false);
+  const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
+  const [signedInUser, setSignedInUser] = useState(null);
+  const [GAPIAuthInstance, setGAPIAuthInstance] = useState(null);
 
- 
+  const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
+  const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
+  const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
+  const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   
+  const handleAuthClick = (event) => {
+    gapi.auth2.getAuthInstance().signIn();
+  };
+
+  const initClient = () => {
+    setIsLoadingGoogleDriveApi(true);
+    gapi.client
+      .init({
+        apiKey: G_API_ID,
+        clientId: G_CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES,
+      })
+      .then(
+        function () {
+          // Listen for sign-in state changes.
+          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+
+          // Handle the initial sign-in state.
+          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+
+          setGLoginLogout(true);
+          localStorage.setItem('GLoginLogout', true);
+        },
+        function (error) {
+          setGLoginLogout(false);
+          localStorage.setItem('GLoginLogout', false);
+        }
+      ) ;
+  };  
+ 
+  const updateSigninStatus = (isSignedIn) => {
+    if (isSignedIn) {
+      // Set the signed in user
+      console.log(gapi.auth2.getAuthInstance())
+      setSignedInUser(gapi.auth2.getAuthInstance().currentUser.le);
+      setGAPIAuthInstance(gapi.auth2.getAuthInstance());
+      setIsLoadingGoogleDriveApi(false);
+    } else {
+      // prompt user to sign in
+      console.log(gapi.auth2.getAuthInstance().currentUser)
+      handleAuthClick();
+    }
+  };
 
   const deauthoriseStrava = async () => {
     const ACCESS_TOKEN = props.stravaAccessToken.access_token;
@@ -151,6 +202,24 @@ const RoutePreferencesPanel = (props) => {
       props.gpxLink.click();
   }
 
+  
+  useEffect(() => {
+    const localGLoginLogout = localStorage.getItem('GLoginLogout');
+    if (localGLoginLogout === 'true') {
+      gapi.load('client:auth2', initClient)
+      setGLoginLogout(true);
+    }
+  },[]);
+
+  useEffect(() => {
+    const btn = document.querySelector('#google-login');
+    if (GLoginLogout === true) {
+      btn.textContent = 'Log out of Google';
+    } else {
+      btn.textContent = 'Log in to Google';
+    }
+  }, [GLoginLogout])
+
   useEffect(() => {
     const routePreferencesPanelContainer = document.querySelector('.route-preferences-panel__preferences');
     if (showPanel) {
@@ -175,6 +244,18 @@ const RoutePreferencesPanel = (props) => {
         </button> 
         <button id="strava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
           Log in to Strava 
+        </button>
+        <button id="google-login" className="route-preferences-panel__button" onClick={() => {
+            if (GLoginLogout === true) {
+              if(GAPIAuthInstance) {
+                GAPIAuthInstance.disconnect();
+                setGLoginLogout(false);
+                localStorage.setItem('GLoginLogout', false);
+              }
+            } else {
+              gapi.load('client:auth2', initClient)
+            }
+          }}>
         </button>
         <button className="route-preferences-panel__button" onClick={toggleSharePanel} >
           Share
@@ -209,6 +290,7 @@ const RoutePreferencesPanel = (props) => {
           data={props.emailData}
           stravaAccessToken={props.stravaAccessToken}
           stravaData={props.stravaData}
+          GLoginLogout={GLoginLogout}
         />
       </div>
   );
