@@ -13,18 +13,30 @@ const Modal = (props) => {
     return null
   }
 
-  const buttonUpdate = (text, type) => {
+  const buttonUpdate = (text, type, googleCheck) => {
     let sendBtn = document.querySelector('#send-email');
     if (type === 'strava') {
       sendBtn = document.querySelector('#create-activity-btn');
+    } 
+    if (type === 'google') {
+      sendBtn = document.querySelector('#upload-drive');
     }
-    sendBtn.classList.add('fail')
-    sendBtn.textContent = text
-    setTimeout(() => {
-      sendBtn.classList.remove('fail');
-      sendBtn.textContent = 'Send';
-    },1000);
-    return;
+    if (!(type === 'google' && googleCheck)) {
+      sendBtn.classList.add('fail')
+      sendBtn.textContent = text
+      setTimeout(() => {
+        sendBtn.classList.remove('fail');
+        sendBtn.textContent = 'Send';
+      },1000);
+      return;
+    } else {
+      sendBtn.classList.add('success');
+      sendBtn.textContent = text
+      setTimeout(() => {
+        sendBtn.classList.remove('success');
+        sendBtn.textContent = 'Share';
+      }, 1000);
+    }
   }
 
   const collateStravaData = () => {
@@ -90,7 +102,6 @@ const Modal = (props) => {
       "parents": ['root']
     };
 
-    console.log(props.gapi)
     const accessToken = props.gapi.auth.getToken().access_token;
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
@@ -103,6 +114,17 @@ const Modal = (props) => {
     });
     const res = await response.json();
     console.log(res);
+
+    if (res.error) {
+      buttonUpdate('Error uploading file', 'google');
+      return;
+    };
+
+    if (res.id) {
+      buttonUpdate('File uploaded successfully', 'google', true);
+      return;
+    }
+    
 
   }
 
