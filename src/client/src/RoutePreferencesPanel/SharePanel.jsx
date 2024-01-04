@@ -189,8 +189,8 @@ const SharePanel = (props) => {
       console.log('strava');
       props.setShowStrava(!props.showStrava)
     } else if (id === 'shareGoogleDriveButton') {
-      createFiles();
-      // listFiles();
+      console.log('google-drive');
+      props.setShowGoogle(!props.showGoogle)      
     }
   };
 

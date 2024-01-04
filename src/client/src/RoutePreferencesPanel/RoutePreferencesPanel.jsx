@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
-import { gapi } from 'gapi-script';
 
 /**
  * @function RoutePreferencesPanel
@@ -26,12 +25,12 @@ const RoutePreferencesPanel = (props) => {
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   
   const handleAuthClick = (event) => {
-    gapi.auth2.getAuthInstance().signIn();
+    props.gapi.auth2.getAuthInstance().signIn();
   };
 
   const initClient = () => {
     setIsLoadingGoogleDriveApi(true);
-    gapi.client
+    props.gapi.client
       .init({
         apiKey: G_API_ID,
         clientId: G_CLIENT_ID,
@@ -41,10 +40,10 @@ const RoutePreferencesPanel = (props) => {
       .then(
         function () {
           // Listen for sign-in state changes.
-          gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+          props.gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
 
           // Handle the initial sign-in state.
-          updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+          updateSigninStatus(props.gapi.auth2.getAuthInstance().isSignedIn.get());
 
           setGLoginLogout(true);
           localStorage.setItem('GLoginLogout', true);
@@ -59,13 +58,13 @@ const RoutePreferencesPanel = (props) => {
   const updateSigninStatus = (isSignedIn) => {
     if (isSignedIn) {
       // Set the signed in user
-      console.log(gapi.auth2.getAuthInstance())
-      setSignedInUser(gapi.auth2.getAuthInstance().currentUser.le);
-      setGAPIAuthInstance(gapi.auth2.getAuthInstance());
+      console.log(props.gapi.auth2.getAuthInstance())
+      setSignedInUser(props.gapi.auth2.getAuthInstance().currentUser.le);
+      setGAPIAuthInstance(props.gapi.auth2.getAuthInstance());
       setIsLoadingGoogleDriveApi(false);
     } else {
       // prompt user to sign in
-      console.log(gapi.auth2.getAuthInstance().currentUser)
+      console.log(props.gapi.auth2.getAuthInstance().currentUser)
       handleAuthClick();
     }
   };
@@ -206,7 +205,7 @@ const RoutePreferencesPanel = (props) => {
   useEffect(() => {
     const localGLoginLogout = localStorage.getItem('GLoginLogout');
     if (localGLoginLogout === 'true') {
-      gapi.load('client:auth2', initClient)
+      props.gapi.load('client:auth2', initClient)
       setGLoginLogout(true);
     }
   },[]);
@@ -253,7 +252,7 @@ const RoutePreferencesPanel = (props) => {
                 localStorage.setItem('GLoginLogout', false);
               }
             } else {
-              gapi.load('client:auth2', initClient)
+              props.gapi.load('client:auth2', initClient)
             }
           }}>
         </button>
@@ -287,11 +286,13 @@ const RoutePreferencesPanel = (props) => {
           show={props.show}
           setShowStrava={props.setShowStrava}
           showStrava={props.showStrava}
+          setShowGoogle={props.setShowGoogle}
+          showGoogle={props.showGoogle}
           data={props.emailData}
           stravaAccessToken={props.stravaAccessToken}
           stravaData={props.stravaData}
           GLoginLogout={GLoginLogout}
-          gapi={gapi}
+          gapi={props.gapi}
         />
       </div>
   );

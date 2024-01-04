@@ -5,8 +5,7 @@ import { getGPX, createStravaActivity } from './routeHelpers';
 import RoutePreferencesPanel from '../RoutePreferencesPanel/RoutePreferencesPanel';
 import Modal from '../Modal/Modal';
 import ElevationChart from '../ElevationChart/ElevationChart';
-
-
+import { gapi } from 'gapi-script';
 
 /**
  * @function Map
@@ -301,6 +300,9 @@ const Map = (props) => {
         stravaData={stravaData}
         stravaAccessToken={stravaAccessToken}
         setStravaAccessToken={setStravaAccessToken}
+        showGoogle={showGoogle} 
+        setShowGoogle={setShowGoogle}
+        gapi={gapi}
       />
       <Modal 
         id='ShareEmailModal' 
@@ -327,11 +329,14 @@ const Map = (props) => {
         show={showGoogle} 
         setShow={setShowGoogle} 
         modalTitle='Save to Google Drive'
-        type='strava'
+        type='google'
         setGoogleData={setGoogleData}
         googleData={googleData}
         instructions={instructions}
         coordinates={coordinates}
+        gapi={gapi}
+        gpx={gpx}
+        geoJSON={geoJSON}
       />
     </div>
   )

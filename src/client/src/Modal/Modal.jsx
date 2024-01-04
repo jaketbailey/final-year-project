@@ -27,45 +27,91 @@ const Modal = (props) => {
     return;
   }
 
+  const collateStravaData = () => {
+    const activityName = document.querySelector('#input-activity-name').value;
+    const startDate = Date.parse(document.querySelector('#input-start').value);
+    const avgSpeed = document.querySelector('#input-speed').value;
+
+    if (activityName.trim() === '') {
+      buttonUpdate('Activity name is blank', 'strava');
+      return;
+    }
+
+    if (!new Date(startDate).getTime()) {
+      buttonUpdate('Invalid date', 'strava');
+      return;
+    }
+
+    if (avgSpeed.trim() === '') {
+      buttonUpdate('Average speed is blank', 'strava');
+      return;
+    }
+
+    const stravaData = {
+      name: activityName,
+      start: startDate,
+      speed: avgSpeed,
+    }
+
+
+    console.log(stravaData)
+    props.setStravaData(stravaData)
+    console.log('strava activity clicked')
+
+    if (!props.stravaData || !props.instructions || !props.coordinates) {
+      return;
+    }
+
+    const GPX = getGPX(props.instructions, props.coordinates, stravaData);
+    createStravaActivity(GPX, stravaData, props.stravaAccessToken);
+    return;
+  }
+
+  const collateGoogleData = async () => {
+    const fileName = document.querySelector('#input-filename').value || 'myroute';
+    const fileTypes = document.getElementsByName('input-file');
+    let fileType;
+    let file;
+    for (const type of fileTypes) {
+      if (type.checked) {
+        fileType = type.value;
+        if (fileType === 'gpx') {
+          file = new Blob([props.gpx], {type: 'text/xml'});
+        } else {
+          file = new Blob([props.geoJSON], {type: 'application/json'});
+        }
+      }
+    }
+    console.log(fileType);
+    
+    const metadata = {
+      'name': `${fileName}.${fileType}`,
+      'mimeType': `application/${fileType}`,
+      "parents": ['root']
+    };
+
+    console.log(props.gapi)
+    const accessToken = props.gapi.auth.getToken().access_token;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+    form.append('file', file);
+
+    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true', {
+      method: 'POST',
+      headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+      body: form,
+    });
+    const res = await response.json();
+    console.log(res);
+
+  }
+
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
-      const activityName = document.querySelector('#input-activity-name').value;
-      const startDate = Date.parse(document.querySelector('#input-start').value);
-      const avgSpeed = document.querySelector('#input-speed').value;
-
-      if (activityName.trim() === '') {
-        buttonUpdate('Activity name is blank', 'strava');
-        return;
-      }
-
-      if (!new Date(startDate).getTime()) {
-        buttonUpdate('Invalid date', 'strava');
-        return;
-      }
-
-      if (avgSpeed.trim() === '') {
-        buttonUpdate('Average speed is blank', 'strava');
-        return;
-      }
-
-      const stravaData = {
-        name: activityName,
-        start: startDate,
-        speed: avgSpeed,
-      }
-
-
-      console.log(stravaData)
-      props.setStravaData(stravaData)
-      console.log('strava activity clicked')
-
-      if (!props.stravaData || !props.instructions || !props.coordinates) {
-        return;
-      }
-  
-      const GPX = getGPX(props.instructions, props.coordinates, stravaData);
-      createStravaActivity(GPX, stravaData, props.stravaAccessToken);
+      collateStravaData();
+    } else if (type === "google") {
+      collateGoogleData();
       return;
     }
 
@@ -166,7 +212,24 @@ const Modal = (props) => {
           <button id='create-activity-btn' className='share' onClick={() => {handleClick(props.type)}}>Create Activity</button>
         </div>
       )
-    }
+    } else if (props.type === 'google') {
+      return (
+        <div>
+          <div className='block'>
+          <label htmlFor='input-filename'>Filename</label>
+          <input id='input-filename' name='input-filename' type='text' placeholder='myroute'/>
+          </div>
+          <div className='block'>
+          File Type:
+          <label htmlFor='input-gpx'>GPX</label>
+          <input id='input-gpx' name='input-file'type='radio' value='gpx' defaultChecked/>
+          <label htmlFor='input-geojson'>GeoJSON</label>
+          <input id='input-geojson' name='input-file'type='radio' value='geojson'/>
+          </div>
+          <button id='upload-drive' className='share' onClick={() => {handleClick(props.type)}}>Send</button>
+        </div>
+      )
+      }
   }
 
   return (
