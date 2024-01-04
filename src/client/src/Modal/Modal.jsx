@@ -34,7 +34,7 @@ const Modal = (props) => {
       sendBtn.textContent = text
       setTimeout(() => {
         sendBtn.classList.remove('success');
-        sendBtn.textContent = 'Share';
+        sendBtn.textContent = 'Save';
       }, 1000);
     }
   }
@@ -124,8 +124,6 @@ const Modal = (props) => {
       buttonUpdate('File uploaded successfully', 'google', true);
       return;
     }
-    
-
   }
 
   const handleClick = (type) => {
@@ -170,24 +168,6 @@ const Modal = (props) => {
     // Sets the email data after input validation which is used within the SharePanel component
     props.setEmailData(emailData)
   }
-
-  // // const executeOnce = useRef(true);
-  // useEffect(() => {
-  //   // if (executeOnce.current) {
-  //     // executeOnce.current = false;
-  //     let button;
-  //     if (props.type === "email") {
-  //       button = document.querySelector('#send-email');
-  //     } else if (props.type === "strava") {
-  //       button = document.querySelector('#create-activity-btn');
-  //     } 
-  //     button.addEventListener('click', () => {handleClick(props.type)});
-  //     return () => {
-  //       button.removeEventListener('click', () => {handleClick(props.type)});
-  //     }
-  //   // }
-  // }, [])
-
 
   /**
    * @function getContent
@@ -248,7 +228,7 @@ const Modal = (props) => {
           <label htmlFor='input-geojson'>GeoJSON</label>
           <input id='input-geojson' name='input-file'type='radio' value='geojson'/>
           </div>
-          <button id='upload-drive' className='share' onClick={() => {handleClick(props.type)}}>Send</button>
+          <button id='upload-drive' className='share' onClick={() => {handleClick(props.type)}}>Save</button>
         </div>
       )
       }
