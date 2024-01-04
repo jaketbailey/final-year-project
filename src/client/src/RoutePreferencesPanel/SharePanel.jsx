@@ -1,8 +1,6 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
-import { act } from '@testing-library/react';
-import { create } from 'eslint-plugin-react/lib/rules/button-has-type';
 
 /**
  * @function SharePanel
@@ -26,6 +24,7 @@ const SharePanel = (props) => {
   const message = useRef(null);
   const routeGeoJSON = useRef(props.geoJSON);
   const routeGPX = useRef(props.gpx);
+  
 
   useEffect(() => {
     routeGeoJSON.current = props.geoJSON;
@@ -148,6 +147,40 @@ const SharePanel = (props) => {
     return;
   }, [props.stravaAccessToken]);
 
+  useEffect(() => {
+    const googleShare = document.querySelector('#shareGoogleDriveButton');
+    if (props.GLoginLogout === true) {
+      googleShare.disabled = false;
+    } else {
+      googleShare.disabled = true;
+    }
+  }, [props.GLoginLogout]);
+
+  const createFiles = async (type = 'GPX') => {
+    
+  const file = new Blob([props.gpx], {type: 'text/xml'});
+    const metadata = {
+      'name': 'test.gpx',
+      'mimeType': 'application/gpx',
+      "parents": ['root']
+    };
+
+    console.log(props.gapi)
+    const accessToken = props.gapi.auth.getToken().access_token;
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
+    form.append('file', file);
+
+    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true', {
+      method: 'POST',
+      headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+      body: form,
+    });
+    const res = await response.json();
+    console.log(res);
+  }
+
+
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
@@ -155,6 +188,9 @@ const SharePanel = (props) => {
     } else if (id === 'shareStravaButton') {
       console.log('strava');
       props.setShowStrava(!props.showStrava)
+    } else if (id === 'shareGoogleDriveButton') {
+      console.log('google-drive');
+      props.setShowGoogle(!props.showGoogle)      
     }
   };
 
@@ -164,6 +200,7 @@ const SharePanel = (props) => {
         <div className='button-list'>
           <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
+          <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
         </div>
       </div>
     </div>
