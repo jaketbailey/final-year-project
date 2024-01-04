@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
-// import { gapi, loadClientAuth2 } from 'gapi-script';
+import { gapi } from 'gapi-script';
 
 /**
  * @function RoutePreferencesPanel
@@ -291,6 +291,7 @@ const RoutePreferencesPanel = (props) => {
           stravaAccessToken={props.stravaAccessToken}
           stravaData={props.stravaData}
           GLoginLogout={GLoginLogout}
+          gapi={gapi}
         />
       </div>
   );

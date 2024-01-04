@@ -165,8 +165,8 @@ const SharePanel = (props) => {
       "parents": ['root']
     };
 
-    console.log(gapi)
-    const accessToken = gapi.auth.getToken().access_token;
+    console.log(props.gapi)
+    const accessToken = props.gapi.auth.getToken().access_token;
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
     form.append('file', file);
