@@ -7,9 +7,34 @@ import (
 	"cycling-route-planner/src/back-end/utils/logger"
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/lib/pq"
 )
+
+type Property struct {
+	Key   string
+	Value string
+}
+
+type Coordinate struct {
+	Latitude  float64
+	Longitude float64
+}
+
+type Geometry struct {
+	Type        string
+	Coordinates []Coordinate
+}
+
+type Hazard struct {
+	ID         int
+	Date       time.Time
+	Geometry   Geometry
+	Properties []Property
+}
+
+var db *sql.DB
 
 func Init() {
 
@@ -26,13 +51,14 @@ func Init() {
 		"password=%s dbname=%s sslmode=%s",
 		host, port, user, password, dbname, sslmode)
 
-	db, err := sql.Open("postgres", psqlInfo)
+	database, err := sql.Open("postgres", psqlInfo)
+	db = database
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	// defer db.Close()
 
-	err = db.Ping()
+	err = database.Ping()
 	if err != nil {
 		panic(err)
 	}

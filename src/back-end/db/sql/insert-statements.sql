@@ -1,51 +1,3 @@
-CREATE TABLE IF NOT EXISTS geometry_type (
-    id SERIAL PRIMARY KEY,
-    type VARCHAR(20)
-);
-
-CREATE TABLE IF NOT EXISTS geometry (
-    id SERIAL PRIMARY KEY,
-    type_id INTEGER REFERENCES geometry_type(id)
-);
-
-CREATE TABLE IF NOT EXISTS coordinate (
-    id SERIAL PRIMARY KEY,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION
-);
-
-CREATE TABLE IF NOT EXISTS geometry_coords (
-    geometry_id INTEGER REFERENCES geometry(id),
-    coordinate_id INTEGER REFERENCES coordinate(id),
-    PRIMARY KEY (geometry_id, coordinate_id)
-);
-
-CREATE TABLE IF NOT EXISTS category (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
-    description TEXT
-);
-
-CREATE TABLE IF NOT EXISTS hazard (
-    id SERIAL PRIMARY KEY,
-    hazard_date DATE,
-    hazard_timeframe TIME,
-    geometry_id INTEGER REFERENCES geometry(id),
-    category_id INTEGER REFERENCES category(id)
-);
-
-CREATE TABLE IF NOT EXISTS property (
-    id SERIAL PRIMARY KEY,
-    property_name VARCHAR(50),
-    property_value VARCHAR(100)
-);
-
-CREATE TABLE IF NOT EXISTS hazard_property (
-    property_id INTEGER REFERENCES property(id),
-    hazard_id INTEGER REFERENCES hazard(id),
-    PRIMARY KEY (property_id, hazard_id)
-);
-
 -- INSERT OSM Hazard types into category from https://wiki.openstreetmap.org/wiki/Key:hazard
 -- Inserts for category table
 INSERT INTO category (name, description) VALUES 
@@ -73,7 +25,8 @@ INSERT INTO category (name, description) VALUES
 ('fog', 'An area where fog tends to form more frequently than surrounding areas.'),
 ('frail_pedestrians', 'A place where frail or disabled pedestrians are likely to cross a road'),
 ('frost_heave', 'An area where the road is known to bulge because of ice underneath the roadway.'),
-('ground_clearance', 'A place (usually a hill or incline) where vehicles with long wheelbases risk being grounded.'),
+('ground_clearance', 'A place (usually a hill
+ or incline) where vehicles with long wheelbases risk being grounded.'),
 ('horse_riders', 'An area where horse riders share a roadway with motor vehicles.'),
 ('ice', 'An area where ice tends to form more frequently than surrounding areas.'),
 ('illegal_crossing', 'Illegal crossing marked with boards informing about the prohibition.'),
@@ -95,3 +48,55 @@ INSERT INTO category (name, description) VALUES
 ('flooding', 'Whether or not the feature or area is likely to flood after very heavy rain.'),
 ('leeches', 'Leeches are present'),
 ('washout', 'A section of road which presents a risk to motorists due to washouts.');
+
+
+-- Inserting data into the 'coordinate' table
+INSERT INTO coordinate (latitude, longitude) VALUES
+  (40.7128, -74.0060), -- New York City
+  (34.0522, -118.2437), -- Los Angeles
+  (41.8781, -87.6298), -- Chicago
+  (29.7604, -95.3698), -- Houston
+  (51.5074, -0.1278); -- London
+
+INSERT INTO geometry_type (type) VALUES
+    ('Point'),
+    ('LineString'),
+    ('Polygon'),
+    ('MultiPoint'),
+    ('MultiLineString'),
+    ('MultiPolygon'),
+    ('GeometryCollection');
+
+INSERT INTO geometry (type_id, coordinates) VALUES
+  (1, ARRAY[1,2]),
+  (1, ARRAY[2]),
+  (1, ARRAY[3]),
+  (1, ARRAY[4]),
+  (1, ARRAY[2,1,3]);
+
+-- Inserting data into the 'hazard' table
+INSERT INTO hazard (hazard_date, hazard_timeframe, geometry_id, category_id) VALUES
+  ('2023-05-15', '12:00', 1, 3),
+  ('2023-07-20', '15:30', 2, 7),
+  ('2023-06-10', '08:45', 3, 5),
+  ('2023-08-05', '09:00', 4, 2),
+  ('2023-04-22', '18:20', 5, 9);
+
+-- Inserting data into the 'property' table
+INSERT INTO property (property_name, property_value) VALUES
+  ('severity', 'High'),
+  ('severity', 'Low'),
+  ('impact', 'Major'),
+  ('impact', 'Minor'),
+  ('evacuation', 'Required');
+
+-- Inserting data into the 'hazard_property' table
+INSERT INTO hazard_property (property_id, hazard_id) VALUES
+  (1, 1),
+  (3, 1),
+  (2, 2),
+  (4, 2),
+  (3, 3),
+  (5, 4),
+  (1, 5),
+  (5, 5);

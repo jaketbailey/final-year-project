@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS geometry_type (
 
 CREATE TABLE IF NOT EXISTS geometry (
     id SERIAL PRIMARY KEY,
-    type_id INTEGER REFERENCES geometry_type(id)
+    type_id INTEGER REFERENCES geometry_type(id),
+    coordinates INTEGER[]
 );
 
 CREATE TABLE IF NOT EXISTS coordinate (
@@ -14,15 +15,10 @@ CREATE TABLE IF NOT EXISTS coordinate (
     longitude DOUBLE PRECISION
 );
 
-CREATE TABLE IF NOT EXISTS geometry_coords (
-    geometry_id INTEGER REFERENCES geometry(id),
-    coordinate_id INTEGER REFERENCES coordinate(id),
-    PRIMARY KEY (geometry_id, coordinate_id)
-);
-
 CREATE TABLE IF NOT EXISTS category (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50)
+    name VARCHAR(50),
+    description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS hazard (
@@ -36,7 +32,7 @@ CREATE TABLE IF NOT EXISTS hazard (
 CREATE TABLE IF NOT EXISTS property (
     id SERIAL PRIMARY KEY,
     property_name VARCHAR(50),
-    property_value VARCHAR(100)
+    property_value TEXT
 );
 
 CREATE TABLE IF NOT EXISTS hazard_property (
@@ -44,3 +40,28 @@ CREATE TABLE IF NOT EXISTS hazard_property (
     hazard_id INTEGER REFERENCES hazard(id),
     PRIMARY KEY (property_id, hazard_id)
 );
+
+-- Functions and Triggers
+CREATE OR REPLACE FUNCTION check_coordinate_ids() RETURNS TRIGGER AS $$
+DECLARE
+    coord_id INTEGER;
+
+BEGIN FOREACH coord_id IN ARRAY NEW.coordinates LOOP IF NOT EXISTS (
+    SELECT 1 
+    FROM coordinate
+    WHERE id = coord_id
+) THEN RAISE EXCEPTION 'Coordinate ID % not found',
+coord_id;
+END IF;
+END LOOP;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_check_coordinate_ids BEFORE
+INSERT
+    OR
+UPDATE ON 
+  geometry
+FOR EACH ROW EXECUTE FUNCTION
+check_coordinate_ids();
