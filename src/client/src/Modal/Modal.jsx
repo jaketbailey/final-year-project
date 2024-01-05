@@ -65,7 +65,6 @@ const Modal = (props) => {
       speed: avgSpeed,
     }
 
-
     console.log(stravaData)
     props.setStravaData(stravaData)
     console.log('strava activity clicked')
