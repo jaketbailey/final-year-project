@@ -1,4 +1,4 @@
-import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState, useRef } from 'react';
 import { getGPX, createStravaActivity } from './routeHelpers';
@@ -34,6 +34,7 @@ const Map = (props) => {
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
+  const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
@@ -41,6 +42,47 @@ const Map = (props) => {
   const StravaPolicy = import.meta.env.VITE_STRAVA_HEATMAP_POLICY;
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
+
+  const polygon = [
+    [51.515, -0.09],
+    [51.52, -0.1],
+    [51.52, -0.12],
+  ]
+
+  const purpleOptions = { color: 'purple' }
+
+  useState(() => {
+    const fetchHazardAreas = async () => {
+
+      const convertCoords = (coordinates) => {
+        const arr = [];
+        for (const coord of coordinates) {
+          arr.push([coord.Latitude, coord.Longitude]);
+        }
+        return arr;
+      }
+
+      const response = await fetch('/api/all-hazard');
+      const res = await response.json();
+      console.log(res);
+      const hazards = [];
+
+      for (const hazard of res) {
+        console.log(hazard)
+        if (hazard.Geometry.Type === "Polygon") {
+          console.log(convertCoords(hazard.Geometry.Coordinates))
+          hazards.push(
+            <Polygon pathOptions={{color: 'purple'}} positions={convertCoords(hazard.Geometry.Coordinates)}/>
+          )
+        }
+        console.log(hazards)
+      }
+      setHazardAreas(hazards);
+
+    }
+    
+    fetchHazardAreas();
+  }, [mapCenter])
 
   const getDistance = (coords1, coords2) => {
     const deg2rad = (deg) => {
@@ -224,6 +266,7 @@ const Map = (props) => {
         zoomControl={true}
         ref={setMap}
       >
+        <Polygon pathOptions={purpleOptions} positions={polygon} />
         <LayersControl position='topleft'>
           <LayersControl.BaseLayer checked name="CyclOSM">
             <TileLayer
@@ -258,6 +301,11 @@ const Map = (props) => {
           <LayersControl.Overlay name="Key POI - Attractions">
             <LayerGroup>
               {keyPOIMarkers.attractions} 
+            </LayerGroup>
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Hazard Areas">
+            <LayerGroup>
+              {hazardAreas}
             </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>

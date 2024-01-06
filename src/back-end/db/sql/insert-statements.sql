@@ -58,6 +58,15 @@ INSERT INTO coordinate (latitude, longitude) VALUES
   (29.7604, -95.3698), -- Houston
   (51.5074, -0.1278); -- London
 
+INSERT INTO coordinate (latitude, longitude) VALUES
+(50.7930237, -1.1086033),
+(50.7815201, -1.0808016),
+(50.7964959, -1.0317196),
+(50.7866211, -1.0289737),
+(50.7767442, -1.0885243);
+
+
+
 INSERT INTO geometry_type (type) VALUES
     ('Point'),
     ('LineString'),
@@ -71,8 +80,11 @@ INSERT INTO geometry (type_id, coordinates) VALUES
   (4, ARRAY[1,2]),
   (1, ARRAY[2]),
   (1, ARRAY[3]),
-  (1, ARRAY[4]),
-  (3, ARRAY[2,1,3]);
+  (1, ARRAY[4]);
+
+INSERT INTO geometry (type_id, coordinates) VALUES (3, ARRAY[
+  6, 7, 8, 9, 10
+]);
 
 -- Inserting data into the 'hazard' table
 INSERT INTO hazard (hazard_date, hazard_timeframe, geometry_id, category_id) VALUES
