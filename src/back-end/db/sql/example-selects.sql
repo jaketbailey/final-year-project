@@ -1,17 +1,20 @@
-
 SELECT 
-  hazard.id AS "Hazard ID",
-  hazard_date AS "Date",
-  geometry_type.type AS "Geometry Type",
-  coordinate.latitude AS "Lat",
-  coordinate.longitude AS "Lon",
-  category.name AS "Category",
-  category.description AS "Category Description"
+  h.id AS "Hazard ID",
+  h.hazard_date AS "Date",
+  gt.type AS "Geometry Type",
+  coord.latitude AS "Lat",
+  coord.longitude AS "Lon",
+  c.name AS "Category",
+  c.description AS "Category Description",
+  p.property_name AS "Property",
+  p.property_value AS "Property Value"
 FROM
-  hazard
-  JOIN geometry ON geometry.id = hazard.geometry_id
-  JOIN category ON category.id = hazard.category_id
-  JOIN geometry_type ON geometry_type.id = geometry.type_id
+  hazard as h
+  JOIN geometry as g ON g.id = h.geometry_id 
+  JOIN category as c ON c.id = h.category_id 
+  JOIN geometry_type as gt ON gt.id = g.type_id 
+  JOIN hazard_property AS hp ON hp.hazard_id = h.id 
+  JOIN property AS p ON p.id = hp.property_id 
   LEFT JOIN LATERAL (
     SELECT
       coordinate.latitude,
@@ -20,16 +23,18 @@ FROM
       coordinate
     WHERE
       coordinate.id = ANY(
-        geometry.coordinates
+        g.coordinates
       )
-  ) AS coordinate ON TRUE
+  ) AS coord ON TRUE
 GROUP BY  
-  hazard.id,
-  hazard_date,
-  geometry_type.type,
-  coordinate.latitude,
-  coordinate.longitude,
-  category.name,
-  category.description
+  h.id,
+  h.hazard_date,
+  gt.type,
+  coord.latitude,
+  coord.longitude,
+  c.name,
+  c.description,
+  p.property_name,
+  p.property_value
 ORDER BY
-  hazard.id;
+  h.id;

@@ -10,18 +10,22 @@ func GetAllHazard() ([]Hazard, error) {
 	hazards := []Hazard{}
 	query := `
 	SELECT 
-		hazard.id AS "Hazard ID",
-		hazard_date AS "Date",
-		geometry_type.type AS "Geometry Type",
-		coordinate.latitude AS "Lat",
-		coordinate.longitude AS "Lon",
-		category.name AS "Category",
-		category.description AS "Category Description"
+		h.id AS "Hazard ID",
+		h.hazard_date AS "Date",
+		gt.type AS "Geometry Type",
+		coord.latitude AS "Lat",
+		coord.longitude AS "Lon",
+		c.name AS "Category",
+		c.description AS "Category Description",
+		p.property_name AS "Property",
+		p.property_value AS "Property Value"
 	FROM
-		hazard
-		JOIN geometry ON geometry.id = hazard.geometry_id
-		JOIN category ON category.id = hazard.category_id
-		JOIN geometry_type ON geometry_type.id = geometry.type_id
+		hazard as h
+		JOIN geometry as g ON g.id = h.geometry_id 
+		JOIN category as c ON c.id = h.category_id 
+		JOIN geometry_type as gt ON gt.id = g.type_id 
+		JOIN hazard_property AS hp ON hp.hazard_id = h.id 
+		JOIN property AS p ON p.id = hp.property_id 
 		LEFT JOIN LATERAL (
 			SELECT
 				coordinate.latitude,
@@ -30,19 +34,21 @@ func GetAllHazard() ([]Hazard, error) {
 				coordinate
 			WHERE
 				coordinate.id = ANY(
-					geometry.coordinates
+					g.coordinates
 				)
-		) AS coordinate ON TRUE
+		) AS coord ON TRUE
 	GROUP BY  
-		hazard.id,
-		hazard_date,
-		geometry_type.type,
-		coordinate.latitude,
-		coordinate.longitude,
-		category.name,
-		category.description
+		h.id,
+		h.hazard_date,
+		gt.type,
+		coord.latitude,
+		coord.longitude,
+		c.name,
+		c.description,
+		p.property_name,
+		p.property_value
 	ORDER BY
-		hazard.id;
+		h.id;
 	`
 
 	rows, err := db.Query(query)
@@ -52,16 +58,17 @@ func GetAllHazard() ([]Hazard, error) {
 	}
 	defer rows.Close()
 	previousRowID := 0
+	var previousProperty Property
 	for rows.Next() {
 		coordinates := []Coordinate{}
 		properties := []Property{}
 
 		var id int
-		var geometryType, category, categoryDesc string
+		var geometryType, category, categoryDesc, propertyKey, propertyValue string
 		var lat, lon float64
 		var hazardDate time.Time
 
-		err = rows.Scan(&id, &hazardDate, &geometryType, &lat, &lon, &category, &categoryDesc)
+		err = rows.Scan(&id, &hazardDate, &geometryType, &lat, &lon, &category, &categoryDesc, &propertyKey, &propertyValue)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
@@ -79,9 +86,15 @@ func GetAllHazard() ([]Hazard, error) {
 				Coordinates: coordinates,
 			}
 
-			property := Property{
+			category := Property{
 				Key:   category,
 				Value: categoryDesc,
+			}
+			properties = append(properties, category)
+
+			property := Property{
+				Key:   propertyKey,
+				Value: propertyValue,
 			}
 			properties = append(properties, property)
 
@@ -92,14 +105,30 @@ func GetAllHazard() ([]Hazard, error) {
 				Properties: properties,
 			}
 			hazards = append(hazards, hazard)
+
 			previousRowID = id
 		} else {
-			coordinate := Coordinate{
-				Latitude:  lat,
-				Longitude: lon,
-			}
+			if propertyKey != previousProperty.Key {
+				coordinate := Coordinate{
+					Latitude:  lat,
+					Longitude: lon,
+				}
 
-			hazards[len(hazards)-1].Geometry.Coordinates = append(hazards[len(hazards)-1].Geometry.Coordinates, coordinate)
+				property := Property{
+					Key:   propertyKey,
+					Value: propertyValue,
+				}
+
+				checkCoord, _ := in_array(coordinate, hazards[len(hazards)-1].Geometry.Coordinates)
+				if checkCoord != true {
+					hazards[len(hazards)-1].Geometry.Coordinates = append(hazards[len(hazards)-1].Geometry.Coordinates, coordinate)
+				}
+
+				checkProperty, _ := in_array(property, hazards[len(hazards)-1].Properties)
+				if checkProperty != true {
+					hazards[len(hazards)-1].Properties = append(hazards[len(hazards)-1].Properties, property)
+				}
+			}
 		}
 	}
 	return hazards, err

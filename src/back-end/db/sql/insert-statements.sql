@@ -68,11 +68,11 @@ INSERT INTO geometry_type (type) VALUES
     ('GeometryCollection');
 
 INSERT INTO geometry (type_id, coordinates) VALUES
-  (1, ARRAY[1,2]),
+  (4, ARRAY[1,2]),
   (1, ARRAY[2]),
   (1, ARRAY[3]),
   (1, ARRAY[4]),
-  (1, ARRAY[2,1,3]);
+  (3, ARRAY[2,1,3]);
 
 -- Inserting data into the 'hazard' table
 INSERT INTO hazard (hazard_date, hazard_timeframe, geometry_id, category_id) VALUES
