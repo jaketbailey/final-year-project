@@ -67,12 +67,27 @@ const Map = (props) => {
       console.log(res);
       const hazards = [];
 
+      const icon = L.icon({
+        iconUrl: '/img/routing/hazard.svg',
+        iconSize: [30, 110],
+        iconAnchor: [15, 68],
+        popupAnchor: [-3, -76],
+      });
+
       for (const hazard of res) {
         console.log(hazard)
         if (hazard.Geometry.Type === "Polygon") {
           console.log(convertCoords(hazard.Geometry.Coordinates))
           hazards.push(
             <Polygon pathOptions={{color: 'purple'}} positions={convertCoords(hazard.Geometry.Coordinates)}/>
+          )
+        } 
+        else if (hazard.Geometry.Type ==="Point") {
+          hazards.push(
+            <Marker 
+              position={[hazard.Geometry.Coordinates[0].Latitude, hazard.Geometry.Coordinates[0].Longitude]}
+              icon={icon}
+            />
           )
         }
         console.log(hazards)

@@ -37,8 +37,6 @@ func GetAllHazard() ([]Hazard, error) {
 					g.coordinates
 				)
 		) AS coord ON TRUE
-	WHERE
-		h.id = 5
 	GROUP BY  
 		h.id,
 		h.hazard_date,

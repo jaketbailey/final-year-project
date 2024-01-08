@@ -52,20 +52,16 @@ INSERT INTO category (name, description) VALUES
 
 -- Inserting data into the 'coordinate' table
 INSERT INTO coordinate (latitude, longitude) VALUES
-  (40.7128, -74.0060), -- New York City
-  (34.0522, -118.2437), -- Los Angeles
-  (41.8781, -87.6298), -- Chicago
-  (29.7604, -95.3698), -- Houston
-  (51.5074, -0.1278); -- London
+  (50.794659, -1.129070), -- Gosport
+  (50.909698, -1.404351), -- Los Angeles
+  (50.798908, -1.091160), -- Portsmouth
+  (50.8056317, -0.9800537), -- Hayling Island
+  (50.8526637,-1.1783134); -- Fareham
 
 INSERT INTO coordinate (latitude, longitude) VALUES
 (50.7930237, -1.1086033),
-(50.7815201, -1.0808016),
 (50.7964959, -1.0317196),
-(50.7866211, -1.0289737),
 (50.7767442, -1.0885243);
-
-
 
 INSERT INTO geometry_type (type) VALUES
     ('Point'),
@@ -83,7 +79,7 @@ INSERT INTO geometry (type_id, coordinates) VALUES
   (1, ARRAY[4]);
 
 INSERT INTO geometry (type_id, coordinates) VALUES (3, ARRAY[
-  6, 7, 8, 9, 10
+  6, 7, 8
 ]);
 
 -- Inserting data into the 'hazard' table

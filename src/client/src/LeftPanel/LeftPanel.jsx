@@ -11,6 +11,8 @@ const LeftPanel = (props) => {
                 <h1 className='legend'>Map Legend</h1>
                     <div><img src="/img/routing/waypoint.svg" className="panelImg"/></div>
                     <div>Route Waypoints</div><hr/>
+                    <div><img src="/img/routing/hazard.svg" className="panelImg"/></div>
+                    <div>Hazards</div><hr/>
                     <div><img src="/img/routing/attractions.svg" className="panelImg"/></div>
                     <div>POI - Attractions</div><hr/>
                     <div><img src="/img/routing/accommodation.svg" className="panelImg"/></div>

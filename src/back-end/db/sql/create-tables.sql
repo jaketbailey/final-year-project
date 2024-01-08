@@ -1,3 +1,9 @@
+CREATE EXTENSION postgis;
+ CREATE EXTENSION postgis_topology;
+ CREATE EXTENSION fuzzystrmatch;
+ CREATE EXTENSION postgis_tiger_geocoder;
+
+
 CREATE TABLE IF NOT EXISTS geometry_type (
     id SERIAL PRIMARY KEY,
     type VARCHAR(20)
@@ -11,15 +17,23 @@ CREATE TABLE IF NOT EXISTS geometry (
 
 CREATE TABLE IF NOT EXISTS coordinate (
     id SERIAL PRIMARY KEY,
+    -- location geometry(Point, 4326)
     latitude DOUBLE PRECISION,
     longitude DOUBLE PRECISION
 );
+
+ALTER TABLE coordinate
+ADD COLUMN location geometry(Point, 4326);
+
+UPDATE coordinate
+SET location = ST_SetSRID(ST_MakePoint(longitude, latitude));
 
 CREATE TABLE IF NOT EXISTS category (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     description TEXT
 );
+
 
 CREATE TABLE IF NOT EXISTS hazard (
     id SERIAL PRIMARY KEY,
