@@ -10,22 +10,19 @@ SELECT
   p.property_value AS "Property Value"
 FROM
   hazard as h
-  JOIN geometry as g ON g.id = h.geometry_id 
+  JOIN geometry_table as g ON g.id = h.geometry_id 
   JOIN category as c ON c.id = h.category_id 
   JOIN geometry_type as gt ON gt.id = g.type_id 
   JOIN hazard_property AS hp ON hp.hazard_id = h.id 
   JOIN property AS p ON p.id = hp.property_id 
-  LEFT JOIN LATERAL (
-    SELECT
-      coordinate.latitude,
-      coordinate.longitude
-    FROM
-      coordinate
-    WHERE
-      coordinate.id = ANY(
-        g.coordinates
-      )
-  ) AS coord ON TRUE
+  JOIN coordinate AS coord ON coord.id = ANY(g.coordinates)
+WHERE
+  ST_DWithin(
+    coord.location,
+    ST_SetSRID(ST_MakePoint(50.909698, -1.404351), 4326),
+    -- ST_MakePoint(@longitude, @latitude)::geo,
+    0.5 * 1609.34
+  )
 GROUP BY  
   h.id,
   h.hazard_date,

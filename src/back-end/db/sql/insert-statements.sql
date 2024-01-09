@@ -51,17 +51,34 @@ INSERT INTO category (name, description) VALUES
 
 
 -- Inserting data into the 'coordinate' table
-INSERT INTO coordinate (latitude, longitude) VALUES
-  (50.794659, -1.129070), -- Gosport
-  (50.909698, -1.404351), -- Los Angeles
-  (50.798908, -1.091160), -- Portsmouth
-  (50.8056317, -0.9800537), -- Hayling Island
-  (50.8526637,-1.1783134); -- Fareham
+-- INSERT INTO coordinate (latitude, longitude) VALUES
+  
+--   (ST_MakePoint(50.794659, -1.129070)), -- Gosport
+--   (ST_MakePoint(50.909698, -1.404351)), -- Los Angeles
+--   (ST_MakePoint(50.798908, -1.091160)), -- Portsmouth
+--   (ST_MakePoint(50.8056317, -0.9800537)), -- Hayling Island
+--   (ST_MakePoint(50.8526637,-1.1783134)); -- Fareham
 
-INSERT INTO coordinate (latitude, longitude) VALUES
-(50.7930237, -1.1086033),
-(50.7964959, -1.0317196),
-(50.7767442, -1.0885243);
+-- INSERT INTO coordinate (latitude, longitude) VALUES
+-- (ST_MakePoint(50.7930237, -1.1086033)),
+-- (ST_MakePoint(50.7964959, -1.0317196)),
+-- (ST_MakePoint(50.7767442, -1.0885243));
+
+INSERT INTO coordinate (longitude, latitude, location)
+VALUES
+    (-1.129070, 50.794659, ST_SetSRID(ST_MakePoint(-1.129070, 50.794659), 4326)), -- Gosport
+    (-1.404351, 50.909698, ST_SetSRID(ST_MakePoint(-1.404351, 50.909698), 4326)), -- Los Angeles
+    (-0.1278, 51.5074, ST_SetSRID(ST_MakePoint(-0.1278, 51.5074), 4326)), -- London
+    -- (-1.091160, 50.798908, ST_SetSRID(ST_MakePoint(-1.091160, 50.798908), 4326)), -- Portsmouth
+    (-0.9800537, 50.8056317, ST_SetSRID(ST_MakePoint(-0.9800537, 50.8056317), 4326)), -- Hayling Island
+    (-1.1783134, 50.8526637, ST_SetSRID(ST_MakePoint(-1.1783134, 50.8526637), 4326)); -- Fareham
+
+INSERT INTO coordinate (longitude, latitude, location)
+VALUES
+    (-1.1086033, 50.7930237, ST_SetSRID(ST_MakePoint(-1.1086033, 50.7930237), 4326)),
+    (-1.0317196, 50.7964959, ST_SetSRID(ST_MakePoint(-1.0317196, 50.7964959), 4326)),
+    (-1.0885243, 50.7767442, ST_SetSRID(ST_MakePoint(-1.0885243, 50.7767442), 4326));
+
 
 INSERT INTO geometry_type (type) VALUES
     ('Point'),
@@ -72,13 +89,13 @@ INSERT INTO geometry_type (type) VALUES
     ('MultiPolygon'),
     ('GeometryCollection');
 
-INSERT INTO geometry (type_id, coordinates) VALUES
+INSERT INTO geometry_table (type_id, coordinates) VALUES
   (4, ARRAY[1,2]),
   (1, ARRAY[2]),
   (1, ARRAY[3]),
   (1, ARRAY[4]);
 
-INSERT INTO geometry (type_id, coordinates) VALUES (3, ARRAY[
+INSERT INTO geometry_table (type_id, coordinates) VALUES (3, ARRAY[
   6, 7, 8
 ]);
 

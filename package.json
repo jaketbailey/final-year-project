@@ -7,9 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build",
-    "serve": "bunx --bun vite preview",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "test": "jest --env=jsdom",
     "backend": "go run main.go",
     "lint:fix": "eslint src/**/*.js --fix",
@@ -76,7 +76,7 @@
     "jest": "^29.5.0",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.6",
-    "vite": "^4.4.9"
+    "vite": "^4.5.1"
   },
   "eslintConfig": {
     "extends": [

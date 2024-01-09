@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS geometry_type (
     type VARCHAR(20)
 );
 
-CREATE TABLE IF NOT EXISTS geometry (
+CREATE TABLE IF NOT EXISTS geometry_table (
     id SERIAL PRIMARY KEY,
     type_id INTEGER REFERENCES geometry_type(id),
     coordinates INTEGER[]
@@ -17,16 +17,13 @@ CREATE TABLE IF NOT EXISTS geometry (
 
 CREATE TABLE IF NOT EXISTS coordinate (
     id SERIAL PRIMARY KEY,
-    -- location geometry(Point, 4326)
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION
+    location geometry(Point, 4326),
+    longitude DOUBLE PRECISION,
+    latitude DOUBLE PRECISION
 );
 
-ALTER TABLE coordinate
-ADD COLUMN location geometry(Point, 4326);
-
 UPDATE coordinate
-SET location = ST_SetSRID(ST_MakePoint(longitude, latitude));
+SET location = ST_MakePoint(longitude, latitude);
 
 CREATE TABLE IF NOT EXISTS category (
     id SERIAL PRIMARY KEY,
@@ -39,7 +36,7 @@ CREATE TABLE IF NOT EXISTS hazard (
     id SERIAL PRIMARY KEY,
     hazard_date DATE,
     hazard_timeframe TIME,
-    geometry_id INTEGER REFERENCES geometry(id),
+    geometry_id INTEGER REFERENCES geometry_table(id),
     category_id INTEGER REFERENCES category(id)
 );
 
@@ -76,6 +73,6 @@ CREATE TRIGGER trigger_check_coordinate_ids BEFORE
 INSERT
     OR
 UPDATE ON 
-  geometry
+  geometry_table
 FOR EACH ROW EXECUTE FUNCTION
 check_coordinate_ids();
