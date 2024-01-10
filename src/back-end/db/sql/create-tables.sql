@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS geometry_table (
 
 CREATE TABLE IF NOT EXISTS coordinate (
     id SERIAL PRIMARY KEY,
-    location geometry(Point, 4326),
+    location geography(Point, 4326),
     longitude DOUBLE PRECISION,
     latitude DOUBLE PRECISION
 );

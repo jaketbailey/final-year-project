@@ -16,12 +16,11 @@ FROM
   JOIN hazard_property AS hp ON hp.hazard_id = h.id 
   JOIN property AS p ON p.id = hp.property_id 
   JOIN coordinate AS coord ON coord.id = ANY(g.coordinates)
-WHERE
+WHERE 
   ST_DWithin(
-    coord.location,
-    ST_SetSRID(ST_MakePoint(50.909698, -1.404351), 4326),
-    -- ST_MakePoint(@longitude, @latitude)::geo,
-    0.5 * 1609.34
+    location::geography,
+    ST_SetSRID(ST_MakePoint(-1.091160, 50.798908), 4326)::geography,
+    5 * 1609.34 
   )
 GROUP BY  
   h.id,
