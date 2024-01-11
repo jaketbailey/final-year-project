@@ -3,12 +3,17 @@ package db
 import (
 	"fmt"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetAllHazards function
-func GetAllHazard() ([]Hazard, error) {
+func GetHazards(c *gin.Context) ([]Hazard, error) {
 	hazards := []Hazard{}
-	query := `
+	latitude := c.Query("latitude")
+	longitude := c.Query("longitude")
+	radius := c.Query("radius")
+	query := fmt.Sprintf(`
 	SELECT 
 		h.id AS "Hazard ID",
 		h.hazard_date AS "Date",
@@ -27,12 +32,11 @@ func GetAllHazard() ([]Hazard, error) {
 		JOIN hazard_property AS hp ON hp.hazard_id = h.id 
 		JOIN property AS p ON p.id = hp.property_id 
 		JOIN coordinate AS coord ON coord.id = ANY(g.coordinates)
-	WHERE
+	WHERE 
 		ST_DWithin(
-			coord.location,
-			ST_SetSRID(ST_MakePoint(50.909698, -1.404351), 4326),
-			-- ST_MakePoint(@longitude, @latitude)::geo,
-			0.5 * 1609.34
+			location::geography,
+			ST_SetSRID(ST_MakePoint(%s, %s), 4326)::geography,
+			%s * 1609.34 
 		)
 	GROUP BY  
 		h.id,
@@ -46,7 +50,8 @@ func GetAllHazard() ([]Hazard, error) {
 		p.property_value
 	ORDER BY
 		h.id;
-	`
+	`, longitude, latitude, radius)
+	fmt.Println(query)
 
 	rows, err := db.Query(query)
 	if err != nil {

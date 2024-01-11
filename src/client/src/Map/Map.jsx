@@ -52,51 +52,7 @@ const Map = (props) => {
   const purpleOptions = { color: 'purple' }
 
   useState(() => {
-    const fetchHazardAreas = async () => {
-
-      const convertCoords = (coordinates) => {
-        const arr = [];
-        for (const coord of coordinates) {
-          arr.push([coord.Latitude, coord.Longitude]);
-        }
-        return arr;
-      }
-
-      const response = await fetch('/api/all-hazard');
-      const res = await response.json();
-      console.log(res);
-      const hazards = [];
-
-      const icon = L.icon({
-        iconUrl: '/img/routing/hazard.svg',
-        iconSize: [30, 110],
-        iconAnchor: [15, 68],
-        popupAnchor: [-3, -76],
-      });
-
-      for (const hazard of res) {
-        console.log(hazard)
-        if (hazard.Geometry.Type === "Polygon") {
-          console.log(convertCoords(hazard.Geometry.Coordinates))
-          hazards.push(
-            <Polygon pathOptions={{color: 'purple'}} positions={convertCoords(hazard.Geometry.Coordinates)}/>
-          )
-        } 
-        else if (hazard.Geometry.Type ==="Point") {
-          hazards.push(
-            <Marker 
-              position={[hazard.Geometry.Coordinates[0].Latitude, hazard.Geometry.Coordinates[0].Longitude]}
-              icon={icon}
-            />
-          )
-        }
-        console.log(hazards)
-      }
-      setHazardAreas(hazards);
-
-    }
     
-    fetchHazardAreas();
   }, [mapCenter])
 
   const getDistance = (coords1, coords2) => {
@@ -181,6 +137,51 @@ const Map = (props) => {
       setKeyPOI(res);
     }
     getPOI();
+
+    const fetchHazardAreas = async () => {
+      const radiusMiles = 5;
+      const convertCoords = (coordinates) => {
+        const arr = [];
+        for (const coord of coordinates) {
+          arr.push([coord.Latitude, coord.Longitude]);
+        }
+        return arr;
+      }
+      const url = `/api/hazards?latitude=${mapCenter.lat}&longitude=${mapCenter.lng}&radius=${radiusMiles}`;
+      const response = await fetch(url);
+      const res = await response.json();
+      console.log(res);
+      const hazards = [];
+
+      const icon = L.icon({
+        iconUrl: '/img/routing/hazard.svg',
+        iconSize: [30, 110],
+        iconAnchor: [15, 68],
+        popupAnchor: [-3, -76],
+      });
+
+      for (const hazard of res) {
+        console.log(hazard)
+        if (hazard.Geometry.Type === "Polygon") {
+          console.log(convertCoords(hazard.Geometry.Coordinates))
+          hazards.push(
+            <Polygon pathOptions={{color: 'purple'}} positions={convertCoords(hazard.Geometry.Coordinates)}/>
+          )
+        } 
+        else if (hazard.Geometry.Type ==="Point") {
+          hazards.push(
+            <Marker 
+              position={[hazard.Geometry.Coordinates[0].Latitude, hazard.Geometry.Coordinates[0].Longitude]}
+              icon={icon}
+            />
+          )
+        }
+        console.log(hazards)
+      }
+      setHazardAreas(hazards);
+    }
+    
+    fetchHazardAreas();
   }, [mapCenter])
 
   useEffect(() => {

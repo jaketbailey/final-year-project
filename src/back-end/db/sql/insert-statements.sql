@@ -49,21 +49,6 @@ INSERT INTO category (name, description) VALUES
 ('leeches', 'Leeches are present'),
 ('washout', 'A section of road which presents a risk to motorists due to washouts.');
 
-
--- Inserting data into the 'coordinate' table
--- INSERT INTO coordinate (latitude, longitude) VALUES
-  
---   (ST_MakePoint(50.794659, -1.129070)), -- Gosport
---   (ST_MakePoint(50.909698, -1.404351)), -- Los Angeles
---   (ST_MakePoint(50.798908, -1.091160)), -- Portsmouth
---   (ST_MakePoint(50.8056317, -0.9800537)), -- Hayling Island
---   (ST_MakePoint(50.8526637,-1.1783134)); -- Fareham
-
--- INSERT INTO coordinate (latitude, longitude) VALUES
--- (ST_MakePoint(50.7930237, -1.1086033)),
--- (ST_MakePoint(50.7964959, -1.0317196)),
--- (ST_MakePoint(50.7767442, -1.0885243));
-
 INSERT INTO coordinate (longitude, latitude, location)
 VALUES
     (-1.129070, 50.794659, ST_SetSRID(ST_MakePoint(-1.129070, 50.794659), 4326)), -- Gosport
@@ -78,7 +63,6 @@ VALUES
     (-1.1086033, 50.7930237, ST_SetSRID(ST_MakePoint(-1.1086033, 50.7930237), 4326)),
     (-1.0317196, 50.7964959, ST_SetSRID(ST_MakePoint(-1.0317196, 50.7964959), 4326)),
     (-1.0885243, 50.7767442, ST_SetSRID(ST_MakePoint(-1.0885243, 50.7767442), 4326));
-
 
 INSERT INTO geometry_type (type) VALUES
     ('Point'),

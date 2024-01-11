@@ -14,8 +14,8 @@ func GetTest(c *gin.Context) {
 	})
 }
 
-func GetAllHazard(c *gin.Context) {
-	rows, err := db.GetAllHazard()
+func GetHazards(c *gin.Context) {
+	rows, err := db.GetHazards(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": err.Error(),
