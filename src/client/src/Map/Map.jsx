@@ -1,11 +1,13 @@
-import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon } from 'react-leaflet'
+import L from "leaflet";
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
-import { useEffect, useState, useRef } from 'react';
-import { getGPX, createStravaActivity } from './routeHelpers';
+import { useEffect, useState, useRef, createRef } from 'react';
 import RoutePreferencesPanel from '../RoutePreferencesPanel/RoutePreferencesPanel';
 import Modal from '../Modal/Modal';
 import ElevationChart from '../ElevationChart/ElevationChart';
 import { gapi } from 'gapi-script';
+import { onDrawCreated } from "./drawHelpers";
+import { EditControl } from "react-leaflet-draw";
 
 /**
  * @function Map
@@ -16,7 +18,8 @@ import { gapi } from 'gapi-script';
 const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
-
+  
+  const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
@@ -24,13 +27,19 @@ const Map = (props) => {
   const [geoJSON, setGeoJSON] = useState(null);
   const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
-  const [stravaData, setStravaData] = useState({});
-  const [googleData, setGoogleData] = useState({});
   const [instructions, setInstructions] = useState([]);
+  
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [showGoogle, setShowGoogle] = useState(false);
+  const [showHazard, setShowHazard] = useState(false);
+
   const [emailData, setEmailData] = useState({});
+  const [stravaData, setStravaData] = useState({});
+  const [googleData, setGoogleData] = useState({});
+  const [hazardData, setHazardData] = useState({});
+  const [hazard, setHazard] = useState({});
+
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
@@ -42,18 +51,6 @@ const Map = (props) => {
   const StravaPolicy = import.meta.env.VITE_STRAVA_HEATMAP_POLICY;
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
-
-  const polygon = [
-    [51.515, -0.09],
-    [51.52, -0.1],
-    [51.52, -0.12],
-  ]
-
-  const purpleOptions = { color: 'purple' }
-
-  useState(() => {
-    
-  }, [mapCenter])
 
   const getDistance = (coords1, coords2) => {
     const deg2rad = (deg) => {
@@ -110,10 +107,37 @@ const Map = (props) => {
   }
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch('/api/categories');
+      const res = await response.json();
+      setCategories(res);
+    }
+
+    fetchCategories();
+  },[])
+
+  useEffect(() => {
     if (map) {
-        map.on("moveend" , () => {
-          setMapCenter(map.getCenter());
-        })
+      map.on("moveend" , () => {
+        setMapCenter(map.getCenter());
+      });
+
+      // setDrawLayer(
+      //   <DrawLayer/>
+      // );
+
+      // console.log('hello')
+      // console.log(DrawLayer)
+
+      // setDrawCtl(
+      //   <DrawControl
+      //     map={map}
+      //     position='topleft'
+      //     drawnItems={drawnItems}
+      //   />
+      // );
+
+        // map.on("draw:drawstop", (e) => onDrawStop(e, ))
       }
   }, [map])
 
@@ -282,7 +306,21 @@ const Map = (props) => {
         zoomControl={true}
         ref={setMap}
       >
-        <Polygon pathOptions={purpleOptions} positions={polygon} />
+        <FeatureGroup>
+          <EditControl
+            position='topleft'
+            draw={{
+                circle: false,
+                circlemarker: false,
+                rectangle: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+            onCreated={(e) => onDrawCreated(e, setHazard, setShowHazard)}
+          />
+        </FeatureGroup>
         <LayersControl position='topleft'>
           <LayersControl.BaseLayer checked name="CyclOSM">
             <TileLayer
@@ -337,7 +375,7 @@ const Map = (props) => {
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
-        />
+        />      
       </MapContainer>
 
       <ElevationChart
@@ -402,6 +440,18 @@ const Map = (props) => {
         gpx={gpx}
         geoJSON={geoJSON}
       />
+      <Modal 
+        id='AddHazardModal' 
+        show={showHazard} 
+        setShow={setShowHazard} 
+        modalTitle='Add Hazard'
+        type='hazard'
+        setHazardData={setHazardData}
+        hazardData={hazardData}
+        hazard={hazard}
+        categories={categories}
+      />
+      
     </div>
   )
 }

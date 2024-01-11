@@ -103,3 +103,7 @@ tr {
     width: 80vw;
   }
 }
+
+.sr-only {
+  display: none;
+}

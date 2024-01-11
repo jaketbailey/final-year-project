@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import './Modal.css'
 import { getGPX, createStravaActivity } from '../Map/routeHelpers'
-
 /**
  * @function Modal
  * @description Universal modal component
@@ -125,6 +124,40 @@ const Modal = (props) => {
     }
   }
 
+  const collateHazardData = () => {
+    console.log(props.hazard)
+    let hazardType = props.hazard.layerType;
+    if (hazardType === 'marker') {
+      hazardType = 'point';
+    }
+
+    const data = {
+      name: '',
+      description: '',
+      type: 1,
+      date: Date.now(),
+      timeframe: 0,
+      coordinates: props.hazard.layer._latlngs[0],
+      properties: []
+    }
+
+    const addHazard  = async () => {
+      
+      
+      const res = await fetch('/hazard', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+      const response = await res.json();
+      console.log(response);
+  }
+
+  // addHazard();
+  }
+
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
@@ -132,6 +165,8 @@ const Modal = (props) => {
     } else if (type === "google") {
       collateGoogleData();
       return;
+    } else if (type === "hazard") {
+      collateHazardData();
     }
 
     const validateEmail = (email) => {
@@ -230,7 +265,37 @@ const Modal = (props) => {
           <button id='upload-drive' className='share' onClick={() => {handleClick(props.type)}}>Save</button>
         </div>
       )
-      }
+    } else if (props.type === 'hazard') {
+      return (
+        <div>
+          <div className='block' id='test1'>
+          <label htmlFor='input-type'>Hazard Type</label><br/>
+          <select id='input-type' name='input-type' type='text' placeholder='myroute'><br/>
+            {props.categories.map((category) => {
+              //split name at _ and capitalize first letter of each word
+              const name = category.Name.split('_').map((word) => {
+                return word.charAt(0).toUpperCase() + word.slice(1) + ' ';
+              })
+              return <option value={category.ID}>{name}</option>
+            })}
+          </select><br/>
+          <label htmlFor='input-desc'>Hazard Description</label><br/>
+          <textarea id='input-desc' name='input-desc' type='text' placeholder='myroute'/><br/>
+          <label htmlFor='input-date'>Date Found</label><br/>
+          <input id='input-date' name='input-date' type='date' placeholder='myroute'/> <br/>
+          <label htmlFor='input-timeframe'>Expected Length of Hazard (Time)</label><br/>
+          <input id='input-timeframe' name='input-timeframe' type='time' placeholder='myroute'/><br/>
+          <label htmlFor='input-danger-level'>Expected Danger Level</label><br/>
+          Low
+          <input id='input-danger-level' name='input-danger-level' type='range' min={1} max={10} defaultValue={5.5}/> High
+          </div>
+          <div className='block'>
+          
+          </div>
+          <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Add</button>
+        </div>
+      )
+    }
   }
 
   return (
