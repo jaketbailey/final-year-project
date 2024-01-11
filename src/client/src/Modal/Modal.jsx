@@ -126,24 +126,63 @@ const Modal = (props) => {
 
   const collateHazardData = () => {
     console.log(props.hazard)
-    let hazardType = props.hazard.layerType;
-    if (hazardType === 'marker') {
-      hazardType = 'point';
+    let geometryType = props.hazard.layerType;
+    if (geometryType === 'marker') {
+      geometryType = 'point';
     }
+    //capitalise geometry type
+    geometryType = geometryType.charAt(0).toUpperCase() + geometryType.slice(1);
+    const geometries = [
+      'Point',
+      'LineString',
+      'Polygon',
+      'MultiPoint',
+      'MultiLineString',
+      'MultiPolygon',
+      'GeometryCollection'
+    ]
+    
+    
+    
+    const geometry = geometries.indexOf(geometryType) + 1
 
+
+    console.log(geometry)
+
+    const hazardType = document.querySelector('#input-type').value,
+          hazardDesc = document.querySelector('#input-desc').value,
+          hazardDate = document.querySelector('#input-date').value,
+          hazardTimeframe = document.querySelector('#input-timeframe').value,
+          hazardDanger = document.querySelector('#input-danger-level').value
+
+
+    // dependant on hazard danger range, set property
+    let hazardProperty;
+    if (hazardDanger < 3 && hazardDanger >= 1) {
+        hazardProperty = 'Low';
+    } else if (hazardDanger > 3 && hazardDanger <= 7) {
+        hazardProperty = 'Medium';
+    } else if (hazardDanger > 7 && hazardDanger <= 10) {
+      hazardProperty = 'High';
+    }
     const data = {
-      name: '',
-      description: '',
-      type: 1,
-      date: Date.now(),
-      timeframe: 0,
+      name: props.categories[hazardType].Name,
+      hazardType: hazardType,
+      description: hazardDesc,
+      geometryType: geometry,
+      date: hazardDate,
+      timeframe: hazardTimeframe,
       coordinates: props.hazard.layer._latlngs[0],
-      properties: []
+      properties: [
+        {
+          Key: 'Danger',
+          Value: hazardProperty
+        }
+      ]
     }
 
+    console.log(data)
     const addHazard  = async () => {
-      
-      
       const res = await fetch('/hazard', {
           method: 'POST',
           headers: {
@@ -155,10 +194,10 @@ const Modal = (props) => {
       console.log(response);
   }
 
-  // addHazard();
+  addHazard();
   }
 
-  const handleClick = (type) => {
+  const handleClick = (type, hazardData) => {
     console.log('clicked')
     if (type === "strava") {
       collateStravaData();
@@ -166,7 +205,7 @@ const Modal = (props) => {
       collateGoogleData();
       return;
     } else if (type === "hazard") {
-      collateHazardData();
+      collateHazardData(hazardData);
     }
 
     const validateEmail = (email) => {
