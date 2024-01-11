@@ -197,7 +197,7 @@ const Modal = (props) => {
   addHazard();
   }
 
-  const handleClick = (type, hazardData) => {
+  const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
       collateStravaData();
@@ -205,7 +205,8 @@ const Modal = (props) => {
       collateGoogleData();
       return;
     } else if (type === "hazard") {
-      collateHazardData(hazardData);
+      collateHazardData();
+      return;
     }
 
     const validateEmail = (email) => {
