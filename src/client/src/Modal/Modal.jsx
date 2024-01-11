@@ -149,7 +149,7 @@ const Modal = (props) => {
 
     console.log(geometry)
 
-    const hazardType = document.querySelector('#input-type').value,
+    const hazardType = parseInt(document.querySelector('#input-type').value),
           hazardDesc = document.querySelector('#input-desc').value,
           hazardDate = document.querySelector('#input-date').value,
           hazardTimeframe = document.querySelector('#input-timeframe').value,
@@ -183,7 +183,7 @@ const Modal = (props) => {
 
     console.log(data)
     const addHazard  = async () => {
-      const res = await fetch('/hazard', {
+      const res = await fetch('/api/hazard', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
