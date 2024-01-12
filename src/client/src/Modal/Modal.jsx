@@ -12,7 +12,7 @@ const Modal = (props) => {
     return null
   }
 
-  const buttonUpdate = (text, type, googleCheck) => {
+  const buttonUpdate = (text, type, check) => {
     let sendBtn = document.querySelector('#send-email');
     if (type === 'strava') {
       sendBtn = document.querySelector('#create-activity-btn');
@@ -20,7 +20,24 @@ const Modal = (props) => {
     if (type === 'google') {
       sendBtn = document.querySelector('#upload-drive');
     }
-    if (!(type === 'google' && googleCheck)) {
+    if (type === 'hazard') {
+      sendBtn = document.querySelector('#save-hazard');
+      sendBtn.textContent = text
+      if (check == 'success') {
+        sendBtn.classList.add('success')
+        setTimeout(() => {
+          sendBtn.classList.remove('success');
+          sendBtn.textContent = 'Save';
+        },1000);
+      } else {
+        sendBtn.classList.add('fail')
+        setTimeout(() => {
+          sendBtn.classList.remove('fail');
+          sendBtn.textContent = 'Save';
+        },1000);
+      }
+    }
+    if (!(type === 'google' && check)) {
       sendBtn.classList.add('fail')
       sendBtn.textContent = text
       setTimeout(() => {
@@ -124,6 +141,11 @@ const Modal = (props) => {
     }
   }
 
+  /**
+   * @function collateHazardData
+   * @description Collate hazard data from modal and send to server
+   * @returns {void}
+   */
   const collateHazardData = () => {
     console.log(props.hazard)
     let coordinates;
@@ -146,12 +168,7 @@ const Modal = (props) => {
       'GeometryCollection'
     ]
     
-    
-    
     const geometry = geometries.indexOf(geometryType) + 1
-
-
-    console.log(geometry)
 
     const hazardType = parseInt(document.querySelector('#input-type').value),
           hazardDesc = document.querySelector('#input-desc').value,
@@ -159,7 +176,6 @@ const Modal = (props) => {
           hazardTimeframe = document.querySelector('#input-timeframe').value,
           hazardDanger = document.querySelector('#input-danger-level').value
 
-    // dependant on hazard danger range, set property
     let hazardProperty;
     if (hazardDanger < 3 && hazardDanger >= 1) {
         hazardProperty = 'Low';
@@ -185,20 +201,27 @@ const Modal = (props) => {
       ]
     }
 
-    console.log(data)
     const addHazard  = async () => {
-      const res = await fetch('/api/hazard', {
+      const response = await fetch('/api/hazard', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
           },
           body: JSON.stringify(data)
       });
-      const response = await res.json();
-      console.log(response);
-  }
+      const res = await response.json();
 
-  addHazard();
+      if (res.status === "Good") {
+        buttonUpdate('Hazard added to database.', 'hazard', 'success');
+        return;
+      } else {
+        buttonUpdate('Error adding hazard.', 'hazard');
+        console.log(res);
+        return;
+      }; 
+    }
+
+    addHazard();
   }
 
   const handleClick = (type) => {

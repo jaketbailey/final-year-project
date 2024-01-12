@@ -121,23 +121,6 @@ const Map = (props) => {
       map.on("moveend" , () => {
         setMapCenter(map.getCenter());
       });
-
-      // setDrawLayer(
-      //   <DrawLayer/>
-      // );
-
-      // console.log('hello')
-      // console.log(DrawLayer)
-
-      // setDrawCtl(
-      //   <DrawControl
-      //     map={map}
-      //     position='topleft'
-      //     drawnItems={drawnItems}
-      //   />
-      // );
-
-        // map.on("draw:drawstop", (e) => onDrawStop(e, ))
       }
   }, [map])
 
