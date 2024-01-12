@@ -126,9 +126,13 @@ const Modal = (props) => {
 
   const collateHazardData = () => {
     console.log(props.hazard)
+    let coordinates;
     let geometryType = props.hazard.layerType;
     if (geometryType === 'marker') {
+      coordinates = [props.hazard.layer._latlng];
       geometryType = 'point';
+    } else {
+      coordinates = props.hazard.layer._latlngs[0];
     }
     //capitalise geometry type
     geometryType = geometryType.charAt(0).toUpperCase() + geometryType.slice(1);
@@ -155,7 +159,6 @@ const Modal = (props) => {
           hazardTimeframe = document.querySelector('#input-timeframe').value,
           hazardDanger = document.querySelector('#input-danger-level').value
 
-
     // dependant on hazard danger range, set property
     let hazardProperty;
     if (hazardDanger < 3 && hazardDanger >= 1) {
@@ -165,6 +168,7 @@ const Modal = (props) => {
     } else if (hazardDanger > 7 && hazardDanger <= 10) {
       hazardProperty = 'High';
     }
+    console.log(props.hazard)
     const data = {
       name: props.categories[hazardType].Name,
       hazardType: hazardType,
@@ -172,7 +176,7 @@ const Modal = (props) => {
       geometryType: geometry,
       date: hazardDate,
       timeframe: hazardTimeframe,
-      coordinates: props.hazard.layer._latlngs[0],
+      coordinates: coordinates,
       properties: [
         {
           Key: 'Danger',
