@@ -7,6 +7,71 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetCategories function
+func GetCategories(c *gin.Context) ([]Category, error) {
+	categories := []Category{}
+	query := `
+	SELECT 
+		id,
+		name
+	FROM 
+		category
+	ORDER BY 
+		id;
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var category Category
+		err := rows.Scan(&category.ID, &category.Name)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		categories = append(categories, category)
+	}
+	return categories, nil
+}
+
+type GeometryType struct {
+	ID   int
+	Type string
+}
+
+// GetGeometryTypes function
+func GetGeometryTypes(c *gin.Context) ([]GeometryType, error) {
+	geometryTypes := []GeometryType{}
+	query := `
+	SELECT 
+		id,
+		type
+	FROM 
+		geometry_type
+	ORDER BY 
+		id;
+	`
+	rows, err := db.Query(query)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var geoType GeometryType
+		err := rows.Scan(&geoType.ID, &geoType.Type)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		geometryTypes = append(geometryTypes, geoType)
+	}
+	return geometryTypes, nil
+}
+
 // GetAllHazards function
 func GetHazards(c *gin.Context) ([]Hazard, error) {
 	hazards := []Hazard{}

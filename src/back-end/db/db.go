@@ -35,6 +35,28 @@ type Hazard struct {
 	Properties []Property
 }
 
+type HazardRequestBody struct {
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	GeometryType int    `json:"geometryType"`
+	HazardType   int    `json:"hazardType"`
+	Timeframe    string `json:"timeframe"`
+	Date         string `json:"date"`
+	Coordinates  []struct {
+		Latitude  float64 `json:"lat"`
+		Longitude float64 `json:"lng"`
+	} `json:"coordinates"`
+	Properties []struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	} `json:"properties"`
+}
+
+type Category struct {
+	ID   int
+	Name string
+}
+
 var db *sql.DB
 
 func Init() {

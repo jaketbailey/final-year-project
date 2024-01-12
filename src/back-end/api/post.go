@@ -6,6 +6,7 @@ package api
 
 import (
 	"cycling-route-planner/src/back-end/config"
+	"cycling-route-planner/src/back-end/db"
 	"cycling-route-planner/src/back-end/utils/logger"
 	"encoding/base64"
 	"fmt"
@@ -92,6 +93,22 @@ func PostSendEmail(c *gin.Context) {
 			})
 		}
 	}
+}
+
+func PostCreateHazard(c *gin.Context) {
+	res, err := db.CreateHazard(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Bad",
+			"message": "Hazard not created",
+			"data":    err,
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": "Good",
+		"data":   res,
+	})
 }
 
 type Activity struct {

@@ -49,6 +49,7 @@
     "jsdoc": "^4.0.2",
     "leaflet": "^1.9.4",
     "leaflet-control-geocoder": "^2.4.0",
+    "leaflet-draw": "^1.0.4",
     "leaflet-routing-machine": "^3.2.12",
     "npm": "^10.2.5",
     "openrouteservice-js": "^0.3.0",
@@ -56,6 +57,7 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
+    "react-leaflet-draw": "^0.20.4",
     "vite-plugin-require": "^1.1.14",
     "vite-plugin-svgr": "^3.2.0",
     "web-vitals": "^2.1.4"

@@ -109,3 +109,63 @@ INSERT INTO hazard_property (property_id, hazard_id) VALUES
   (5, 4),
   (1, 5),
   (5, 5);
+
+
+CREATE OR REPLACE FUNCTION create_hazard_from_json(json_input JSONB) RETURNS void AS $$
+DECLARE 
+    coordinateId INT;
+    geometryId INT;
+    hazardId INT;
+    propertyId INT;
+    coord JSONB;
+    property JSONB;
+    properties_arr JSONB;
+    coordinates_arr JSONB;
+    typeId INT;
+    hazardDate DATE;
+    hazardTimeframe TIME;
+    categoryId INT;
+    coordinateIds INT[] := '{}'; -- Corrected syntax
+BEGIN
+    -- Extract values from JSON 
+    typeId := (json_input->>'hazardType')::INT;
+    hazardDate := (json_input->>'date')::DATE;
+    hazardTimeframe := (json_input->>'timeframe')::TIME;
+    categoryId := (json_input->>'geometryType')::INT;
+
+    -- the loop
+    FOR coord IN SELECT * FROM jsonb_array_elements(json_input->'coordinates')
+    LOOP
+        -- Insert 
+        INSERT INTO coordinate (latitude, longitude, location)
+        VALUES ((coord->>'lat')::DOUBLE PRECISION, (coord->>'lng')::DOUBLE PRECISION, ST_SetSRID(ST_MakePoint((coord->>'lng')::DOUBLE PRECISION, (coord->>'lat')::DOUBLE PRECISION), 4326))
+        RETURNING id INTO coordinateId;
+
+        -- Append 
+        coordinateIds := array_append(coordinateIds, coordinateId);
+    END LOOP;
+
+    -- Insert into geometry
+    INSERT INTO geometry_table (type_id, coordinates)
+    VALUES (categoryId, coordinateIds)
+    RETURNING id INTO geometryId;
+
+    -- Insert into hazard
+    INSERT INTO hazard (hazard_date, hazard_timeframe, geometry_id, category_id)
+    VALUES (hazardDate, hazardTimeframe, geometryId, typeId)
+    RETURNING id INTO hazardId;
+
+        -- Loop through properties array and insert each property
+      FOR property IN SELECT * FROM jsonb_array_elements(json_input->'properties')
+      LOOP
+          -- Insert into property
+          INSERT INTO property (property_name, property_value)
+          VALUES ((property->>'key'), (property->>'value'))
+          RETURNING id INTO propertyId;
+
+          -- Insert into hazard_property
+          INSERT INTO hazard_property (hazard_id, property_id)
+          VALUES (hazardId, propertyId);
+      END LOOP;
+END;
+$$ LANGUAGE plpgsql;

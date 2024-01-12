@@ -34,3 +34,4 @@ GROUP BY
   p.property_value
 ORDER BY
   h.id;
+

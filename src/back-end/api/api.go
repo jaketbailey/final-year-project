@@ -17,11 +17,14 @@ func Init(router *gin.Engine) {
 		// GET Routes
 		api.GET("/ping", GetTest)
 		api.GET("/hazards", GetHazards)
+		api.GET("/categories", GetCategories)
+		api.GET("/geotypes", GetGeometryTypes)
 
 		// POST Routes
 		api.POST("/test", PostTest)
 		api.POST("/send-email", PostSendEmail)
 		api.POST("/create-strava-activity", PostCreateStravaActivity)
+		api.POST("/hazard", PostCreateHazard)
 
 		// PUT Routes
 		api.PUT("/test", PutTest)
