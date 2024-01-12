@@ -184,7 +184,25 @@ const Modal = (props) => {
     } else if (hazardDanger > 7 && hazardDanger <= 10) {
       hazardProperty = 'High';
     }
-    console.log(props.hazard)
+
+    //input validation
+    if (hazardType === 0) {
+      buttonUpdate('Hazard type is blank', 'hazard');
+      return;
+    } 
+    if (hazardDesc.trim() === '') {
+      buttonUpdate('Hazard description is blank', 'hazard');
+      return;
+    }
+    if (hazardDate.trim() === '') {
+      buttonUpdate('Ha\zard date is blank', 'hazard');
+      return;
+    }
+    if (hazardTimeframe.trim() === '') {
+      buttonUpdate('Hazard timeframe is blank', 'hazard');
+      return;
+    }
+
     const data = {
       name: props.categories[hazardType].Name,
       hazardType: hazardType,
