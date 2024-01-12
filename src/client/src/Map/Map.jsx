@@ -121,7 +121,7 @@ const Map = (props) => {
       map.on("moveend" , () => {
         setMapCenter(map.getCenter());
       });
-      }
+    }
   }, [map])
 
   useEffect(() => {
@@ -169,10 +169,33 @@ const Map = (props) => {
 
       for (const hazard of res) {
         console.log(hazard)
+        let hazardType = hazard.Properties[0].Key
+        console.log(hazard.Date)
+        let date = Date.parse(hazard.Date);
+        date = new Date(date);
+        const formattedDate = date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric'
+        });
+        
+        hazardType = hazardType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         if (hazard.Geometry.Type === "Polygon") {
           console.log(convertCoords(hazard.Geometry.Coordinates))
           hazards.push(
-            <Polygon pathOptions={{color: 'purple'}} positions={convertCoords(hazard.Geometry.Coordinates)}/>
+            <Polygon 
+              pathOptions={{color: '#FFBF00'}} 
+              positions={convertCoords(hazard.Geometry.Coordinates)}
+            >
+              <Popup>
+                  <h3>{hazardType}</h3>
+                  <p>
+                    Description: {hazard.Properties[0].Value}<br/>
+                    Danger Risk: {hazard.Properties[1].Value}<br/>
+                    Date Reported: {formattedDate}
+                  </p>
+              </Popup>  
+            </Polygon>
           )
         } 
         else if (hazard.Geometry.Type ==="Point") {
@@ -180,7 +203,11 @@ const Map = (props) => {
             <Marker 
               position={[hazard.Geometry.Coordinates[0].Latitude, hazard.Geometry.Coordinates[0].Longitude]}
               icon={icon}
-            />
+            >
+              <Popup>
+                <h3>{hazardType}</h3>
+              </Popup>
+            </Marker>
           )
         }
         console.log(hazards)
