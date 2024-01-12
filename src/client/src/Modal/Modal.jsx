@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import './Modal.css'
 import { getGPX, createStravaActivity } from '../Map/routeHelpers'
-
 /**
  * @function Modal
  * @description Universal modal component
@@ -13,7 +12,7 @@ const Modal = (props) => {
     return null
   }
 
-  const buttonUpdate = (text, type, googleCheck) => {
+  const buttonUpdate = (text, type, check) => {
     let sendBtn = document.querySelector('#send-email');
     if (type === 'strava') {
       sendBtn = document.querySelector('#create-activity-btn');
@@ -21,7 +20,24 @@ const Modal = (props) => {
     if (type === 'google') {
       sendBtn = document.querySelector('#upload-drive');
     }
-    if (!(type === 'google' && googleCheck)) {
+    if (type === 'hazard') {
+      sendBtn = document.querySelector('#save-hazard');
+      sendBtn.textContent = text
+      if (check == 'success') {
+        sendBtn.classList.add('success')
+        setTimeout(() => {
+          sendBtn.classList.remove('success');
+          sendBtn.textContent = 'Save';
+        },1000);
+      } else {
+        sendBtn.classList.add('fail')
+        setTimeout(() => {
+          sendBtn.classList.remove('fail');
+          sendBtn.textContent = 'Save';
+        },1000);
+      }
+    }
+    if (!(type === 'google' && check)) {
       sendBtn.classList.add('fail')
       sendBtn.textContent = text
       setTimeout(() => {
@@ -64,7 +80,6 @@ const Modal = (props) => {
       start: startDate,
       speed: avgSpeed,
     }
-
 
     console.log(stravaData)
     props.setStravaData(stravaData)
@@ -126,12 +141,116 @@ const Modal = (props) => {
     }
   }
 
+  /**
+   * @function collateHazardData
+   * @description Collate hazard data from modal and send to server
+   * @returns {void}
+   */
+  const collateHazardData = () => {
+    console.log(props.hazard)
+    let coordinates;
+    let geometryType = props.hazard.layerType;
+    if (geometryType === 'marker') {
+      coordinates = [props.hazard.layer._latlng];
+      geometryType = 'point';
+    } else {
+      coordinates = props.hazard.layer._latlngs[0];
+    }
+    //capitalise geometry type
+    geometryType = geometryType.charAt(0).toUpperCase() + geometryType.slice(1);
+    const geometries = [
+      'Point',
+      'LineString',
+      'Polygon',
+      'MultiPoint',
+      'MultiLineString',
+      'MultiPolygon',
+      'GeometryCollection'
+    ]
+    
+    const geometry = geometries.indexOf(geometryType) + 1
+
+    const hazardType = parseInt(document.querySelector('#input-type').value),
+          hazardDesc = document.querySelector('#input-desc').value,
+          hazardDate = document.querySelector('#input-date').value,
+          hazardTimeframe = document.querySelector('#input-timeframe').value,
+          hazardDanger = document.querySelector('#input-danger-level').value
+
+    let hazardProperty;
+    if (hazardDanger < 3 && hazardDanger >= 1) {
+        hazardProperty = 'Low';
+    } else if (hazardDanger > 3 && hazardDanger <= 7) {
+        hazardProperty = 'Medium';
+    } else if (hazardDanger > 7 && hazardDanger <= 10) {
+      hazardProperty = 'High';
+    }
+
+    //input validation
+    if (hazardType === 0) {
+      buttonUpdate('Hazard type is blank', 'hazard');
+      return;
+    } 
+    if (hazardDesc.trim() === '') {
+      buttonUpdate('Hazard description is blank', 'hazard');
+      return;
+    }
+    if (hazardDate.trim() === '') {
+      buttonUpdate('Ha\zard date is blank', 'hazard');
+      return;
+    }
+    if (hazardTimeframe.trim() === '') {
+      buttonUpdate('Hazard timeframe is blank', 'hazard');
+      return;
+    }
+
+    const data = {
+      name: props.categories[hazardType].Name,
+      hazardType: hazardType,
+      description: hazardDesc,
+      geometryType: geometry,
+      date: hazardDate,
+      timeframe: hazardTimeframe,
+      coordinates: coordinates,
+      properties: [
+        {
+          Key: 'Danger',
+          Value: hazardProperty
+        }
+      ]
+    }
+
+    const addHazard  = async () => {
+      const response = await fetch('/api/hazard', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+      });
+      const res = await response.json();
+
+      if (res.status === "Good") {
+        buttonUpdate('Hazard added to database.', 'hazard', 'success');
+        return;
+      } else {
+        buttonUpdate('Error adding hazard.', 'hazard');
+        console.log(res);
+        return;
+      }; 
+    }
+
+    addHazard();
+  }
+
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
       collateStravaData();
     } else if (type === "google") {
       collateGoogleData();
+      return;
+    } else if (type === "hazard") {
+      collateHazardData();
       return;
     }
 
@@ -231,7 +350,37 @@ const Modal = (props) => {
           <button id='upload-drive' className='share' onClick={() => {handleClick(props.type)}}>Save</button>
         </div>
       )
-      }
+    } else if (props.type === 'hazard') {
+      return (
+        <div>
+          <div className='block' id='test1'>
+          <label htmlFor='input-type'>Hazard Type</label><br/>
+          <select id='input-type' name='input-type' type='text' placeholder='myroute'><br/>
+            {props.categories.map((category) => {
+              //split name at _ and capitalize first letter of each word
+              const name = category.Name.split('_').map((word) => {
+                return word.charAt(0).toUpperCase() + word.slice(1) + ' ';
+              })
+              return <option value={category.ID}>{name}</option>
+            })}
+          </select><br/>
+          <label htmlFor='input-desc'>Hazard Description</label><br/>
+          <textarea id='input-desc' name='input-desc' type='text' placeholder='myroute'/><br/>
+          <label htmlFor='input-date'>Date Found</label><br/>
+          <input id='input-date' name='input-date' type='date' placeholder='myroute'/> <br/>
+          <label htmlFor='input-timeframe'>Expected Length of Hazard (Time)</label><br/>
+          <input id='input-timeframe' name='input-timeframe' type='time' placeholder='myroute'/><br/>
+          <label htmlFor='input-danger-level'>Expected Danger Level</label><br/>
+          Low
+          <input id='input-danger-level' name='input-danger-level' type='range' min={1} max={10} defaultValue={5.5}/> High
+          </div>
+          <div className='block'>
+          
+          </div>
+          <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Add</button>
+        </div>
+      )
+    }
   }
 
   return (

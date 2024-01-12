@@ -16,6 +16,7 @@ func Init(router *gin.Engine) {
 	{
 		// GET Routes
 		api.GET("/ping", GetTest)
+		api.GET("/hazards", GetHazards)
 
 		// POST Routes
 		api.POST("/test", PostTest)

@@ -1,11 +1,13 @@
-import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup } from 'react-leaflet'
+import L from "leaflet";
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
-import { useEffect, useState, useRef } from 'react';
-import { getGPX, createStravaActivity } from './routeHelpers';
+import { useEffect, useState, useRef, createRef } from 'react';
 import RoutePreferencesPanel from '../RoutePreferencesPanel/RoutePreferencesPanel';
 import Modal from '../Modal/Modal';
 import ElevationChart from '../ElevationChart/ElevationChart';
 import { gapi } from 'gapi-script';
+import { onDrawCreated } from "./drawHelpers";
+import { EditControl } from "react-leaflet-draw";
 
 /**
  * @function Map
@@ -16,7 +18,8 @@ import { gapi } from 'gapi-script';
 const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
-
+  
+  const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
   const [summary, setSummary] = useState({});
@@ -24,16 +27,23 @@ const Map = (props) => {
   const [geoJSON, setGeoJSON] = useState(null);
   const [gpx, setGPX] = useState(null);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
-  const [stravaData, setStravaData] = useState({});
-  const [googleData, setGoogleData] = useState({});
   const [instructions, setInstructions] = useState([]);
+  
   const [show, setShow] = useState(false);
   const [showStrava, setShowStrava] = useState(false);
   const [showGoogle, setShowGoogle] = useState(false);
+  const [showHazard, setShowHazard] = useState(false);
+
   const [emailData, setEmailData] = useState({});
+  const [stravaData, setStravaData] = useState({});
+  const [googleData, setGoogleData] = useState({});
+  const [hazardData, setHazardData] = useState({});
+  const [hazard, setHazard] = useState({});
+
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
+  const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
@@ -97,11 +107,21 @@ const Map = (props) => {
   }
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      const response = await fetch('/api/categories');
+      const res = await response.json();
+      setCategories(res);
+    }
+
+    fetchCategories();
+  },[])
+
+  useEffect(() => {
     if (map) {
-        map.on("moveend" , () => {
-          setMapCenter(map.getCenter());
-        })
-      }
+      map.on("moveend" , () => {
+        setMapCenter(map.getCenter());
+      });
+    }
   }, [map])
 
   useEffect(() => {
@@ -124,6 +144,78 @@ const Map = (props) => {
       setKeyPOI(res);
     }
     getPOI();
+
+    const fetchHazardAreas = async () => {
+      const radiusMiles = 5;
+      const convertCoords = (coordinates) => {
+        const arr = [];
+        for (const coord of coordinates) {
+          arr.push([coord.Latitude, coord.Longitude]);
+        }
+        return arr;
+      }
+      const url = `/api/hazards?latitude=${mapCenter.lat}&longitude=${mapCenter.lng}&radius=${radiusMiles}`;
+      const response = await fetch(url);
+      const res = await response.json();
+      console.log(res);
+      const hazards = [];
+
+      const icon = L.icon({
+        iconUrl: '/img/routing/hazard.svg',
+        iconSize: [30, 110],
+        iconAnchor: [15, 68],
+        popupAnchor: [-3, -76],
+      });
+
+      for (const hazard of res) {
+        console.log(hazard)
+        let hazardType = hazard.Properties[0].Key
+        console.log(hazard.Date)
+        let date = Date.parse(hazard.Date);
+        date = new Date(date);
+        const formattedDate = date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'numeric',
+          year: 'numeric'
+        });
+        
+        hazardType = hazardType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        if (hazard.Geometry.Type === "Polygon") {
+          console.log(convertCoords(hazard.Geometry.Coordinates))
+          hazards.push(
+            <Polygon 
+              pathOptions={{color: '#FFBF00'}} 
+              positions={convertCoords(hazard.Geometry.Coordinates)}
+            >
+              <Popup>
+                  <h3>{hazardType}</h3>
+                  <p>
+                    Description: {hazard.Properties[0].Value}<br/>
+                    Danger Risk: {hazard.Properties[1].Value}<br/>
+                    Date Reported: {formattedDate}
+                  </p>
+              </Popup>  
+            </Polygon>
+          )
+        } 
+        else if (hazard.Geometry.Type ==="Point") {
+          hazards.push(
+            <Marker 
+              position={[hazard.Geometry.Coordinates[0].Latitude, hazard.Geometry.Coordinates[0].Longitude]}
+              icon={icon}
+            >
+              <Popup>
+                <h3>{hazardType}</h3>
+              </Popup>
+            </Marker>
+          )
+        }
+        console.log(hazards)
+      }
+      setHazardAreas(hazards);
+    }
+    
+    fetchHazardAreas();
   }, [mapCenter])
 
   useEffect(() => {
@@ -224,6 +316,21 @@ const Map = (props) => {
         zoomControl={true}
         ref={setMap}
       >
+        <FeatureGroup>
+          <EditControl
+            position='topleft'
+            draw={{
+                circle: false,
+                circlemarker: false,
+                rectangle: false,
+            }}
+            edit={{
+              remove: false,
+              edit: false,
+            }}
+            onCreated={(e) => onDrawCreated(e, setHazard, setShowHazard)}
+          />
+        </FeatureGroup>
         <LayersControl position='topleft'>
           <LayersControl.BaseLayer checked name="CyclOSM">
             <TileLayer
@@ -260,6 +367,11 @@ const Map = (props) => {
               {keyPOIMarkers.attractions} 
             </LayerGroup>
           </LayersControl.Overlay>
+          <LayersControl.Overlay name="Hazard Areas">
+            <LayerGroup>
+              {hazardAreas}
+            </LayerGroup>
+          </LayersControl.Overlay>
         </LayersControl>
         <RoutingMachine
           setCoordinates={setCoordinates}
@@ -273,7 +385,7 @@ const Map = (props) => {
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
-        />
+        />      
       </MapContainer>
 
       <ElevationChart
@@ -338,6 +450,18 @@ const Map = (props) => {
         gpx={gpx}
         geoJSON={geoJSON}
       />
+      <Modal 
+        id='AddHazardModal' 
+        show={showHazard} 
+        setShow={setShowHazard} 
+        modalTitle='Add Hazard'
+        type='hazard'
+        setHazardData={setHazardData}
+        hazardData={hazardData}
+        hazard={hazard}
+        categories={categories}
+      />
+      
     </div>
   )
 }
