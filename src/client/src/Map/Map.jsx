@@ -178,7 +178,7 @@ const Map = (props) => {
           month: 'numeric',
           year: 'numeric'
         });
-        
+
         hazardType = hazardType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         if (hazard.Geometry.Type === "Polygon") {
           console.log(convertCoords(hazard.Geometry.Coordinates))
@@ -206,6 +206,11 @@ const Map = (props) => {
             >
               <Popup>
                 <h3>{hazardType}</h3>
+                <p>
+                  Description: {hazard.Properties[0].Value}<br/>
+                  Danger Risk: {hazard.Properties[1].Value}<br/>
+                  Date Reported: {formattedDate}
+                </p>
               </Popup>
             </Marker>
           )
