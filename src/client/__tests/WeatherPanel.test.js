@@ -1,4 +1,4 @@
-import WeatherPanel from '../src/WeatherPanel/WeatherPanel';
+import WeatherPanel from '../src/LeftPanel/WeatherPanel/WeatherPanel';
 import { render, act } from '@testing-library/react';
 import { enableFetchMocks } from 'jest-fetch-mock';
 enableFetchMocks();

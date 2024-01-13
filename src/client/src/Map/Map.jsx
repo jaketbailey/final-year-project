@@ -10,7 +10,7 @@ import { onDrawCreated } from "./drawHelpers";
 import { EditControl } from "react-leaflet-draw";
 
 /**
- * @function Map
+ * @component Map
  * @description Creates an Open Street Map component with a route planning engine
  * @param {*} props 
  * @returns Map component
@@ -52,6 +52,15 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
+  /**
+   * Calculate the great-circle distance between two points on the Earth's surface
+   * using their latitude and longitude coordinates.
+   *
+   * @function getDistance
+   * @param {Object} coords1 - Object with 'lat' and 'lon' properties for the first point.
+   * @param {Object} coords2 - Object with 'lat' and 'lon' properties for the second point.
+   * @returns {number} Distance in kilometers.
+   */
   const getDistance = (coords1, coords2) => {
     const deg2rad = (deg) => {
       return deg * (Math.PI/180)
@@ -70,6 +79,14 @@ const Map = (props) => {
     return d;
   }
 
+  /**
+   * Sets a route waypoint at the specified coordinates. If 'to' is provided, the final waypoint
+   * is replaced with new coordinates. Otherwise, a new waypoint is added along the route, and its
+   * position is determined based on the distance between existing waypoints.
+   * @function setRouteWaypoint
+   * @param {Object} coords - Coordinates object with 'lat' and 'lon' properties for the new waypoint.
+   * @param {boolean} [to=false] - Optional flag indicating if the new waypoint should replace the final one.
+   */
   const setRouteWaypoint = (coords, to) => {
     const currentWaypoints = control.current._plan._waypoints;
     
@@ -125,7 +142,6 @@ const Map = (props) => {
   }, [map])
 
   useEffect(() => {
-    // const radius = 8046 // 5 miles
     const radius = 48280 // 5 miles
     const accommodation = 19009
     const attractions = 16000
@@ -145,6 +161,15 @@ const Map = (props) => {
     }
     getPOI();
 
+    /**
+     * Asynchronously fetches hazard areas from the server based on the provided map center coordinates and radius.
+     * Creates map elements (Polygon or Marker) for each hazard and adds them to the hazards array.
+     * Logs the fetched data and creates map elements with associated popups.
+     * 
+     * @async
+     * @function fetchHazardAreas
+     * @returns {Promise<void>} A Promise that resolves after hazards are fetched and processed.
+     */
     const fetchHazardAreas = async () => {
       const radiusMiles = 5;
       const convertCoords = (coordinates) => {
@@ -215,7 +240,6 @@ const Map = (props) => {
             </Marker>
           )
         }
-        console.log(hazards)
       }
       setHazardAreas(hazards);
     }

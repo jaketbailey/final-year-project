@@ -7,6 +7,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateHazard creates a new hazard using the provided JSON request body.
+//
+// The function takes a Gin context (`c`) as a parameter, reads and validates
+// the JSON request body, converts the Coordinates and Properties fields to
+// PostgreSQL-compatible JSON, and then executes a PostgreSQL function
+// (`create_hazard_from_json`) to store the hazard in the database.
+//
+// Parameters:
+//   - c: Gin context representing the HTTP request and response context.
+//
+// Returns:
+//   - An interface{} representing the created hazard.
+//   - An error if any issues occur during processing.
+//
+// Example Usage:
+//
+//	hazard, err := CreateHazard(c)
+//	if err != nil {
+//	    // Handle error
+//	}
+//	// Use the created hazard
+//
+// Note: This function assumes the existence of the 'create_hazard_from_json'
+// PostgreSQL function, and it formats the input parameters as a JSON object.
 func CreateHazard(c *gin.Context) (interface{}, error) {
 	var hazard HazardRequestBody
 

@@ -14,6 +14,11 @@ func GetTest(c *gin.Context) {
 	})
 }
 
+// GET Req handler functions for the for multiple endpoints.
+// It retrieves data from the database and returns a JSON response.
+// If an error occurs during the database query, it responds with a 500 Internal Server Error
+// and includes the error message in the response JSON.
+
 func GetCategories(c *gin.Context) {
 	rows, err := db.GetCategories(c)
 	if err != nil {

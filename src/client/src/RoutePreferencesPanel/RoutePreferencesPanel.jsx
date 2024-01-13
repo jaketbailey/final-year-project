@@ -4,7 +4,7 @@ import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
 
 /**
- * @function RoutePreferencesPanel
+ * @component RoutePreferencesPanel
  * @description Creates a panel for the user to select route preferences
  * @param {*} props
  * @returns RoutePreferencesPanel component

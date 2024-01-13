@@ -105,7 +105,7 @@ func PostCreateHazard(c *gin.Context) {
 			"data":    err,
 		})
 	}
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusCreated, gin.H{
 		"status": "Good",
 		"data":   res,
 	})

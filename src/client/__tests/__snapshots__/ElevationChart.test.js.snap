@@ -20,8 +20,15 @@ exports[`ElevationChart renders without crashing 1`] = `
         </div>
         <div
           id="main-chart"
-          style="display: none;"
+          style="height: 11rem; padding-bottom: 2rem;"
         >
+          <button
+            class="btn btn-primary"
+          >
+            Reset Zoom
+          </button>
+          Segment Distance: 
+          km
           <canvas
             class="chart"
             id="elevation-chart"
@@ -46,8 +53,15 @@ exports[`ElevationChart renders without crashing 1`] = `
       </div>
       <div
         id="main-chart"
-        style="display: none;"
+        style="height: 11rem; padding-bottom: 2rem;"
       >
+        <button
+          class="btn btn-primary"
+        >
+          Reset Zoom
+        </button>
+        Segment Distance: 
+        km
         <canvas
           class="chart"
           id="elevation-chart"

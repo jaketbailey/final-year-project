@@ -1,5 +1,15 @@
 import './DailyForecast.css'
 
+/**
+ * Functional component representing the daily weather forecast for the upcoming week.
+ * It displays information for each day, including the day name, date, weather icon, temperature range, and weather condition.
+ * The weather data is provided as props and is fetched from the OpenWeatherMap API.
+ *
+ * @component DailyForecast
+ * @param {object} props - The properties passed to the component.
+ * @param {Array} props.daily - An array containing daily weather forecast data.
+ * @returns {JSX.Element} JSX representing the daily weather forecast.
+ */
 const DailyForecast = (props) => {
   const getDayString = (index) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
