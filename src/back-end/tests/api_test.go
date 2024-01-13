@@ -1,4 +1,4 @@
-package api_test
+package tests
 
 import (
 	"cycling-route-planner/src/back-end/db"
