@@ -188,12 +188,6 @@ const ElevationChart = (props) => {
                   modifierKey: 'ctrl',
                 },
                 onZoomComplete: (chart) => {onZoomComplete(chart)},
-                // wheel: {
-                //   enabled: true,
-                // },
-                // pinch: {
-                //   enabled: true
-                // },
                 mode: 'x',
               },
               pan: {

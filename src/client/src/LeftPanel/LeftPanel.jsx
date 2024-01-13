@@ -1,8 +1,16 @@
 import './LeftPanel.css';
 import WeatherPanel from './WeatherPanel/WeatherPanel';
 
-const LeftPanel = (props) => {
 
+/**
+ * Functional component representing the left panel of the application.
+ * It includes a weather panel and a map legend.
+ *
+ * @component
+ * @param {object} props - The properties passed to the component.
+ * @returns {JSX.Element} JSX representing the left panel.
+ */
+const LeftPanel = (props) => {
     return (
         <div className="left-panel__container">
             <div className="left-panel">

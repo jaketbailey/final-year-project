@@ -3,7 +3,7 @@ import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
 
 /**
- * @function SharePanel
+ * @component SharePanel
  * @description Share Panel is a sub-component of RoutePreferencesPanel which provides the share functionality of the application.
  * @param {*} props 
  * @returns SharePanel component

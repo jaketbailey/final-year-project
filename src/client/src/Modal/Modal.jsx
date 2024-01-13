@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import './Modal.css'
 import { getGPX, createStravaActivity } from '../Map/routeHelpers'
 /**
- * @function Modal
+ * @component Modal
  * @description Universal modal component
  * @param {*} props 
  * @returns Modal component

@@ -4,6 +4,14 @@ import './WeatherPanel.css'
 
 import DailyForecast from './DailyForecast';
 
+/**
+ * Functional component representing the weather panel of the application.
+ * It displays the current weather information, including temperature, wind speed, UV index, and more.
+ * The weather data is fetched from the OpenWeatherMap API based on the user's geolocation.
+ *
+ * @component WeatherPanel
+ * @returns {JSX.Element} JSX representing the weather panel.
+ */
 const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')

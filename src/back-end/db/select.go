@@ -7,7 +7,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetCategories function
+// GetCategories retrieves a list of categories from the database.
+//
+// The function queries the 'category' table in the database to fetch
+// categories sorted by ID. It returns a slice of Category structures,
+// each containing an ID and a Name. If any errors occur during the
+// database query or result processing, an error is returned.
+//
+// Parameters:
+//   - c: Gin context representing the HTTP request and response context.
+//
+// Returns:
+//   - A slice of Category representing the retrieved categories.
+//   - An error if any issues occur during the database query or result processing.
+//
+// Example Usage:
+//
+//	categories, err := GetCategories(c)
+//	if err != nil {
+//	    // Handle error
+//	}
+//	// Use the retrieved categories
+//
+// Note: This function assumes the existence of a 'category' table in the
+// database with 'id' and 'name' columns.
 func GetCategories(c *gin.Context) ([]Category, error) {
 	categories := []Category{}
 	query := `
@@ -42,7 +65,30 @@ type GeometryType struct {
 	Type string
 }
 
-// GetGeometryTypes function
+// GetGeometryTypes retrieves a list of geometry types from the database.
+//
+// The function queries the 'geometry_type' table in the database to fetch
+// geometry types sorted by ID. It returns a slice of GeometryType structures,
+// each containing an ID and a Type. If any errors occur during the
+// database query or result processing, an error is returned.
+//
+// Parameters:
+//   - c: Gin context representing the HTTP request and response context.
+//
+// Returns:
+//   - A slice of GeometryType representing the retrieved geometry types.
+//   - An error if any issues occur during the database query or result processing.
+//
+// Example Usage:
+//
+//	geoTypes, err := GetGeometryTypes(c)
+//	if err != nil {
+//	    // Handle error
+//	}
+//	// Use the retrieved geometry types
+//
+// Note: This function assumes the existence of a 'geometry_type' table in the
+// database with 'id' and 'type' columns.
 func GetGeometryTypes(c *gin.Context) ([]GeometryType, error) {
 	geometryTypes := []GeometryType{}
 	query := `
@@ -72,7 +118,33 @@ func GetGeometryTypes(c *gin.Context) ([]GeometryType, error) {
 	return geometryTypes, nil
 }
 
-// GetAllHazards function
+// GetHazards retrieves a list of hazards from the database based on
+// specified geographical coordinates (latitude, longitude) and radius.
+//
+// The function queries the database to fetch hazards that fall within
+// a specified radius of the provided latitude and longitude. It returns
+// a slice of Hazard structures, each containing an ID, Date, Geometry
+// (including Coordinates and Geometry Type), and Properties (including
+// Category and Hazard-specific properties).
+//
+// Parameters:
+//   - c: Gin context representing the HTTP request and response context.
+//
+// Returns:
+//   - A slice of Hazard representing the retrieved hazards.
+//   - An error if any issues occur during the database query or result processing.
+//
+// Example Usage:
+//
+//	hazards, err := GetHazards(c)
+//	if err != nil {
+//	    // Handle error
+//	}
+//	// Use the retrieved hazards
+//
+// Note: This function assumes the existence of tables 'hazard', 'geometry_table',
+// 'category', 'geometry_type', 'hazard_property', 'property', and 'coordinate' in
+// the database with appropriate columns and relationships.
 func GetHazards(c *gin.Context) ([]Hazard, error) {
 	hazards := []Hazard{}
 	latitude := c.Query("latitude")
