@@ -13,28 +13,23 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type Category struct {
-	ID   int    `json:"ID"`
-	Name string `json:"Name"`
-}
-
-func TestGetCategories(t *testing.T) {
+func TestGetGeoTypes(t *testing.T) {
 	err := godotenv.Load("../../../.env")
 	if err != nil {
 		log.Fatal(err)
 		log.Fatal("Error loading .env file")
 	}
 	db.Init()
-	// Set Gin to test mode
 
+	// Set Gin to test mode
 	gin.SetMode(gin.TestMode)
 
 	// Create a new Gin router
 	r := gin.New()
 
 	// Define the route using your GetCategories function
-	r.POST("/api/categories", func(c *gin.Context) {
-		rows, err := db.GetCategories(c)
+	r.GET("/api/geotypes", func(c *gin.Context) {
+		rows, err := db.GetGeometryTypes(c)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"message": err.Error(),
@@ -45,7 +40,7 @@ func TestGetCategories(t *testing.T) {
 	})
 
 	// Create a new HTTP request with POST method and empty body
-	req, err := http.NewRequest("POST", "/api/categories", nil)
+	req, err := http.NewRequest("GET", "/api/geotypes", nil)
 	assert.NoError(t, err)
 
 	// Create a response recorder to record the response
@@ -63,13 +58,8 @@ func TestGetCategories(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Check that each object in the response has the keys "ID" and "Name"
-	for _, category := range response {
-		assert.Contains(t, category, "ID")
-		assert.Contains(t, category, "Name")
+	for _, geotype := range response {
+		assert.Contains(t, geotype, "ID")
+		assert.Contains(t, geotype, "Type")
 	}
-}
-
-func main() {
-	// Run the test using: go test -v
-	// This will execute the TestGetCategories function
 }
