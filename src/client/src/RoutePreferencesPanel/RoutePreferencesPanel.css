@@ -1,6 +1,8 @@
+/* #shareStravaButton {
+  display: none;
+} */
 
-
-.route-preferences-panel {
+.route-preferences-panel, .share-panel {
     position: absolute; 
     background-color: white;
     border: 1px solid #ccc;
@@ -11,12 +13,12 @@
     transform: translate(-50%, 0);
 }
 
-.route-preferences-panel__preferences {
+.route-preferences-panel__preferences, .share-panel__preferences {
     overflow: hidden;
     font: 0.8rem Poppins;
 }
 
-  .checkbox-list {
+  .checkbox-list, .button-list {
     display: flex;
     flex-direction: column;
   }
@@ -51,7 +53,7 @@ p {
     text-align: left;
 }
 
-.route-preferences-panel__button {
+.route-preferences-panel__button, .share-panel__button {
     all: none;
     font: 0.8rem Poppins;
     background-color: white;
@@ -62,12 +64,12 @@ p {
     text-orientation: upright; */
 }
 
-.route-preferences-panel__button:hover {
+.route-preferences-panel__button:hover, .share-panel__button:hover {
     background-color: #ccc;
     cursor: pointer;
 }
 
-.route-preferences-panel__button {
+.route-preferences-panel__button, .share-panel__button {
     height: auto;
 }
 

@@ -1,4 +1,4 @@
-.leaflet-right, .leaflet-top, .leaflet-control {
+.leaflet-top {
   margin-top: 0;
 }
 
@@ -7,21 +7,6 @@
   /* height: 98vh; */
   all: none;
   
-}
-
-.leaflet-routing-container {
-  /* background-color: red; */
-  /* font: 0.8rem Poppins; */
-  /* height: 98vh; */
-  /* all: none; */
-}
-  
-.leaflet-routing-geocoders {
-  /* background-color: blue; */
-}
-
-.leaflet-routing-geocoder {
-  /* background-color: green; */
 }
 
 .leaflet-routing-remove-waypoint {
@@ -35,14 +20,32 @@ leaflet-routing-collapse-btn {
   cursor: pointer;
 }
 
+h3.popup {
+  font: bold 14px 'Poppins', sans-serif;
+}
 
+button.popup {
+  font: 12px 'Poppins', sans-serif;
+  border: 1px solid #acacac;
+  border-radius: 4px;
+  background-color: white;
+}
+
+ul.popup {
+  list-style-type: none;
+  font: 12px 'Poppins', sans-serif;
+  padding: 0;
+}
+.leaflet-routing-geocoder > input{
+  width: 15rem;
+}
 .leaflet-routing-geocoders button {
   font: bold 18px 'Poppins', sans-serif;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
-  margin: 0;
-  margin-right: 3px;
+  /* margin: 0; */
+  margin-right: 1rem;
   float: right;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -51,10 +54,6 @@ leaflet-routing-collapse-btn {
 input {
   /* background-color: orange; */
   font: 0.8rem Poppins;
-}
-
-.leaflet-routing-add-waypoint  {
-  /* background-color: purple; */
 }
 
 .leaflet-routing-alternatives-container {
@@ -76,6 +75,35 @@ tr {
   border-bottom: 1px solid #ccc;
 }
 
+.map-outer {
+  right: 0;
+}
+
 #map {
   position: fixed;
+  right: 0;
+}
+
+@media (min-width: 2350px) {
+  #map {
+    width: 85vw;
+  }
+
+  .map-outer {
+    width: 85vw;
+  }
+}
+
+@media (max-width: 2350px) {
+  #map {
+    width: 80vw;
+  }
+
+  .map-outer {
+    width: 80vw;
+  }
+}
+
+.sr-only {
+  display: none;
 }

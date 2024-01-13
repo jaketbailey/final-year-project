@@ -2,10 +2,20 @@
 import { useEffect, useState } from 'react';
 import './WeatherPanel.css'
 
+import DailyForecast from './DailyForecast';
+
+/**
+ * Functional component representing the weather panel of the application.
+ * It displays the current weather information, including temperature, wind speed, UV index, and more.
+ * The weather data is fetched from the OpenWeatherMap API based on the user's geolocation.
+ *
+ * @component WeatherPanel
+ * @returns {JSX.Element} JSX representing the weather panel.
+ */
 const WeatherPanel = () => {
   const [weather, setWeather] = useState([])
   const [icon, setIcon] = useState('')
-  const [showWeather, setShowWeather] = useState(false);
+  const [showWeather, setShowWeather] = useState(true);
   const [geoLocation, setGeoLocation] = useState({});
 
   useEffect(() => {
@@ -14,7 +24,7 @@ const WeatherPanel = () => {
     })
   }, [])
 
-  const API_KEY = 'cd23bb1d782fea9749efa44fa624ad6f'
+  const API_KEY = import.meta.env.VITE_OPEN_WEATHER_MAP_API_KEY
 
   /**
    * @function getCurrentWeather
@@ -23,11 +33,8 @@ const WeatherPanel = () => {
    * @async
    */
   const getCurrentWeather = async (currentGeoLocation) => {
-    // const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
-    // const data = await response.json()
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${currentGeoLocation.latitude}&lon=${currentGeoLocation.longitude}&appid=${API_KEY}`)
     const data = await response.json()
-    console.log(data)
     setWeather(data)
   }
 
@@ -137,7 +144,6 @@ const WeatherPanel = () => {
 
   // Fetch the weather on page load
   useEffect(() => {
-    console.log(geoLocation)
     getCurrentWeather(geoLocation);
   }, [geoLocation])
   
@@ -153,7 +159,7 @@ const WeatherPanel = () => {
       <>
       <div className="weather-panel__header">
         <h1>
-          Weather 
+          Today's Forecast 
         </h1>
       </div>
       <div className='panel-body'>
@@ -196,11 +202,15 @@ const WeatherPanel = () => {
     <div className='weather-container'>
       <div className='weather-panel'>
         <div className="weather-panel__body">
-          <button onClick={() => setShowWeather(!showWeather)}>
+          {/* <button onClick={() => setShowWeather(!showWeather)}>
             <img src="/img/all/clear-day.svg" alt="weather button" />
-          </button>
+          </button> */}
           <div className="weather-panel__body__left">
             {checkWeather()}
+            {/* <hr/> */}
+            <DailyForecast 
+              daily={weather.daily}
+            />
           </div>
         </div>
       </div>

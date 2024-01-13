@@ -1,0 +1,20 @@
+div.week-forecast, div.daily-item {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: left;
+  font-size: 1.25em;
+}
+
+div.week-forecast {
+  width: 21rem;
+}
+
+div.daily-item {
+  width: 5rem;
+  padding: 1rem;
+}
+
+div.daily-details {
+  width: 100%;
+  text-align: center;
+}

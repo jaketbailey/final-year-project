@@ -8,9 +8,16 @@ module.exports = function(api) {
 
   const presets = [
         [
-        "@babel/preset-react", {
-          runtime: 'automatic',
-        }
+          "@babel/preset-react", {
+            runtime: 'automatic',
+          }
+        ],
+        "@babel/preset-env",
+        [
+          "babel-preset-vite",
+          {
+            "env": true
+          }
         ]
     ];
 

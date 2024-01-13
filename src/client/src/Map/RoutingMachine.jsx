@@ -4,9 +4,10 @@ import 'leaflet-routing-machine';
 import 'leaflet-control-geocoder/dist/Control.Geocoder.js'
 import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
-import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.min.js'
+// import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.js'
+import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.js'
 import './Map.css'
-import { useEffect } from 'react';
+import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 
 /**
  * @function createRoutingMachineLayer
@@ -16,19 +17,25 @@ import { useEffect } from 'react';
  * @returns RoutingMachineLayer instance
  */
 const createRoutingMachineLayer = (props) => {
-  // const apiKey = "5b3ce3597851110001cf624804aafa7570224300b37f2f457b2d5438";
-  const apiKey = "5b3ce3597851110001cf6248b6ff7d6cab1c42b0a902f23e68a53ce6";
-  const router = new L.Routing.OpenRouteService(apiKey, {
+  const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
+  const router = new L.Routing.OpenRouteService(API_KEY, {
     timeout: 30 * 1000, // 30",
         format: "json",                          
         host: "https://api.openrouteservice.org",
         service: "directions",                   
         api_version: "v2",                       
-        profile: "cycling-road",                 
+        profile: "cycling-regular",                 
         routingQueryParams: {
             attributes: [
                 "avgspeed",
                 "percentage",
+              ],
+            extra_info: [
+                "steepness",
+                "suitability",
+                "surface",
+                "waycategory",
+                "waytype"
             ],
             options: {
                 avoid_features: [],
@@ -40,158 +47,147 @@ const createRoutingMachineLayer = (props) => {
         },
   })
 
-  /**
-   * @function getGeoJSON
-   * @param {Array} instructions 
-   * @param {Array} coordinates 
-   * @description Creates a GeoJSON object from the route instructions and coordinates
-   * @returns GeoJSON object
-   */
-  const getGeoJSON = (instructions, coordinates) => {
-    const formatter = new L.Routing.Formatter();
-    const instructionPts = {
-      type: 'FeatureCollection',
-      features: []
+  function updateTime(select, input) {
+    if (!input.value) {
+      return;
     };
-
-    for (const instruction of instructions) {
-      const g = {
-        type: 'Point',
-        coordinates: [coordinates[instruction.index].lng, coordinates[instruction.index].lat],
-      }
-
-      const p = {
-        instruction: formatter.formatInstruction(instruction),
-      };
-
-      instructionPts.features.push({
-        geometry: g,
-        type: 'Feature',
-        properties: p,
-      });
-    }
+    //convert hours-minutes into seconds
+    const time = input.value.split(':')
+    const hours = parseInt(time[0]) * 3600
+    const minutes = parseInt(time[1]) * 60
+    const secondsTime = hours + minutes
+    console.log(secondsTime)
+    console.log(props.summary)
+    let leaveArrive,
+      seconds;
+    if (select.value === 'Leave Time') {
+      seconds = Math.round(secondsTime + props.summary.totalTime)
+      leaveArrive = 'Leave';
+    } else if (select.value === 'Arrive Time'){
+      seconds = Math.round(secondsTime - props.summary.totalTime)
+      leaveArrive = 'Arrive';
+    } else {
+      return;
+    };
+    const finalHours = Math.floor(seconds / 3600);
+    const finalMinutes = Math.floor((seconds - finalHours * 3600) / 60);
+    const finalTime = `${finalHours}:${finalMinutes}`;
+    console.log(`${leaveArrive} Time is ${finalTime}`);
+    const leafletRoutingAlt = document.querySelector('.leaflet-routing-alt');
+    const h3 = document.createElement('h3');
     
-    for (const [index, coordinate] of coordinates.entries()) {
-      let g; 
-      
-      if (index === 0) {
-        g = {
-          type: 'LineString',
-          coordinates: [coordinate.lng, coordinate.lat],
-        };
-      } else {        
-        g = {
-          type: 'LineString',
-          coordinates: [[coordinates[index-1].lng, coordinates[index-1].lat], [coordinate.lng, coordinate.lat]],
-        };
-      }
-      instructionPts.features.push({
-        geometry: g,
-        type: 'Feature',
-        properties: {},
-      });
+    if (leaveArrive === 'Leave') {
+      h3.textContent = `Expected arrival time: ${finalTime}`;
+    } else {
+      h3.textContent = `Approximate leave time: ${finalTime}`;
     }
+
+    if (leafletRoutingAlt.childNodes[2].nodeName === 'H3') {
+      leafletRoutingAlt.removeChild(leafletRoutingAlt.childNodes[2]);
+    };
+    leafletRoutingAlt.insertBefore(h3, leafletRoutingAlt.childNodes[2]);
+  }
+
+  function createTimeInput(container) {
+    console.log(container)
+    const select = L.DomUtil.create('select', '', container);
+    const leaveTime = L.DomUtil.create('option', '', select);
+    const arriveTime = L.DomUtil.create('option', '', select);
+    select.setAttribute('id', 'select-time-dropdown')
+    select.setAttribute('style', 'width: 6rem; height: 1.65rem')
+    leaveTime.textContent = 'Leave Time';
+    arriveTime.textContent = 'Arrive Time';
     
-    return instructionPts;
+    const input = L.DomUtil.create('input', '', container);
+    input.setAttribute('id', 'select-time-input')
+    input.setAttribute('type', 'time');
+    input.setAttribute('style', 'width: 5rem; height: 1.60rem')
+
+    // Add listeners
+    select.addEventListener('change', (e) => {
+      const inputData = document.querySelector('#select-time-input');
+      updateTime(e.target, inputData);
+    })
+
+    input.addEventListener('change', (e) => {
+      const selectData = document.querySelector('#select-time-dropdown');
+      updateTime(selectData, e.target);
+    })
+
+    return input;
   }
 
-  /**
-   * @function exportGPX
-   * @param {Object} geoJSON
-   * @description Exports the GeoJSON object as a .geojson file
-   * @returns null
-   */
-  const exportGPX = (gpx) => { 
-    const blob = new Blob([gpx], {type: 'text/xml'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = 'route.gpx';
-    link.href = url;
-    props.setGPXLink(link);
-  }
-
-  /**
-   * @function getGPX
-   * @param {Array} instructions
-   * @param {Array} coordinates
-   * @description Creates a GPX file from the route instructions and coordinates
-   * @returns GPX file
-   * @see https://www.topografix.com/GPX/1/1/
-   */
-  const getGPX = (instructions, coordinates) => {
-    const formatter = new L.Routing.Formatter();
-    const currentTime = new Date().toISOString();
-    let gpx = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    gpx += '<gpx version="1.1" creator="Cycling Route Planner" xmlns="http://www.topografix.com/GPX/1/1">\n';
-
-    // Add waypoints for each instruction
-    for (const instruction of instructions) {
-      gpx += `  <wpt lat="${coordinates[instruction.index].lat}" lon="${coordinates[instruction.index].lng}">\n`;
-      gpx += `    <name>${formatter.formatInstruction(instruction)}</name>\n`;
-      gpx += `  </wpt>\n`;
+  const Plan = L.Routing.Plan.extend({
+    createGeocoders: function() {
+      const container = L.Routing.Plan.prototype.createGeocoders.call(this);
+      createTimeInput(container);
+      return container;
     }
+  });
 
-    // Add tracks for each coordinate
-    gpx += `  <trk>\n    <trkseg>\n`;
-    for (const coordinate of coordinates) {
-      gpx += `      <trkpt lat="${coordinate.lat}" lon="${coordinate.lng}">\n`;
-      gpx += `        <ele>${coordinate.alt}</ele>\n`;
-      gpx += `        <time>${currentTime}</time>\n`;
-      gpx += '      </trkpt>\n';
-    }
-    gpx += `    </trkseg>\n  </trk>\n`;
-    gpx += '</gpx>';
-    return gpx;
-  }
-
-  /**
-   * @function exportGeoJSON
-   * @param {Object} geoJSON
-   * @description Exports the GeoJSON object as a .geojson file
-   * @returns null
-   */
-  const exportGeoJSON = (geoJSON) => {
-    const data = JSON.stringify(geoJSON);
-    const blob = new Blob([data], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = 'route.geojson';
-    link.href = url;
-    props.setGeoJSONLink(link); 
-  }
-
-  const instance = L.Routing.control({
-    router,
-    waypoints: [
+  const plan = new Plan([
       L.latLng(50.798908,-1.091160),
       L.latLng(50.789560,-1.055250)
-    ],
-    lineOptions: {
-      styles: [{color: '#3454D1', opacity: 1, weight: 3}]
-    },
-    altLineOptions: {
-      styles: [{opacity: 0.5, weight: 3}]
-    },
+    ], {
     routeWhileDragging: false,
     show: true,
     draggableWaypoints: true,
     addWaypoints: true,
+    reverseWaypoints: true,
+    waypointMode: 'connect',
     fitSelectedRoutes: false,
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
-    collapsible: true,
     containerClassName: 'routing-container',
+    createMarker: function (i, waypoint, n) {
+      const marker = L.marker(waypoint.latLng, {
+        draggable: true,
+        bounceOnAdd: false,
+        bounceOnAddOptions: {
+          duration: 1000,
+          height: 800,
+          function() {
+            (bindPopup(myPopup).openOn(map))
+          }
+        },
+        icon: L.icon({
+          iconUrl: '/img/routing/waypoint.svg',
+          iconSize: [30, 110],
+          iconAnchor: [15, 68],
+          popupAnchor: [-3, -76],
+        })
+      });
+      return marker;
+    }
+  });
+
+
+  const instance = L.Routing.control({
+    router,
+    plan,
+    collapsible: false,
+    lineOptions: {
+      styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
+    },
+    altLineOptions: {
+      styles: [{opacity: 0.5, weight: 3}]
+    },
   });
 
   instance.on('routesfound', (e) => {
     const routes = e.routes;
     props.setCoordinates(routes[0].coordinates);
+    props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
-    exportGeoJSON(geoJSON);
-    exportGPX(gpx);
+    exportGeoJSON(geoJSON, props.setGeoJSON, props.setGeoJSONLink);
+    exportGPX(gpx, props.setGPX, props.setGPXLink);
+    setTimeout(() => {
+      props.chartRef.current.resetZoom();
+      props.chartRef.current.update();
+    }, 500);
   });
 
   props.control.current = instance;

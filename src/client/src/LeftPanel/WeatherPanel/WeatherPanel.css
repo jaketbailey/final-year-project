@@ -2,18 +2,20 @@
     width: auto;
     position: fixed;
 }
+.weather-container {
+    width: auto;
+}
 
 .weather-panel {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     width: auto;
     background-color: transparent;
     color: black;
-    position: fixed;
+    position: relative;
     font-family: 'Poppins', sans-serif;
     font-size: 0.45rem;
     font-weight: 400;
-
 }
 
 .weather-panel > div {
@@ -22,7 +24,7 @@
     padding: 0.5rem;
     height: auto;
     color: black;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
 }
 
 .weather-panel > div > div {

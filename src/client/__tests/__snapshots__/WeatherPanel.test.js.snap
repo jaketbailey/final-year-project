@@ -14,15 +14,9 @@ exports[`WeatherPanel should render correctly 1`] = `
           <div
             class="weather-panel__body"
           >
-            <button>
-              <img
-                alt="weather button"
-                src="/img/all/clear-day.svg"
-              />
-            </button>
             <div
               class="weather-panel__body__left"
-              style="width: 0px; height: 0px;"
+              style="width: auto; height: auto;"
             />
           </div>
         </div>
@@ -39,15 +33,9 @@ exports[`WeatherPanel should render correctly 1`] = `
         <div
           class="weather-panel__body"
         >
-          <button>
-            <img
-              alt="weather button"
-              src="/img/all/clear-day.svg"
-            />
-          </button>
           <div
             class="weather-panel__body__left"
-            style="width: 0px; height: 0px;"
+            style="width: auto; height: auto;"
           />
         </div>
       </div>

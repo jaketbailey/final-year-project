@@ -28,6 +28,9 @@ describe('ElevationChart', () => {
                 coordinates={coordinates}
                 summary={summary}
                 mapRef={map}
+                chartRef={
+                    {current: mockChart}
+                }
             />
         );
 
