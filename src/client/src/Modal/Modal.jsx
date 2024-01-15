@@ -247,6 +247,13 @@ const Modal = (props) => {
     //get report info
     console.log(document.getElementById('input-info'))
     const reportInfo = document.getElementById('input-info').value;
+
+    //input validation
+    if (reportInfo.trim() === '') {
+      buttonUpdate('Report info is blank', 'hazardReport');
+      return;
+    }
+
     const reportDate = new Date().toISOString().slice(0, 10);;
     const hazardID = props.hazardID;
 
