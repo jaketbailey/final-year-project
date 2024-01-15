@@ -25,6 +25,7 @@ func Init(router *gin.Engine) {
 		api.POST("/send-email", PostSendEmail)
 		api.POST("/create-strava-activity", PostCreateStravaActivity)
 		api.POST("/hazard", PostCreateHazard)
+		api.POST("/hazard-report", PostCreateUserHazardReport)
 
 		// PUT Routes
 		api.PUT("/test", PutTest)

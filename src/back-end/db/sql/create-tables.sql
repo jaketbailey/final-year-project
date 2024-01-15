@@ -52,6 +52,15 @@ CREATE TABLE IF NOT EXISTS hazard_property (
     PRIMARY KEY (property_id, hazard_id)
 );
 
+CREATE TABLE IF NOT EXISTS hazard_error_report (
+    id SERIAL PRIMARY KEY,
+    hazard_id INTEGER REFERENCES hazard(id),
+    report_date TIMESTAMP,
+    user_feedback TEXT,
+    user_email VARCHAR(50),
+    user_name VARCHAR(50)
+);
+
 -- Functions and Triggers
 CREATE OR REPLACE FUNCTION check_coordinate_ids() RETURNS TRIGGER AS $$
 DECLARE

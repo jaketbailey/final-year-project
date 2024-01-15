@@ -111,6 +111,23 @@ func PostCreateHazard(c *gin.Context) {
 	})
 }
 
+func PostCreateUserHazardReport(c *gin.Context) {
+	res, err := db.CreateUserHazardReport(c)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "Bad",
+			"message": "Hazard not created",
+			"data":    err,
+		})
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"status": "Good",
+		"data":   res,
+	})
+	return
+}
+
 type Activity struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`

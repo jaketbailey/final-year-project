@@ -1,5 +1,6 @@
-#test1 {
+#add-hazard, #add-hazard-report {
   text-align: center;
+  font-size: 1rem;
 }
 
 .modal {
@@ -36,6 +37,10 @@
   border-top: 0.15rem solid #eee;
   border-bottom: 0.15rem solid #eee;
   text-align: center;
+}
+
+.type-info {
+  padding: 0;
 }
 
 input {
@@ -84,4 +89,18 @@ button:hover {
 
 textarea {
   resize: none;
+}
+
+#input-desc, #input-type, #input-danger-level{
+  width: 70%;
+  text-align: center;
+  font-family: 'Poppins';
+  font-size: 0.8rem;
+}
+
+#input-date, #input-timeframe {
+  width: 40%;
+  text-align: center;
+  font-family: 'Poppins';
+  
 }

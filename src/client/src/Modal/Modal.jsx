@@ -11,6 +11,8 @@ const Modal = (props) => {
   if (!props.show) {
     return null
   }
+  
+  const [typeDesc, setTypeDesc] = useState(23);
 
   const buttonUpdate = (text, type, check) => {
     let sendBtn = document.querySelector('#send-email');
@@ -186,16 +188,12 @@ const Modal = (props) => {
     }
 
     //input validation
-    if (hazardType === 0) {
-      buttonUpdate('Hazard type is blank', 'hazard');
-      return;
-    } 
     if (hazardDesc.trim() === '') {
       buttonUpdate('Hazard description is blank', 'hazard');
       return;
     }
     if (hazardDate.trim() === '') {
-      buttonUpdate('Ha\zard date is blank', 'hazard');
+      buttonUpdate('Hazard date is blank', 'hazard');
       return;
     }
     if (hazardTimeframe.trim() === '') {
@@ -203,8 +201,11 @@ const Modal = (props) => {
       return;
     }
 
+    console.log(props.categories)
+    console.log(hazardType)
+
     const data = {
-      name: props.categories[hazardType].Name,
+      name: props.categories[hazardType-1].Name,
       hazardType: hazardType,
       description: hazardDesc,
       geometryType: geometry,
@@ -242,6 +243,41 @@ const Modal = (props) => {
     addHazard();
   }
 
+  const collateReportData = () => {
+    //get report info
+    console.log(document.getElementById('input-info'))
+    const reportInfo = document.getElementById('input-info').value;
+    const reportDate = new Date().toISOString().slice(0, 10);;
+    const hazardID = props.hazardID;
+
+    const addReport = async () => {
+      const response = await fetch('/api/hazard-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          hazardId: hazardID,
+          reportBody: reportInfo,
+          date: reportDate
+        })
+      });
+      const res = await response.json();
+      console.log(res)
+      if (res.status === "Good") {
+        buttonUpdate('Report added to database.', 'hazardReport', 'success');
+        return;
+      } else {
+        buttonUpdate('Error adding report.', 'hazardReport');
+        console.log(res);
+        return;
+      };
+      
+    }
+
+    addReport();
+  }
+
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
@@ -251,6 +287,9 @@ const Modal = (props) => {
       return;
     } else if (type === "hazard") {
       collateHazardData();
+      return;
+    } else if (type === "hazardReport") {
+      collateReportData();
       return;
     }
 
@@ -353,32 +392,42 @@ const Modal = (props) => {
     } else if (props.type === 'hazard') {
       return (
         <div>
-          <div className='block' id='test1'>
+          <div className='block' id='add-hazard'>
           <label htmlFor='input-type'>Hazard Type</label><br/>
-          <select id='input-type' name='input-type' type='text' placeholder='myroute'><br/>
+          <select id='input-type' name='input-type' type='text' defaultValue={23} onChange={(e) => setTypeDesc(e.target.value)}><br/>
             {props.categories.map((category) => {
-              //split name at _ and capitalize first letter of each word
               const name = category.Name.split('_').map((word) => {
                 return word.charAt(0).toUpperCase() + word.slice(1) + ' ';
               })
               return <option value={category.ID}>{name}</option>
             })}
           </select><br/>
-          <label htmlFor='input-desc'>Hazard Description</label><br/>
-          <textarea id='input-desc' name='input-desc' type='text' placeholder='myroute'/><br/>
-          <label htmlFor='input-date'>Date Found</label><br/>
+          Hazard Type Info:
+          <p className='type-info'>
+          {props.categories[typeDesc-1].Description}
+          </p>
+          <label htmlFor='input-desc'>Hazard Description:</label><br/>
+          <textarea id='input-desc' name='input-desc' type='text' placeholder='Additional Information'/><br/>
+          <label htmlFor='input-timeframe'>Expected Length of Hazard hours/minutes</label><br/>
+          Low<input id='input-danger-level' name='input-danger-level' type='range' min={1} max={10} defaultValue={5.5}/> High <br/>
+          <label htmlFor='input-date'>Date Found:</label><br/>
           <input id='input-date' name='input-date' type='date' placeholder='myroute'/> <br/>
-          <label htmlFor='input-timeframe'>Expected Length of Hazard (Time)</label><br/>
           <input id='input-timeframe' name='input-timeframe' type='time' placeholder='myroute'/><br/>
           <label htmlFor='input-danger-level'>Expected Danger Level</label><br/>
-          Low
-          <input id='input-danger-level' name='input-danger-level' type='range' min={1} max={10} defaultValue={5.5}/> High
-          </div>
-          <div className='block'>
-          
           </div>
           <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Add</button>
         </div>
+      )
+    } else if (props.type === 'hazardReport') {
+      return (
+        <div>
+          <div className='block' id="add-hazard-report">
+          <label htmlFor='input-desc'>Error Information:</label><br/>
+          <textarea id='input-info' name='input-desc' type='text' placeholder='Error Information'/><br/>
+          </div>
+          <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Report Error</button>
+        </div>
+      
       )
     }
   }

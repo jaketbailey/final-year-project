@@ -36,7 +36,8 @@ func GetCategories(c *gin.Context) ([]Category, error) {
 	query := `
 	SELECT 
 		id,
-		name
+		name,
+		description
 	FROM 
 		category
 	ORDER BY 
@@ -50,7 +51,7 @@ func GetCategories(c *gin.Context) ([]Category, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var category Category
-		err := rows.Scan(&category.ID, &category.Name)
+		err := rows.Scan(&category.ID, &category.Name, &category.Description)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
@@ -188,7 +189,6 @@ func GetHazards(c *gin.Context) ([]Hazard, error) {
 	ORDER BY
 		h.id;
 	`, longitude, latitude, radius)
-	fmt.Println(query)
 
 	rows, err := db.Query(query)
 	if err != nil {

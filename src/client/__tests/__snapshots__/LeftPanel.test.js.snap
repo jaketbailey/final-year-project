@@ -58,6 +58,16 @@ exports[`LeftPanel should render 1`] = `
             <div>
               <img
                 class="panelImg"
+                src="/img/routing/cycling_infrastructure.svg"
+              />
+            </div>
+            <div>
+              Cycling Infrastructure
+            </div>
+            <hr />
+            <div>
+              <img
+                class="panelImg"
                 src="/img/routing/attractions.svg"
               />
             </div>
@@ -129,6 +139,16 @@ exports[`LeftPanel should render 1`] = `
           </div>
           <div>
             Hazards
+          </div>
+          <hr />
+          <div>
+            <img
+              class="panelImg"
+              src="/img/routing/cycling_infrastructure.svg"
+            />
+          </div>
+          <div>
+            Cycling Infrastructure
           </div>
           <hr />
           <div>
