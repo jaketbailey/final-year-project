@@ -39,6 +39,10 @@ const createRoutingMachineLayer = (props) => {
             ],
             options: {
                 avoid_features: [],
+                round_trip: {
+                  length: 10000,
+                  points: 5
+                }
             },
             language: "en",
             maneuvers: "true",
