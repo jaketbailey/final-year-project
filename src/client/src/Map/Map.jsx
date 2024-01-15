@@ -33,12 +33,15 @@ const Map = (props) => {
   const [showStrava, setShowStrava] = useState(false);
   const [showGoogle, setShowGoogle] = useState(false);
   const [showHazard, setShowHazard] = useState(false);
-
+  const [hazardID, setHazardID] = useState('');
+  const [showHazardReport, setShowHazardReport] = useState(false);
+  
   const [emailData, setEmailData] = useState({});
   const [stravaData, setStravaData] = useState({});
   const [googleData, setGoogleData] = useState({});
   const [hazardData, setHazardData] = useState({});
   const [hazard, setHazard] = useState({});
+  const [hazardReportData, setHazardReportData] = useState({});
 
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
@@ -51,6 +54,17 @@ const Map = (props) => {
   const StravaPolicy = import.meta.env.VITE_STRAVA_HEATMAP_POLICY;
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
+
+  // useEffect(() => {
+  //   const reportHazardBtn = document.querySelectorAll('.reportHazard');
+  //   reportHazardBtn.forEach(btn => {
+  //     btn.addEventListener('click', (e) => {
+  //       console.log(e)
+  //       setShowHazardReport(true);
+  //       // setHazardReportData(e.target.dataset);
+  //     })
+  //   })
+  // },[])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -92,7 +106,6 @@ const Map = (props) => {
     
     // Check if to boolean is present, final element in waypoint array is replaced with new coordinates
     if (to) {
-      console.log(currentWaypoints)
       const length = currentWaypoints.length;
       control.current.spliceWaypoints(length-1,1, L.latLng(coords))
       return;
@@ -119,7 +132,6 @@ const Map = (props) => {
         }
       }
     })
-    console.log(spliceIndex)
     control.current.spliceWaypoints(spliceIndex,0, L.latLng(coords))
   }
 
@@ -182,20 +194,30 @@ const Map = (props) => {
       const url = `/api/hazards?latitude=${mapCenter.lat}&longitude=${mapCenter.lng}&radius=${radiusMiles}`;
       const response = await fetch(url);
       const res = await response.json();
-      console.log(res);
       const hazards = [];
 
-      const icon = L.icon({
+      let icon = L.icon({
         iconUrl: '/img/routing/hazard.svg',
         iconSize: [30, 110],
         iconAnchor: [15, 68],
         popupAnchor: [-3, -76],
       });
 
+      let color = '#FFBF00';
+      
       for (const hazard of res) {
-        console.log(hazard)
+        if (hazard.Properties[0].Key === 'cycling_infrastructure') {
+          icon = L.icon({
+            iconUrl: '/img/routing/cycling_infrastructure.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          color = '#038546';
+        }
         let hazardType = hazard.Properties[0].Key
-        console.log(hazard.Date)
+
         let date = Date.parse(hazard.Date);
         date = new Date(date);
         const formattedDate = date.toLocaleDateString('en-GB', {
@@ -206,10 +228,9 @@ const Map = (props) => {
 
         hazardType = hazardType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         if (hazard.Geometry.Type === "Polygon") {
-          console.log(convertCoords(hazard.Geometry.Coordinates))
           hazards.push(
-            <Polygon 
-              pathOptions={{color: '#FFBF00'}} 
+            <Polygon
+              pathOptions={{color: color}} 
               positions={convertCoords(hazard.Geometry.Coordinates)}
             >
               <Popup>
@@ -219,7 +240,12 @@ const Map = (props) => {
                     Danger Risk: {hazard.Properties[1].Value}<br/>
                     Date Reported: {formattedDate}
                   </p>
-              </Popup>  
+                  <button className="popup reportHazard" id={`reportHazard-${hazard.ID}`} onClick={(e) => {
+                    setShowHazardReport(!showHazardReport)
+                    setHazardID(e.target.id.split('-')[1])
+                  }}>Report Error</button>
+                  <button className="popup" id={`hazardRepeat-${hazard.ID}`}>Report as a reoccurring Hazard</button>
+              </Popup>
             </Polygon>
           )
         } 
@@ -236,6 +262,11 @@ const Map = (props) => {
                   Danger Risk: {hazard.Properties[1].Value}<br/>
                   Date Reported: {formattedDate}
                 </p>
+                <button id={`reportHazard-${hazard.ID}`} className="popup" onClick={(e) => {
+                  setShowHazardReport(!showHazardReport)
+                  setHazardID(e.target.id.split('-')[1])
+                }}>Report Error</button>
+                <button id={`hazardRepeat-${hazard.ID}`} className="popup">Report as a reoccurring Hazard</button>
               </Popup>
             </Marker>
           )
@@ -382,7 +413,7 @@ const Map = (props) => {
           <LayersControl.Overlay name="Strava Heatmap">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url={`https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
+              url={`https://heatmap-external-c.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
               opacity="0.5"
             />
           </LayersControl.Overlay>
@@ -490,7 +521,14 @@ const Map = (props) => {
         hazard={hazard}
         categories={categories}
       />
-      
+      <Modal 
+        id='AddHazardReportModal' 
+        show={showHazardReport} 
+        setShow={setShowHazardReport} 
+        modalTitle='Report a Hazard Error'
+        type='hazardReport'
+        hazardID={hazardID}
+      />
     </div>
   )
 }

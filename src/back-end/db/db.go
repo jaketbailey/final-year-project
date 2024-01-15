@@ -52,9 +52,16 @@ type HazardRequestBody struct {
 	} `json:"properties"`
 }
 
+type HazardReportRequestBody struct {
+	HazardId   string `json:"hazardId"`
+	ReportBody string `json:"reportBody"`
+	Date       string `json:"date"`
+}
+
 type Category struct {
-	ID   int
-	Name string
+	ID          int
+	Name        string
+	Description string
 }
 
 var db *sql.DB
