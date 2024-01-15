@@ -22,8 +22,8 @@ const Modal = (props) => {
     if (type === 'google') {
       sendBtn = document.querySelector('#upload-drive');
     }
-    if (type === 'hazard') {
-      sendBtn = document.querySelector('#save-hazard');
+    if (type === 'hazard' || type === 'hazardReport') {
+      sendBtn = document.querySelector('#save-hazard') || document.querySelector('#save-hazard');
       sendBtn.textContent = text
       if (check == 'success') {
         sendBtn.classList.add('success')
@@ -265,7 +265,7 @@ const Modal = (props) => {
       const res = await response.json();
       console.log(res)
       if (res.status === "Good") {
-        buttonUpdate('Report added to database.', 'hazardReport', 'success');
+        buttonUpdate('Report created.', 'hazardReport', 'success');
         return;
       } else {
         buttonUpdate('Error adding report.', 'hazardReport');
