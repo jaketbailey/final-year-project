@@ -9,6 +9,7 @@ import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.
 import './Map.css'
 import { useMap } from 'react-leaflet';
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
+import { useState } from 'react';
 
 /**
  * @function createRoutingMachineLayer
@@ -19,6 +20,7 @@ import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
  */
 const createRoutingMachineLayer = (props) => {
   let map = useMap();
+
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
     timeout: 30 * 1000, // 30",
@@ -95,7 +97,6 @@ const createRoutingMachineLayer = (props) => {
   }
 
   function createTimeInput(container) {
-    console.log(container)
     const select = L.DomUtil.create('select', '', container);
     const leaveTime = L.DomUtil.create('option', '', select);
     const arriveTime = L.DomUtil.create('option', '', select);
@@ -123,10 +124,50 @@ const createRoutingMachineLayer = (props) => {
     return input;
   }
 
+  function createRoundTripToggle(container) {
+    const input = L.DomUtil.create('input', '', container);
+    const label = L.DomUtil.create('label', '', container);
+    label.setAttribute('for', 'round-trip-toggle')
+    label.textContent = 'Round Trip';
+    input.setAttribute('id', 'round-trip-toggle')
+    input.setAttribute('type', 'checkbox');
+    input.setAttribute('style', 'width: 1.5rem; height: 1.5rem')
+    input.addEventListener('change', (e) => {
+      //disable all but the first waypoint input in the leaflet routing machine component
+      console.log('hello')
+      const waypointInputs = document.querySelectorAll('.leaflet-routing-geocoder');
+      console.log(waypointInputs)
+      waypointInputs.forEach((input, index) => {
+        if (index > 0) {
+          if (!e.target.checked) {
+            input.style.display = 'block';
+          } else {
+            input.style.display = 'none';
+          }
+        }
+      });
+      const waypointMarkers = document.querySelectorAll('.leaflet-marker-icon');
+      console.log(waypointMarkers)
+      //hide the waypoint marker for all other than first too
+      waypointMarkers.forEach((marker, index) => {
+        if (index > 0) {
+          if (!e.target.checked) {
+            marker.style.display = 'block';
+          } else {
+            marker.style.display = 'none';
+          }
+        }
+      });
+
+    });
+    return (label,input);
+  }
+
   const Plan = L.Routing.Plan.extend({
     createGeocoders: function() {
       const container = L.Routing.Plan.prototype.createGeocoders.call(this);
       createTimeInput(container);
+      createRoundTripToggle(container);
       return container;
     }
   });
@@ -196,31 +237,15 @@ const createRoutingMachineLayer = (props) => {
   });
 
   instance.on('waypointschanged', (e) => {
-    const wpts = instance.getWaypoints();
-    if (wpts[1].latLng !== null) {
-      return;
-    }
-    wpts.pop();
-    console.log(e)
+
+    let wpts = instance.getWaypoints();
     console.log(wpts)
-    console.log(instance)
-    instance.getRouter().route(wpts, (error, routes) => {
-      console.log(error)
-      console.log(routes)
-      console.log(map)
-
-      if (!error) {
-          // Handle the routes here
-          if(map) {
-            const routeLayer = L.layerGroup().addTo(map)
-            const routePolyline = new L.Routing.line(routes[0], {options: {color: '#C70039 ', opacity: 1, weight: 4}});
-
-            routePolyline.addTo(routeLayer);
-          }
-      } else {
-        console.error(error)
-      }
-    });      
+    
+    if (wpts[1].latLng === null) {
+      const waypoints = [wpts[0], wpts[0]]
+      instance.setWaypoints(waypoints);
+      return;
+    }   
   })
 
   props.control.current = instance;
