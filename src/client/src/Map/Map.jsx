@@ -442,6 +442,7 @@ const Map = (props) => {
           setGPXLink={props.setGPXLink} 
           setGPX={setGPX}
           control={control}
+          map={props.map}
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}

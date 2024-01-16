@@ -7,6 +7,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 // import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.js'
 import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.js'
 import './Map.css'
+import { useMap } from 'react-leaflet';
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 
 /**
@@ -17,6 +18,7 @@ import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
  * @returns RoutingMachineLayer instance
  */
 const createRoutingMachineLayer = (props) => {
+  let map = useMap();
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
     timeout: 30 * 1000, // 30",
@@ -138,7 +140,7 @@ const createRoutingMachineLayer = (props) => {
     draggableWaypoints: true,
     addWaypoints: true,
     reverseWaypoints: true,
-    waypointMode: 'connect',
+    waypointMode: 'snap',
     fitSelectedRoutes: false,
     showAlternatives: true,
     geocoder: L.Control.Geocoder.nominatim(),
@@ -164,7 +166,6 @@ const createRoutingMachineLayer = (props) => {
       return marker;
     }
   });
-
 
   const instance = L.Routing.control({
     router,
@@ -193,6 +194,34 @@ const createRoutingMachineLayer = (props) => {
       props.chartRef.current.update();
     }, 500);
   });
+
+  instance.on('waypointschanged', (e) => {
+    const wpts = instance.getWaypoints();
+    if (wpts[1].latLng !== null) {
+      return;
+    }
+    wpts.pop();
+    console.log(e)
+    console.log(wpts)
+    console.log(instance)
+    instance.getRouter().route(wpts, (error, routes) => {
+      console.log(error)
+      console.log(routes)
+      console.log(map)
+
+      if (!error) {
+          // Handle the routes here
+          if(map) {
+            const routeLayer = L.layerGroup().addTo(map)
+            const routePolyline = new L.Routing.line(routes[0], {options: {color: '#C70039 ', opacity: 1, weight: 4}});
+
+            routePolyline.addTo(routeLayer);
+          }
+      } else {
+        console.error(error)
+      }
+    });      
+  })
 
   props.control.current = instance;
 
