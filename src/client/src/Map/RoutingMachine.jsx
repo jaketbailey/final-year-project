@@ -120,12 +120,22 @@ const createRoutingMachineLayer = (props) => {
     return input;
   }
 
+  /**
+   * Toggle the display of additional waypoints and controls for adding/removing waypoints.
+   *
+   * @param {boolean} checked - Whether the toggle is checked or not.
+   */
   const removeAddWaypoints = (checked) => {
     const waypointInputs = document.querySelectorAll('.leaflet-routing-geocoder');
     const waypointRemoveButtons = document.querySelectorAll('.leaflet-routing-remove-waypoint');
     const waypointMarkers = document.querySelectorAll('.leaflet-marker-icon');
 
+    const addWaypointBtn = document.querySelector('.leaflet-routing-add-waypoint');
+    const reverseRouteBtn = document.querySelector('.leaflet-routing-reverse-waypoints'); 
     
+    addWaypointBtn.style.display = checked ? 'none' : 'block';
+    reverseRouteBtn.style.display = checked ? 'none' : 'block';
+
     const styles = [{color: '#C70039 ', opacity: 1, weight: 4}]
     instance.updateLineOptions(!checked, styles);
 
@@ -145,6 +155,13 @@ const createRoutingMachineLayer = (props) => {
       }
     });
   }
+  
+  /**
+ * Switch between round trip mode and regular mode, enabling/disabling round trip options.
+ *
+ * @param {boolean} checked - Whether the round trip toggle is checked or not.
+ * @param {HTMLElement} roundTripDistanceInput - The input element for round trip distance.
+ */
   const switchModes = (checked, roundTripDistanceInput) => {
     if (!checked) {
         // Remove round trip options
@@ -174,6 +191,12 @@ const createRoutingMachineLayer = (props) => {
       }
   }
 
+  /**
+ * Create and initialize a round trip toggle control in the specified container.
+ *
+ * @param {HTMLElement} container - The container element in which the round trip toggle will be created.
+ * @returns {Array} An array containing label and input elements of the round trip toggle.
+ */
   function createRoundTripToggle(container) {
     const outerDiv = L.DomUtil.create('div', 'roundTripControls', container)
     const label = L.DomUtil.create('label', '', outerDiv);
