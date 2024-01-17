@@ -22,6 +22,7 @@ const Map = (props) => {
   const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
+  const [waypoints, setWaypoints] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSON, setGeoJSON] = useState(null);
@@ -41,7 +42,6 @@ const Map = (props) => {
   const [googleData, setGoogleData] = useState({});
   const [hazardData, setHazardData] = useState({});
   const [hazard, setHazard] = useState({});
-  const [hazardReportData, setHazardReportData] = useState({});
 
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
@@ -55,16 +55,12 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
-  // useEffect(() => {
-  //   const reportHazardBtn = document.querySelectorAll('.reportHazard');
-  //   reportHazardBtn.forEach(btn => {
-  //     btn.addEventListener('click', (e) => {
-  //       console.log(e)
-  //       setShowHazardReport(true);
-  //       // setHazardReportData(e.target.dataset);
-  //     })
-  //   })
-  // },[])
+  useEffect(() => {
+    console.log(waypoints)
+    if (waypoints.length > 0) {
+      localStorage.setItem('waypoints', JSON.stringify(waypoints));
+    }
+  },[waypoints])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -435,6 +431,7 @@ const Map = (props) => {
         </LayersControl>
         <RoutingMachine
           setCoordinates={setCoordinates}
+          setWaypoints={setWaypoints}
           summary={summary}
           setSummary={setSummary}
           setGeoJSONLink={props.setGeoJSONLink} 

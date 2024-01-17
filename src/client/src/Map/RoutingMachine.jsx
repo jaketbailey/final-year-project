@@ -41,6 +41,7 @@ const createRoutingMachineLayer = (props) => {
                 "waycategory",
                 "waytype"
             ],
+            continue_straight: true,
             options: {
                 avoid_features: ['ferries']
             },
@@ -168,10 +169,7 @@ const createRoutingMachineLayer = (props) => {
         roundTripDistanceInput.setAttribute('disabled', 'true');
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
-          instance.setWaypoints([
-            L.latLng(50.806446,-1.053989),
-            L.latLng(50.785613,-1.094515)
-          ]);
+          instance.setWaypoints(JSON.parse(localStorage.getItem('waypoints')));
           instance.route();
           instance.draggableWaypoints = true;
         }
@@ -246,10 +244,37 @@ const createRoutingMachineLayer = (props) => {
     }
   });
 
-  const plan = new Plan([
-      L.latLng(50.806446,-1.053989),
-      L.latLng(50.785613,-1.094515)
-    ], {
+  let wpts = JSON.parse(localStorage.getItem('waypoints'));
+  console.log(wpts)
+  if (wpts === null) {
+    props.setWaypoints([
+      [50.798061,-1.060741],
+      [50.780372,-1.073965],
+    ]);
+    wpts = [
+      [50.798061,-1.060741],
+      [50.780372,-1.073965],
+    ];
+  }
+
+  console.log(wpts)
+  const planWaypoints = [];
+  for (const wpt of wpts) {
+    planWaypoints.push(L.latLng(wpt[0], wpt[1]));
+  }
+  console.log(planWaypoints)
+  
+  // wpts.forEach((wpt, index) => {
+  //   wpt[index] = L.latLng(wpt.latLng.lat, wpt.latLng.lng);
+  // });
+
+
+
+  // for (const [index, wpt] of wpts) {
+  //   wpt[index] = L.latLng(wpt.latLng.lat, wpt.latLng.lng);
+  // }
+  console.log(wpts)
+  const plan = new Plan(wpts, {
     routeWhileDragging: false,
     show: true,
     draggableWaypoints: true,
@@ -305,6 +330,7 @@ const createRoutingMachineLayer = (props) => {
 
   instance.on('routesfound', (e) => {
     const routes = e.routes;
+
     props.setCoordinates(routes[0].coordinates);
     props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
@@ -321,14 +347,23 @@ const createRoutingMachineLayer = (props) => {
 
   instance.on('waypointschanged', (e) => {
 
+
     let wpts = instance.getWaypoints();
     console.log(wpts)
     
     if (wpts[1].latLng === null) {
       const waypoints = [wpts[0], wpts[0]]
       instance.setWaypoints(waypoints);
-      return;
     }   
+
+    if (wpts.length > 0) {
+      const tempArr = [];
+      for (const wpt of wpts) {
+        tempArr.push([wpt.latLng.lat, wpt.latLng.lng]);
+      }
+      props.setWaypoints(tempArr);
+    }
+    return;
   })
 
   props.control.current = instance;
