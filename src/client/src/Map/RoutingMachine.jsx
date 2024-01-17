@@ -19,7 +19,7 @@ import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
  */
 const createRoutingMachineLayer = (props) => {
   let map = useMap();
-  const roundTripLen = 10000;
+  let roundTripLen = 10000;
 
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
@@ -90,18 +90,21 @@ const createRoutingMachineLayer = (props) => {
   }
 
   function createTimeInput(container) {
-    const select = L.DomUtil.create('select', '', container);
+    L.DomUtil.create('br', '', container);
+    L.DomUtil.create('br', '', container);
+    const outerDiv = L.DomUtil.create('div', 'timeControls', container);
+    const select = L.DomUtil.create('select', '', outerDiv);
     const leaveTime = L.DomUtil.create('option', '', select);
     const arriveTime = L.DomUtil.create('option', '', select);
     select.setAttribute('id', 'select-time-dropdown')
-    select.setAttribute('style', 'width: 6rem; height: 1.65rem')
+    select.setAttribute('style', 'width: 45%; height: 1.65rem')
     leaveTime.textContent = 'Leave Time';
     arriveTime.textContent = 'Arrive Time';
     
-    const input = L.DomUtil.create('input', '', container);
+    const input = L.DomUtil.create('input', '', outerDiv);
     input.setAttribute('id', 'select-time-input')
     input.setAttribute('type', 'time');
-    input.setAttribute('style', 'width: 5rem; height: 1.60rem')
+    input.setAttribute('style', 'width: 45%; height: 1.60rem')
 
     // Add listeners
     select.addEventListener('change', (e) => {
@@ -142,9 +145,10 @@ const createRoutingMachineLayer = (props) => {
       }
     });
   }
-  const switchModes = (checked) => {
+  const switchModes = (checked, roundTripDistanceInput) => {
     if (!checked) {
         // Remove round trip options
+        roundTripDistanceInput.setAttribute('disabled', 'true');
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
           instance.setWaypoints([
@@ -156,6 +160,7 @@ const createRoutingMachineLayer = (props) => {
         }
       } else {
         // Add round trip options
+        roundTripDistanceInput.removeAttribute('disabled');
         const wpts = instance.getWaypoints();
         const waypoints = [wpts[0], wpts[0]];
         instance.setWaypoints(waypoints);
@@ -170,24 +175,47 @@ const createRoutingMachineLayer = (props) => {
   }
 
   function createRoundTripToggle(container) {
-    const input = L.DomUtil.create('input', '', container);
-    const label = L.DomUtil.create('label', '', container);
+    const outerDiv = L.DomUtil.create('div', 'roundTripControls', container)
+    const label = L.DomUtil.create('label', '', outerDiv);
+    const input = L.DomUtil.create('input', '', outerDiv);
     label.setAttribute('for', 'round-trip-toggle');
     label.textContent = 'Round Trip';
+    // label.setAttribute('style', 'margin: 0.5rem, 0.5rem')
     input.setAttribute('id', 'round-trip-toggle');
     input.setAttribute('type', 'checkbox');
-    input.setAttribute('style', 'width: 1.5rem; height: 1.5rem');
+    
+    const distanceLabel = L.DomUtil.create('label', '', outerDiv);
+    const roundTripDistanceInput = L.DomUtil.create('input', '', outerDiv);
+    distanceLabel.setAttribute('for', 'round-trip-distance-input');
+    distanceLabel.textContent = 'Distance (km)';
+    distanceLabel.setAttribute('style', 'margin-left: 0.5rem')
+    roundTripDistanceInput.setAttribute('id', 'round-trip-distance-input');
+    roundTripDistanceInput.setAttribute('type', 'number');
+    roundTripDistanceInput.setAttribute('min', '2');
+    roundTripDistanceInput.setAttribute('max', '200');
+    roundTripDistanceInput.setAttribute('step', '1');
+    roundTripDistanceInput.setAttribute('value', '10');
+    roundTripDistanceInput.setAttribute('style', 'width: 5rem; height: 1.60rem')
+    roundTripDistanceInput.setAttribute('disabled', 'true');
+
     
     input.addEventListener('change', (e) => {
-      switchModes(e.target.checked);
+      switchModes(e.target.checked, roundTripDistanceInput);
       removeAddWaypoints(e.target.checked);
+    });
+
+    roundTripDistanceInput.addEventListener('change', (e) => {
+      console.log(roundTripLen)
+      roundTripLen = parseInt(e.target.value) * 1000;
+      instance.getRouter().options.routingQueryParams.options.round_trip.length = roundTripLen;
+      instance.route();
     });
   
     return [label, input];
   }
 
   const Plan = L.Routing.Plan.extend({
-    createGeocoders: function() {
+    createGeocoders: function() { 
       const container = L.Routing.Plan.prototype.createGeocoders.call(this);
       createTimeInput(container);
       createRoundTripToggle(container);
