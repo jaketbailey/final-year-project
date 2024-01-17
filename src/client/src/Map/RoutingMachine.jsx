@@ -9,7 +9,6 @@ import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.
 import './Map.css'
 import { useMap } from 'react-leaflet';
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
-import { useState } from 'react';
 
 /**
  * @function createRoutingMachineLayer
@@ -20,6 +19,7 @@ import { useState } from 'react';
  */
 const createRoutingMachineLayer = (props) => {
   let map = useMap();
+  const roundTripLen = 10000;
 
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
@@ -42,7 +42,7 @@ const createRoutingMachineLayer = (props) => {
                 "waytype"
             ],
             options: {
-                avoid_features: []
+                avoid_features: ['ferries']
             },
             language: "en",
             maneuvers: "true",
@@ -117,104 +117,54 @@ const createRoutingMachineLayer = (props) => {
     return input;
   }
 
-  // function createRoundTripToggle(container) {
-  //   const input = L.DomUtil.create('input', '', container);
-  //   const label = L.DomUtil.create('label', '', container);
-  //   label.setAttribute('for', 'round-trip-toggle')
-  //   label.textContent = 'Round Trip';
-  //   input.setAttribute('id', 'round-trip-toggle')
-  //   input.setAttribute('type', 'checkbox');
-  //   input.setAttribute('style', 'width: 1.5rem; height: 1.5rem')
-  //   input.addEventListener('change', (e) => {
-  //     //disable all but the first waypoint input in the leaflet routing machine component
-
-  //     if (!e.target.checked) {
-  //       if (instance.getRouter().options.routingQueryParams.options.round_trip) {
-  //         delete instance.getRouter().options.routingQueryParams.options.round_trip;
-  //         instance.getPlan().draggableWaypoints = true;
-  //         instance.route();
-  //       }
-  //     } else {
-  //       instance.getRouter().options.routingQueryParams.options.round_trip = {
-  //         length: 10000,
-  //         points: 5
-  //       };
-  //       instance.getPlan().draggableWaypoints = false;
-  //       let wpts = instance.getWaypoints();
-      
-  //       const waypoints = [wpts[0], wpts[0]]
-  //       instance.setWaypoints(waypoints);
-  //       instance.route();
-  //     }
-
-  //     const waypointInputs = document.querySelectorAll('.leaflet-routing-geocoder');
-  //     console.log(waypointInputs)
-  //     waypointInputs.forEach((input, index) => {
-  //       if (index > 0) {
-  //         if (!e.target.checked) {
-  //           input.style.display = 'block';
-  //         } else {
-  //           input.style.display = 'none';
-  //         }
-  //       }
-  //     });
-  //     const waypointMarkers = document.querySelectorAll('.leaflet-marker-icon');
-  //     //hide the waypoint marker for all other than first too
-  //     waypointMarkers.forEach((marker, index) => {
-  //       if (index > 0) {
-  //         if (!e.target.checked) {
-  //           marker.style.display = 'block';
-  //         } else {
-  //           marker.style.display = 'none';
-  //         }
-  //       }
-  //     });
-  //   });
-  //   return (label,input);
-  // }
-
   const removeAddWaypoints = (checked) => {
-    console.log('removeAddWaypoints called with checked:', checked);
     const waypointInputs = document.querySelectorAll('.leaflet-routing-geocoder');
+    const waypointRemoveButtons = document.querySelectorAll('.leaflet-routing-remove-waypoint');
     const waypointMarkers = document.querySelectorAll('.leaflet-marker-icon');
+
+    
+    const styles = [{color: '#C70039 ', opacity: 1, weight: 4}]
+    instance.updateLineOptions(!checked, styles);
 
     waypointInputs.forEach((input, index) => {
       if (index > 0) {
-        console.log(input)
         input.style.display = checked ? 'none' : 'block';
       }
     });
+
+    waypointRemoveButtons.forEach((btn, index) => {
+      btn.style.display = checked ? 'none' : 'block';
+    });
   
-    // Hide or show the waypoint markers based on the checkbox state
     waypointMarkers.forEach((marker, index) => {
       if (index > 0) {
-        console.log(marker)
         marker.style.display = checked ? 'none' : 'block';
       }
     });
   }
   const switchModes = (checked) => {
     if (!checked) {
-        console.log('checked false')
         // Remove round trip options
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
-          instance.setWaypoints([L.latLng(50.798908,-1.091160), L.latLng(50.789560,-1.055250)]);
+          instance.setWaypoints([
+            L.latLng(50.806446,-1.053989),
+            L.latLng(50.785613,-1.094515)
+          ]);
           instance.route();
           instance.draggableWaypoints = true;
         }
       } else {
-        console.log('checked true')
         // Add round trip options
         const wpts = instance.getWaypoints();
         const waypoints = [wpts[0], wpts[0]];
         instance.setWaypoints(waypoints);
         instance.getRouter().options.routingQueryParams.options.round_trip = {
-          length: 10000,
-          points: 5
+          length: roundTripLen,
+          points: 5,
+          seed:5
         };
         instance.route();
-        console.log(instance.getRouter());
         instance.draggableWaypoints = false;
       }
   }
@@ -229,9 +179,6 @@ const createRoutingMachineLayer = (props) => {
     input.setAttribute('style', 'width: 1.5rem; height: 1.5rem');
     
     input.addEventListener('change', (e) => {
-      // Disable all but the first waypoint input in the leaflet routing machine component
-
-  
       switchModes(e.target.checked);
       removeAddWaypoints(e.target.checked);
     });
@@ -249,8 +196,8 @@ const createRoutingMachineLayer = (props) => {
   });
 
   const plan = new Plan([
-      L.latLng(50.798908,-1.091160),
-      L.latLng(50.789560,-1.055250)
+      L.latLng(50.806446,-1.053989),
+      L.latLng(50.785613,-1.094515)
     ], {
     routeWhileDragging: false,
     show: true,
@@ -284,12 +231,21 @@ const createRoutingMachineLayer = (props) => {
     }
   });
 
-  const instance = L.Routing.control({
+  const Control = L.Routing.Control.extend({
+    updateLineOptions: function (addWaypoints, styles) {
+      this.options.lineOptions.addWaypoints = addWaypoints;
+      this.options.lineOptions.styles = styles;
+      return this;
+    }
+  });
+
+  const instance = new Control({
     router,
     plan,
     collapsible: false,
     lineOptions: {
-      styles: [{color: '#C70039 ', opacity: 1, weight: 4}]
+      styles: [{color: '#C70039 ', opacity: 1, weight: 4}],
+      addWaypoints: true
     },
     altLineOptions: {
       styles: [{opacity: 0.5, weight: 3}]
