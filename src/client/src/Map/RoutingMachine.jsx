@@ -18,9 +18,29 @@ import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
  * @returns RoutingMachineLayer instance
  */
 const createRoutingMachineLayer = (props) => {
-  let map = useMap();
   let roundTripLen = 10000;
-  let roundTripMode = false;
+  const defaultConfig = {
+      attributes: [
+          "avgspeed",
+          "percentage",
+        ],
+      extra_info: [
+          "steepness",
+          "suitability",
+          "surface",
+          "waycategory",
+          "waytype"
+      ],
+      continue_straight: true,
+      options: {
+          avoid_features: ['ferries']
+      },
+      language: "en",
+      maneuvers: "true",
+      preference: "recommended",
+      elevation: "true",
+  };
+  // let roundTripMode = localStorage.getItem('roundTripMode');
 
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
@@ -30,28 +50,10 @@ const createRoutingMachineLayer = (props) => {
         service: "directions",                   
         api_version: "v2",                       
         profile: "cycling-regular",                 
-        routingQueryParams: {
-            attributes: [
-                "avgspeed",
-                "percentage",
-              ],
-            extra_info: [
-                "steepness",
-                "suitability",
-                "surface",
-                "waycategory",
-                "waytype"
-            ],
-            continue_straight: true,
-            options: {
-                avoid_features: ['ferries']
-            },
-            language: "en",
-            maneuvers: "true",
-            preference: "recommended",
-            elevation: "true",
-        },
+        routingQueryParams: props.routerConfig.current
   })
+
+  // const router = new L.Routing.OpenRouteService(API_KEY, JSON.parse(localStorage.getItem('routerConfig')))
 
   function updateTime(select, input) {
     if (!input.value) {
@@ -165,12 +167,17 @@ const createRoutingMachineLayer = (props) => {
  * @param {HTMLElement} roundTripDistanceInput - The input element for round trip distance.
  */
   const switchModes = (checked, roundTripDistanceInput) => {
+    console.log('checked', checked)
     if (!checked) {
         // Remove round trip options
         roundTripDistanceInput.setAttribute('disabled', 'true');
+        console.log(instance.getRouter())
+
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
           instance.setWaypoints(JSON.parse(localStorage.getItem('waypoints')));
+          console.log(instance.getRouter().routingQueryParams)
+          localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().routingQueryParams))
           instance.route();
           instance.draggableWaypoints = true;
         }
@@ -185,6 +192,8 @@ const createRoutingMachineLayer = (props) => {
           points: 5,
           seed:5
         };
+        console.log(instance.getRouter().options.routingQueryParams)
+        localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().options.routingQueryParams))
         instance.route();
         instance.draggableWaypoints = false;
       }
@@ -205,7 +214,8 @@ const createRoutingMachineLayer = (props) => {
     // label.setAttribute('style', 'margin: 0.5rem, 0.5rem')
     input.setAttribute('id', 'round-trip-toggle');
     input.setAttribute('type', 'checkbox');
-    
+    input.setAttribute('checked', props.roundTripMode.current);
+
     const distanceLabel = L.DomUtil.create('label', '', outerDiv);
     const roundTripDistanceInput = L.DomUtil.create('input', '', outerDiv);
     distanceLabel.setAttribute('for', 'round-trip-distance-input');
@@ -220,20 +230,27 @@ const createRoutingMachineLayer = (props) => {
     roundTripDistanceInput.setAttribute('style', 'width: 5rem; height: 1.60rem')
     roundTripDistanceInput.setAttribute('disabled', 'true');
 
+    if (props.roundTripMode.current) {
+      instance.getRouter().options.routingQueryParams.options.round_trip = {
+        length: roundTripLen,
+        points: 5,
+        seed:5
+      };
+      instance.getRouter().route();
+    }
     
     input.addEventListener('change', (e) => {
-      roundTripMode = e.target.checked;
+      props.roundTripMode.current = e.target.checked;
+
       switchModes(e.target.checked, roundTripDistanceInput);
       removeAddWaypoints(e.target.checked);
     });
 
     roundTripDistanceInput.addEventListener('change', (e) => {
-      console.log(roundTripLen)
       roundTripLen = parseInt(e.target.value) * 1000;
       instance.getRouter().options.routingQueryParams.options.round_trip.length = roundTripLen;
       instance.route();
-    });
-  
+    });  
     return [label, input];
   }
 
@@ -263,6 +280,7 @@ const createRoutingMachineLayer = (props) => {
       }
       wpts = planWaypoints;
     } else {
+      props.routerConfig.current = defaultConfig;
       wpts = [
         [50.798061,-1.060741],
         [50.780372,-1.073965],
@@ -347,13 +365,11 @@ const createRoutingMachineLayer = (props) => {
     let wpts = instance.getWaypoints();
     console.log(wpts)
     
-    if (wpts[1].latLng === null && roundTripMode === true) {
+    if (wpts[1].latLng === null && props.roundTripMode === true) {
       const waypoints = [wpts[0], wpts[0]]
       instance.setWaypoints(waypoints);
-      for (const wpt of wpts) {
-        tempArr.push([wpt.latLng.lat, wpt.latLng.lng]);
-      }
-      props.setWaypoints(tempArr);
+      const tempArr = [wpts[0].latLng.lat, wpts[0].latLng.lng]
+      props.setWaypoints([tempArr]);
       return
     } else {
       wpts = instance.getWaypoints();

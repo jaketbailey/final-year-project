@@ -18,6 +18,29 @@ import { EditControl } from "react-leaflet-draw";
 const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
+  const roundTripMode = useRef(false);
+  const routerConfig = useRef({
+            attributes: [
+                "avgspeed",
+                "percentage",
+              ],
+            extra_info: [
+                "steepness",
+                "suitability",
+                "surface",
+                "waycategory",
+                "waytype"
+            ],
+            continue_straight: true,
+            options: {
+                avoid_features: ['ferries']
+            },
+            language: "en",
+            maneuvers: "true",
+            preference: "recommended",
+            elevation: "true",
+        },
+  )
   
   const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
@@ -48,7 +71,6 @@ const Map = (props) => {
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
-  const [loadRoute, setLoadRoute] = useState(false);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -60,8 +82,16 @@ const Map = (props) => {
     console.log(waypoints)
     if (waypoints.length > 0) {
       localStorage.setItem('waypoints', JSON.stringify(waypoints));
+      localStorage.setItem('roundTripMode', roundTripMode.current);
     }
-  },[waypoints])
+
+    console.log(routerConfig.current)
+    if (localStorage.getItem('routerConfig') !== null) {
+      routerConfig.current = JSON.parse(localStorage.getItem('routerConfig'));
+    } else {
+      localStorage.setItem('routerConfig', JSON.stringify(routerConfig.current))
+    }
+  },[waypoints, roundTripMode.current])
 
   // useEffect(() => {
   //   const wpts = JSON.parse(localStorage.getItem('waypoints'));
@@ -452,7 +482,8 @@ const Map = (props) => {
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
-          loadRoute={loadRoute}
+          roundTripMode={roundTripMode}
+          routerConfig={routerConfig}
         />      
       </MapContainer>
 
