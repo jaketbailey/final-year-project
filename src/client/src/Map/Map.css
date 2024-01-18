@@ -1,12 +1,24 @@
+.roundTripControls, .timeControls {
+    vertical-align: middle;
+    height: 50px;
+    font: 12px 'Poppins', sans-serif;
+    text-align: center;
+}
+
+#round-trip-toggle {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  margin-left: 0.5rem;
+}
+
 .leaflet-top {
   margin-top: 0;
 }
 
 .routing-container {
   font: 0.8rem Poppins;
-  /* height: 98vh; */
   all: none;
-  
 }
 
 .leaflet-routing-remove-waypoint {
@@ -52,17 +64,14 @@ ul.popup {
 }
 
 input {
-  /* background-color: orange; */
   font: 0.8rem Poppins;
 }
 
 .leaflet-routing-alternatives-container {
-  /* background-color: pink; */
   height: 100%;
 }
 
 .leaflet-routing-alt {
-  /* background-color: brown; */
   height: 100%;
 }
 

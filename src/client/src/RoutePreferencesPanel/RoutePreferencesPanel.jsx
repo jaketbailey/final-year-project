@@ -268,7 +268,7 @@ const RoutePreferencesPanel = (props) => {
                 <label className='checkbox-label' htmlFor='avoidSteps'>Steps</label>
               </div>
               <div className='checkbox-item'>
-                <input type='checkbox' className="checkbox-input"  id='avoidFerries' name='Ferries' value='ferries' />
+                <input type='checkbox' className="checkbox-input"  id='avoidFerries' name='Ferries' value='ferries' defaultChecked />
                 <label className='checkbox-label' htmlFor='avoidFerries'>Ferries</label>
               </div>
               <div className='checkbox-item'>

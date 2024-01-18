@@ -18,10 +18,34 @@ import { EditControl } from "react-leaflet-draw";
 const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
+  const roundTripMode = useRef(false);
+  const routerConfig = useRef({
+            attributes: [
+                "avgspeed",
+                "percentage",
+              ],
+            extra_info: [
+                "steepness",
+                "suitability",
+                "surface",
+                "waycategory",
+                "waytype"
+            ],
+            continue_straight: true,
+            options: {
+                avoid_features: ['ferries']
+            },
+            language: "en",
+            maneuvers: "true",
+            preference: "recommended",
+            elevation: "true",
+        },
+  )
   
   const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
+  const [waypoints, setWaypoints] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSON, setGeoJSON] = useState(null);
@@ -41,7 +65,6 @@ const Map = (props) => {
   const [googleData, setGoogleData] = useState({});
   const [hazardData, setHazardData] = useState({});
   const [hazard, setHazard] = useState({});
-  const [hazardReportData, setHazardReportData] = useState({});
 
   const [stravaAccessToken, setStravaAccessToken] = useState(null);
   const [keyPOI, setKeyPOI] = useState(null);
@@ -55,16 +78,32 @@ const Map = (props) => {
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
+  useEffect(() => {
+    console.log(waypoints)
+    if (waypoints.length > 0) {
+      localStorage.setItem('waypoints', JSON.stringify(waypoints));
+      localStorage.setItem('roundTripMode', roundTripMode.current);
+    }
+
+    console.log(routerConfig.current)
+    if (localStorage.getItem('routerConfig') !== null) {
+      routerConfig.current = JSON.parse(localStorage.getItem('routerConfig'));
+    } else {
+      localStorage.setItem('routerConfig', JSON.stringify(routerConfig.current))
+    }
+
+    if (localStorage.getItem('roundTripDistance') === null) {
+      localStorage.setItem('roundTripDistance', 10);
+    }
+  },[waypoints, roundTripMode.current])
+
   // useEffect(() => {
-  //   const reportHazardBtn = document.querySelectorAll('.reportHazard');
-  //   reportHazardBtn.forEach(btn => {
-  //     btn.addEventListener('click', (e) => {
-  //       console.log(e)
-  //       setShowHazardReport(true);
-  //       // setHazardReportData(e.target.dataset);
-  //     })
-  //   })
-  // },[])
+  //   const wpts = JSON.parse(localStorage.getItem('waypoints'));
+  //   if (wpts !== null) {
+  //     const alertRes = confirm('Load previous route?'); 
+  //     setLoadRoute(alertRes);
+  //   }
+  // }, [])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -435,6 +474,7 @@ const Map = (props) => {
         </LayersControl>
         <RoutingMachine
           setCoordinates={setCoordinates}
+          setWaypoints={setWaypoints}
           summary={summary}
           setSummary={setSummary}
           setGeoJSONLink={props.setGeoJSONLink} 
@@ -442,9 +482,12 @@ const Map = (props) => {
           setGPXLink={props.setGPXLink} 
           setGPX={setGPX}
           control={control}
+          map={props.map}
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
+          roundTripMode={roundTripMode}
+          routerConfig={routerConfig}
         />      
       </MapContainer>
 
