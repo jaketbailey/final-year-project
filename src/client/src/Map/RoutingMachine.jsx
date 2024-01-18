@@ -214,8 +214,12 @@ const createRoutingMachineLayer = (props) => {
     // label.setAttribute('style', 'margin: 0.5rem, 0.5rem')
     input.setAttribute('id', 'round-trip-toggle');
     input.setAttribute('type', 'checkbox');
-    input.setAttribute('checked', props.roundTripMode.current);
-
+    if (localStorage.getItem('roundTripMode') === 'true') {
+      input.setAttribute('checked', 'true');
+    } else {
+      input.removeAttribute('checked');
+    }
+    console.log(input.checked)
     const distanceLabel = L.DomUtil.create('label', '', outerDiv);
     const roundTripDistanceInput = L.DomUtil.create('input', '', outerDiv);
     distanceLabel.setAttribute('for', 'round-trip-distance-input');
