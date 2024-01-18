@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
+import L from 'leaflet';
+import 'leaflet-gpx';
 
 /**
  * @component RoutePreferencesPanel
@@ -18,6 +20,7 @@ const RoutePreferencesPanel = (props) => {
   const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
   const [signedInUser, setSignedInUser] = useState(null);
   const [GAPIAuthInstance, setGAPIAuthInstance] = useState(null);
+  const [gpxFile, setGPXFile] = useState(null);
 
   const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
   const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
@@ -230,6 +233,42 @@ const RoutePreferencesPanel = (props) => {
     }
   }, [showPanel]);
 
+  const extractWaypoints = (gpxData) => {
+    // Parse GPX data and extract latLngs of waypoints
+    const latLngs = [];
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(gpxData, 'text/xml');
+    const waypoints = xmlDoc.querySelectorAll('wpt');
+
+    waypoints.forEach((waypoint) => {
+      const lat = parseFloat(waypoint.getAttribute('lat'));
+      const lon = parseFloat(waypoint.getAttribute('lon'));
+      latLngs.push(L.latLng(lat, lon));
+    });
+
+    // You now have latLngs of waypoints, you can use them as needed
+    props.control.current.setWaypoints(latLngs);
+    console.log(latLngs);
+  };
+
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setGPXFile(file);
+  }
+
+  const handleFileUpload = (e) => {
+    if (gpxFile !== null) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const gpx = e.target.result;
+        extractWaypoints(gpx);
+      };
+      
+      reader.readAsText(gpxFile);
+    }
+  }
+
   return (
       <div className="route-preferences-panel">        
         <button className="route-preferences-panel__button" onClick={togglePanel}>
@@ -274,6 +313,10 @@ const RoutePreferencesPanel = (props) => {
               <div className='checkbox-item'>
                 <input type='checkbox' className="checkbox-input"  id='avoidFords' name='Fords' value='fords' />
                 <label className='checkbox-label' htmlFor='avoidFords'>Fords</label>
+              </div>
+              <div className='checkbox-item'>
+                <input type='file' onChange={handleFileChange} />
+                <button onClick={handleFileUpload}>Load GPX</button>
               </div>
             </div>
           </div>
