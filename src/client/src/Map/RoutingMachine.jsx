@@ -176,8 +176,8 @@ const createRoutingMachineLayer = (props) => {
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
           instance.setWaypoints(JSON.parse(localStorage.getItem('waypoints')));
-          console.log(instance.getRouter().routingQueryParams)
-          localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().routingQueryParams))
+          console.log(instance.getRouter().options.routingQueryParams)
+          localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().options.routingQueryParams))
           instance.route();
           instance.draggableWaypoints = true;
         }
