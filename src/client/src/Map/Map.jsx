@@ -48,6 +48,7 @@ const Map = (props) => {
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
+  const [loadRoute, setLoadRoute] = useState(false);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -61,6 +62,14 @@ const Map = (props) => {
       localStorage.setItem('waypoints', JSON.stringify(waypoints));
     }
   },[waypoints])
+
+  // useEffect(() => {
+  //   const wpts = JSON.parse(localStorage.getItem('waypoints'));
+  //   if (wpts !== null) {
+  //     const alertRes = confirm('Load previous route?'); 
+  //     setLoadRoute(alertRes);
+  //   }
+  // }, [])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -443,6 +452,7 @@ const Map = (props) => {
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
+          loadRoute={loadRoute}
         />      
       </MapContainer>
 

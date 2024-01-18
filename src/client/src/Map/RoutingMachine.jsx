@@ -20,6 +20,7 @@ import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 const createRoutingMachineLayer = (props) => {
   let map = useMap();
   let roundTripLen = 10000;
+  let roundTripMode = false;
 
   const API_KEY = import.meta.env.VITE_ROUTING_MACHINE_API_KEY
   const router = new L.Routing.OpenRouteService(API_KEY, {
@@ -221,6 +222,7 @@ const createRoutingMachineLayer = (props) => {
 
     
     input.addEventListener('change', (e) => {
+      roundTripMode = e.target.checked;
       switchModes(e.target.checked, roundTripDistanceInput);
       removeAddWaypoints(e.target.checked);
     });
@@ -247,33 +249,29 @@ const createRoutingMachineLayer = (props) => {
   let wpts = JSON.parse(localStorage.getItem('waypoints'));
   console.log(wpts)
   if (wpts === null) {
-    props.setWaypoints([
-      [50.798061,-1.060741],
-      [50.780372,-1.073965],
-    ]);
     wpts = [
       [50.798061,-1.060741],
       [50.780372,-1.073965],
     ];
+    props.setWaypoints(wpts);
+  } else {
+    const loadRoute = confirm('Load previous route?'); 
+    if (loadRoute === true) {
+      const planWaypoints = [];
+      for (const wpt of wpts) {
+        planWaypoints.push(L.latLng(wpt[0], wpt[1]));
+      }
+      wpts = planWaypoints;
+    } else {
+      wpts = [
+        [50.798061,-1.060741],
+        [50.780372,-1.073965],
+      ];
+    }
+    props.setWaypoints(wpts);
   }
 
-  console.log(wpts)
-  const planWaypoints = [];
-  for (const wpt of wpts) {
-    planWaypoints.push(L.latLng(wpt[0], wpt[1]));
-  }
-  console.log(planWaypoints)
   
-  // wpts.forEach((wpt, index) => {
-  //   wpt[index] = L.latLng(wpt.latLng.lat, wpt.latLng.lng);
-  // });
-
-
-
-  // for (const [index, wpt] of wpts) {
-  //   wpt[index] = L.latLng(wpt.latLng.lat, wpt.latLng.lng);
-  // }
-  console.log(wpts)
   const plan = new Plan(wpts, {
     routeWhileDragging: false,
     show: true,
@@ -330,7 +328,7 @@ const createRoutingMachineLayer = (props) => {
 
   instance.on('routesfound', (e) => {
     const routes = e.routes;
-
+  
     props.setCoordinates(routes[0].coordinates);
     props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
@@ -346,24 +344,29 @@ const createRoutingMachineLayer = (props) => {
   });
 
   instance.on('waypointschanged', (e) => {
-
-
     let wpts = instance.getWaypoints();
     console.log(wpts)
     
-    if (wpts[1].latLng === null) {
+    if (wpts[1].latLng === null && roundTripMode === true) {
       const waypoints = [wpts[0], wpts[0]]
       instance.setWaypoints(waypoints);
-    }   
-
-    if (wpts.length > 0) {
-      const tempArr = [];
       for (const wpt of wpts) {
         tempArr.push([wpt.latLng.lat, wpt.latLng.lng]);
       }
       props.setWaypoints(tempArr);
+      return
+    } else {
+      wpts = instance.getWaypoints();
+      if (wpts.length > 0) {
+        const tempArr = [];
+        for (const wpt of wpts) {
+          tempArr.push([wpt.latLng.lat, wpt.latLng.lng]);
+        }
+        props.setWaypoints(tempArr);
+      }
+      return;
     }
-    return;
+
   })
 
   props.control.current = instance;
