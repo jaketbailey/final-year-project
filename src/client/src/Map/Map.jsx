@@ -91,6 +91,10 @@ const Map = (props) => {
     } else {
       localStorage.setItem('routerConfig', JSON.stringify(routerConfig.current))
     }
+
+    if (localStorage.getItem('roundTripDistance') === null) {
+      localStorage.setItem('roundTripDistance', 10);
+    }
   },[waypoints, roundTripMode.current])
 
   // useEffect(() => {

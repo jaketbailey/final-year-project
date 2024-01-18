@@ -129,13 +129,13 @@ const createRoutingMachineLayer = (props) => {
    *
    * @param {boolean} checked - Whether the toggle is checked or not.
    */
-  const removeAddWaypoints = (checked) => {
-    const waypointInputs = document.querySelectorAll('.leaflet-routing-geocoder');
-    const waypointRemoveButtons = document.querySelectorAll('.leaflet-routing-remove-waypoint');
-    const waypointMarkers = document.querySelectorAll('.leaflet-marker-icon');
+  const removeAddWaypoints = (checked, container) => {
+    const waypointInputs = container.querySelectorAll('.leaflet-routing-geocoder');
+    const waypointRemoveButtons = container.querySelectorAll('.leaflet-routing-remove-waypoint');
+    const waypointMarkers = container.querySelectorAll('.leaflet-marker-icon');
 
-    const addWaypointBtn = document.querySelector('.leaflet-routing-add-waypoint');
-    const reverseRouteBtn = document.querySelector('.leaflet-routing-reverse-waypoints'); 
+    const addWaypointBtn = container.querySelector('.leaflet-routing-add-waypoint');
+    const reverseRouteBtn = container.querySelector('.leaflet-routing-reverse-waypoints'); 
     
     addWaypointBtn.style.display = checked ? 'none' : 'block';
     reverseRouteBtn.style.display = checked ? 'none' : 'block';
@@ -214,11 +214,7 @@ const createRoutingMachineLayer = (props) => {
     // label.setAttribute('style', 'margin: 0.5rem, 0.5rem')
     input.setAttribute('id', 'round-trip-toggle');
     input.setAttribute('type', 'checkbox');
-    if (localStorage.getItem('roundTripMode') === 'true') {
-      input.setAttribute('checked', 'true');
-    } else {
-      input.removeAttribute('checked');
-    }
+    
     console.log(input.checked)
     const distanceLabel = L.DomUtil.create('label', '', outerDiv);
     const roundTripDistanceInput = L.DomUtil.create('input', '', outerDiv);
@@ -230,9 +226,17 @@ const createRoutingMachineLayer = (props) => {
     roundTripDistanceInput.setAttribute('min', '2');
     roundTripDistanceInput.setAttribute('max', '200');
     roundTripDistanceInput.setAttribute('step', '1');
-    roundTripDistanceInput.setAttribute('value', '10');
+    roundTripDistanceInput.setAttribute('value', localStorage.getItem('roundTripDistance'));
     roundTripDistanceInput.setAttribute('style', 'width: 5rem; height: 1.60rem')
     roundTripDistanceInput.setAttribute('disabled', 'true');
+
+    if (localStorage.getItem('roundTripMode') === 'true') {
+      input.setAttribute('checked', 'true');
+      roundTripDistanceInput.removeAttribute('disabled');
+      removeAddWaypoints(localStorage.getItem('roundTripMode'), container);
+    } else {
+      input.removeAttribute('checked');
+    }
 
     if (props.roundTripMode.current) {
       instance.getRouter().options.routingQueryParams.options.round_trip = {
@@ -245,12 +249,13 @@ const createRoutingMachineLayer = (props) => {
     
     input.addEventListener('change', (e) => {
       props.roundTripMode.current = e.target.checked;
-
+      
       switchModes(e.target.checked, roundTripDistanceInput);
-      removeAddWaypoints(e.target.checked);
+      removeAddWaypoints(e.target.checked, document);
     });
-
+    
     roundTripDistanceInput.addEventListener('change', (e) => {
+      localStorage.setItem('roundTripDistance', e.target.value);
       roundTripLen = parseInt(e.target.value) * 1000;
       instance.getRouter().options.routingQueryParams.options.round_trip.length = roundTripLen;
       instance.route();
@@ -284,6 +289,7 @@ const createRoutingMachineLayer = (props) => {
       }
       wpts = planWaypoints;
     } else {
+      localStorage.setItem('routerConfig', JSON.stringify(defaultConfig));
       props.routerConfig.current = defaultConfig;
       wpts = [
         [50.798061,-1.060741],
