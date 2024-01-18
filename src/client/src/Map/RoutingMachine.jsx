@@ -312,24 +312,29 @@ const createRoutingMachineLayer = (props) => {
     geocoder: L.Control.Geocoder.nominatim(),
     containerClassName: 'routing-container',
     createMarker: function (i, waypoint, n) {
-      const marker = L.marker(waypoint.latLng, {
-        draggable: true,
-        bounceOnAdd: false,
-        bounceOnAddOptions: {
-          duration: 1000,
-          height: 800,
-          function() {
-            (bindPopup(myPopup).openOn(map))
-          }
-        },
-        icon: L.icon({
-          iconUrl: '/img/routing/waypoint.svg',
-          iconSize: [30, 110],
-          iconAnchor: [15, 68],
-          popupAnchor: [-3, -76],
-        })
-      });
-      return marker;
+      console.log(i,n)
+      if (i === 0 || i === n - 1) {
+        const marker = L.marker(waypoint.latLng, {
+          draggable: true,
+          bounceOnAdd: false,
+          bounceOnAddOptions: {
+            duration: 1000,
+            height: 800,
+            function() {
+              (bindPopup(myPopup).openOn(map))
+            }
+          },
+          icon: L.icon({
+            iconUrl: '/img/routing/waypoint.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          })
+        });
+        return marker;
+      } else {
+        return null;
+      }
     }
   });
 
