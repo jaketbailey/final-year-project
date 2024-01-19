@@ -3,7 +3,6 @@ import L from 'leaflet';
 
 const HERE_API_KEY = import.meta.env.VITE_HERE_API_KEY;
 
-
 L.Control.HereGeocoder = L.Class.extend({
   options: {
     apiKey: HERE_API_KEY,
