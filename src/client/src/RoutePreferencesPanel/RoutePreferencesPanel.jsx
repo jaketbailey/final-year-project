@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
+import L, { geoJson } from 'leaflet';
+import 'leaflet-gpx';
+import { type } from '@testing-library/user-event/dist/type';
+import ImportPanel from './ImportPanel';
 
 /**
  * @component RoutePreferencesPanel
@@ -11,6 +15,7 @@ import SharePanel from './SharePanel';
  */
 const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
+  const [showImportPanel, setShowImportPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
@@ -189,6 +194,11 @@ const RoutePreferencesPanel = (props) => {
     setShowPanel(!showPanel);
   }
 
+  const toggleImportPanel = () => {
+    console.log(showImportPanel)
+    setShowImportPanel(!showImportPanel);
+  }
+
   const toggleSharePanel = () => {
     setShowSharePanel(!showSharePanel);
   }
@@ -235,6 +245,9 @@ const RoutePreferencesPanel = (props) => {
         <button className="route-preferences-panel__button" onClick={togglePanel}>
           Route Preferences 
         </button>
+        <button className="route-preferences-panel__button" onClick={toggleImportPanel}>
+          Import Route 
+        </button>
         <button className="route-preferences-panel__button" onClick={saveGeoJSON} >
           Export Route as GeoJSON
         </button>
@@ -278,6 +291,10 @@ const RoutePreferencesPanel = (props) => {
             </div>
           </div>
         </div>
+        <ImportPanel
+          control={props.control}
+          showPanel={showImportPanel}
+        />
         <SharePanel 
           geoJSON={props.geoJSON} 
           gpx={props.gpx} 

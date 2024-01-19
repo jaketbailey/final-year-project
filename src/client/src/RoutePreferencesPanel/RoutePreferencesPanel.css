@@ -3,37 +3,41 @@
 } */
 
 .route-preferences-panel, .share-panel {
-    position: absolute; 
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 0;
-    width: fit-content;
-    height: fit-content;
-    left: 50%;
-    transform: translate(-50%, 0);
+  position: absolute; 
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 0;
+  width: fit-content;
+  height: fit-content;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
-.route-preferences-panel__preferences, .share-panel__preferences {
-    overflow: hidden;
-    font: 0.8rem Poppins;
+.route-preferences-panel__preferences, .share-panel__preferences, .import-panel {
+  overflow: hidden;
+  font: 0.8rem Poppins;
 }
 
-  .checkbox-list, .button-list {
-    display: flex;
-    flex-direction: column;
-  }
+.import-panel {
+  text-align: center;
+}
 
-  .checkbox-item {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    margin-bottom: 5px;
-    margin-left: 1rem;
-  }
+.checkbox-list, .button-list {
+  display: flex;
+  flex-direction: column;
+}
 
-  .checkbox-label {
-    margin-left: 10px;
-  }
+.checkbox-item {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  margin-bottom: 5px;
+  margin-left: 1rem;
+}
+
+.checkbox-label {
+  margin-left: 10px;
+}
 
 p {
     font: 0.8rem Poppins;
@@ -42,34 +46,35 @@ p {
 }
 
 .left {
-    float: left;
-    width: 15%;
-    text-align: right;
+  float: left;
+  width: 15%;
+  text-align: right;
 }
 
 .right {
-    float: right;
-    width: 85%;
-    text-align: left;
+  float: right;
+  width: 85%;
+  text-align: left;
+}
+
+.route-preferences-panel__button, .share-panel__button, .importFileBtn {
+  all: none;
+  font: 0.8rem Poppins;
+  color: black;
+  background-color: white;
+  border: 0px;
+  cursor: pointer;
+  margin: 0.2rem;
+  /* writing-mode: vertical-lr;
+  text-orientation: upright; */
+}
+
+.route-preferences-panel__button:hover, .share-panel__button:hover, .importFileBtn:hover {
+  background-color: #ccc;
+  cursor: pointer;
 }
 
 .route-preferences-panel__button, .share-panel__button {
-    all: none;
-    font: 0.8rem Poppins;
-    background-color: white;
-    border: 0px;
-    cursor: pointer;
-    margin: 0.2rem;
-    /* writing-mode: vertical-lr;
-    text-orientation: upright; */
-}
-
-.route-preferences-panel__button:hover, .share-panel__button:hover {
-    background-color: #ccc;
-    cursor: pointer;
-}
-
-.route-preferences-panel__button, .share-panel__button {
-    height: auto;
+  height: auto;
 }
 
