@@ -3,8 +3,8 @@ import L from 'leaflet';
 
 const HERE_API_KEY = import.meta.env.VITE_HERE_API_KEY;
 
-// Define your custom Nominatim geocoder class
-L.Control.NominatimGeocoder = L.Class.extend({
+
+L.Control.HereGeocoder = L.Class.extend({
   options: {
     apiKey: HERE_API_KEY,
     lang: 'en-US',
@@ -143,4 +143,4 @@ L.Control.NominatimGeocoder = L.Class.extend({
   },
 });
 
-export default L.Control.NominatimGeocoder;
+export default L.Control.HereGeocoder;

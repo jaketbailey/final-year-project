@@ -8,7 +8,7 @@ import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.js'
 import 'leaflet-control-geocoder'
 import './Map.css'
-import NominatimGeocoder from './geocoder.js'
+import HereGeocoder from './geocoder.js'
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 
 /**
@@ -168,16 +168,13 @@ const createRoutingMachineLayer = (props) => {
  * @param {HTMLElement} roundTripDistanceInput - The input element for round trip distance.
  */
   const switchModes = (checked, roundTripDistanceInput) => {
-    console.log('checked', checked)
     if (!checked) {
         // Remove round trip options
         roundTripDistanceInput.setAttribute('disabled', 'true');
-        console.log(instance.getRouter())
 
         if (instance.getRouter().options.routingQueryParams.options.round_trip) {
           delete instance.getRouter().options.routingQueryParams.options.round_trip;
           instance.setWaypoints(JSON.parse(localStorage.getItem('waypoints')));
-          console.log(instance.getRouter().options.routingQueryParams)
           localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().options.routingQueryParams))
           instance.route();
           instance.draggableWaypoints = true;
@@ -193,7 +190,6 @@ const createRoutingMachineLayer = (props) => {
           points: 5,
           seed:5
         };
-        console.log(instance.getRouter().options.routingQueryParams)
         localStorage.setItem('routerConfig', JSON.stringify(instance.getRouter().options.routingQueryParams))
         instance.route();
         instance.draggableWaypoints = false;
@@ -216,7 +212,6 @@ const createRoutingMachineLayer = (props) => {
     input.setAttribute('id', 'round-trip-toggle');
     input.setAttribute('type', 'checkbox');
     
-    console.log(input.checked)
     const distanceLabel = L.DomUtil.create('label', '', outerDiv);
     const roundTripDistanceInput = L.DomUtil.create('input', '', outerDiv);
     distanceLabel.setAttribute('for', 'round-trip-distance-input');
@@ -274,7 +269,6 @@ const createRoutingMachineLayer = (props) => {
   });
 
   let wpts = JSON.parse(localStorage.getItem('waypoints'));
-  console.log(wpts)
   if (wpts === null) {
     wpts = [
       [50.798061,-1.060741],
@@ -300,14 +294,9 @@ const createRoutingMachineLayer = (props) => {
     props.setWaypoints(wpts);
   }
 
-  const test = (e) => {
-    console.log('hello')
-    console.log(e)
-  }
-
   // Factory function to create an instance of the custom geocoder
-  L.control.nominatimGeocoder = function (options) {
-    return new NominatimGeocoder(options);
+  L.control.hereGeocoder = function (options) {
+    return new HereGeocoder(options);
   };
 
 
@@ -320,8 +309,7 @@ const createRoutingMachineLayer = (props) => {
     waypointMode: 'snap',
     fitSelectedRoutes: false,
     showAlternatives: true,
-    geocoder: L.control.nominatimGeocoder({waypoints: localStorage.getItem('waypoints')}),
-    // geocoder: L.Control.Geocoder.nominatim(),
+    geocoder: L.control.hereGeocoder(),
     containerClassName: 'routing-container',
     createMarker: function (i, waypoint, n) {
       if (i === 0 || i === n - 1) {
@@ -371,8 +359,6 @@ const createRoutingMachineLayer = (props) => {
   });
 
   instance.on('waypointgeocoded', (e) => {
-    console.log('waypointgeocoded')
-    console.log('hgyudaehguifhuo')
     if (instance.getWaypoints().length >= 6) {
       e.preventDefault();
     }

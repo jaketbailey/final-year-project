@@ -81,13 +81,11 @@ const Map = (props) => {
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
 
   useEffect(() => {
-    console.log(waypoints)
     if (waypoints.length > 0) {
       localStorage.setItem('waypoints', JSON.stringify(waypoints));
       localStorage.setItem('roundTripMode', roundTripMode.current);
     }
 
-    console.log(routerConfig.current)
     if (localStorage.getItem('routerConfig') !== null) {
       routerConfig.current = JSON.parse(localStorage.getItem('routerConfig'));
     } else {
