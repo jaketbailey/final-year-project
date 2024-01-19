@@ -259,11 +259,42 @@ const createRoutingMachineLayer = (props) => {
     return [label, input];
   }
 
+  const createVehicleTypeDropdown = (container) => {
+    const outerDiv = L.DomUtil.create('div', 'roundTripControls', container)
+    const label = L.DomUtil.create('label', '', outerDiv);
+    const select = L.DomUtil.create('select', 'vehicleType', outerDiv);
+    select.setAttribute('name', 'vehicle-type-dropdown');
+    select.setAttribute('id', 'vehicle-type-dropdown');
+    select.setAttribute('style', 'width: 10rem; height: 1.60rem')
+    label.setAttribute('for', 'vehicle-type-dropdown');
+    label.textContent = 'Vehicle Type:  ';
+    const types = [
+      {name: 'Road Cyclist', value: 'cycling-road'}, 
+      {name: 'Cyclist', value: 'cycling-regular'}, 
+      {name: 'Mountain Biking', value: 'cycling-mountain'}, 
+      {name: 'E-Biking', value:'cycling-electric'}, 
+      {name: 'Running', value: 'foot-walking'}
+    ]
+    for (const type of types) {
+      const option = L.DomUtil.create('option', '', select);
+      option.setAttribute('value', type.value);
+      option.textContent = type.name;
+    }
+
+    select.addEventListener('change', (e) => {
+      const selectedType = e.target.value;
+      localStorage.setItem('vehicleType', selectedType);
+      instance.getRouter().options.profile = selectedType;
+      instance.route();
+    })
+  }
+
   const Plan = L.Routing.Plan.extend({
     createGeocoders: function() { 
       const container = L.Routing.Plan.prototype.createGeocoders.call(this);
       createTimeInput(container);
       createRoundTripToggle(container);
+      createVehicleTypeDropdown(container);
       return container;
     }
   });
