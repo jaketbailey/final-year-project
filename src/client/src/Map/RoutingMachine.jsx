@@ -6,8 +6,9 @@ import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
 // import '@gegeweb/leaflet-routing-machine-openroute/dist/leaflet-routing-openroute.js'
 import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.js'
+import 'leaflet-control-geocoder'
 import './Map.css'
-import { useMap } from 'react-leaflet';
+import NominatimGeocoder from './geocoder.js'
 import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
 
 /**
@@ -37,7 +38,7 @@ const createRoutingMachineLayer = (props) => {
       },
       language: "en",
       maneuvers: "true",
-      preference: "recommended",
+      preference: "shortest",
       elevation: "true",
   };
   // let roundTripMode = localStorage.getItem('roundTripMode');
@@ -299,7 +300,17 @@ const createRoutingMachineLayer = (props) => {
     props.setWaypoints(wpts);
   }
 
-  
+  const test = (e) => {
+    console.log('hello')
+    console.log(e)
+  }
+
+  // Factory function to create an instance of the custom geocoder
+  L.control.nominatimGeocoder = function (options) {
+    return new NominatimGeocoder(options);
+  };
+
+
   const plan = new Plan(wpts, {
     routeWhileDragging: false,
     show: true,
@@ -309,10 +320,10 @@ const createRoutingMachineLayer = (props) => {
     waypointMode: 'snap',
     fitSelectedRoutes: false,
     showAlternatives: true,
-    geocoder: L.Control.Geocoder.nominatim(),
+    geocoder: L.control.nominatimGeocoder({waypoints: localStorage.getItem('waypoints')}),
+    // geocoder: L.Control.Geocoder.nominatim(),
     containerClassName: 'routing-container',
     createMarker: function (i, waypoint, n) {
-      console.log(i,n)
       if (i === 0 || i === n - 1) {
         const marker = L.marker(waypoint.latLng, {
           draggable: true,
@@ -359,6 +370,14 @@ const createRoutingMachineLayer = (props) => {
     },
   });
 
+  instance.on('waypointgeocoded', (e) => {
+    console.log('waypointgeocoded')
+    console.log('hgyudaehguifhuo')
+    if (instance.getWaypoints().length >= 6) {
+      e.preventDefault();
+    }
+  })
+
   instance.on('routesfound', (e) => {
     const routes = e.routes;
   
@@ -378,7 +397,6 @@ const createRoutingMachineLayer = (props) => {
 
   instance.on('waypointschanged', (e) => {
     let wpts = instance.getWaypoints();
-    console.log(wpts)
     
     if (wpts[1].latLng === null && props.roundTripMode === true) {
       const waypoints = [wpts[0], wpts[0]]

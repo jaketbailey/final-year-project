@@ -19,6 +19,7 @@ const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
   const roundTripMode = useRef(false);
+  const geocoder = useRef(L.Control.Geocoder.nominatim());
   const routerConfig = useRef({
             attributes: [
                 "avgspeed",
@@ -42,6 +43,7 @@ const Map = (props) => {
         },
   )
   
+
   const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
@@ -96,14 +98,6 @@ const Map = (props) => {
       localStorage.setItem('roundTripDistance', 10);
     }
   },[waypoints, roundTripMode.current])
-
-  // useEffect(() => {
-  //   const wpts = JSON.parse(localStorage.getItem('waypoints'));
-  //   if (wpts !== null) {
-  //     const alertRes = confirm('Load previous route?'); 
-  //     setLoadRoute(alertRes);
-  //   }
-  // }, [])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -475,6 +469,7 @@ const Map = (props) => {
         <RoutingMachine
           setCoordinates={setCoordinates}
           setWaypoints={setWaypoints}
+          waypoints={waypoints}
           summary={summary}
           setSummary={setSummary}
           setGeoJSONLink={props.setGeoJSONLink} 
@@ -488,6 +483,7 @@ const Map = (props) => {
           setSegmentDistance={setSegmentDistance}
           roundTripMode={roundTripMode}
           routerConfig={routerConfig}
+          geocoder={geocoder}
         />      
       </MapContainer>
 
@@ -518,6 +514,7 @@ const Map = (props) => {
         showGoogle={showGoogle} 
         setShowGoogle={setShowGoogle}
         gapi={gapi}
+        geocoder={geocoder}
       />
       <Modal 
         id='ShareEmailModal' 

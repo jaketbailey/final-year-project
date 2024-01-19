@@ -236,6 +236,7 @@ const RoutePreferencesPanel = (props) => {
   const extractWaypoints = (gpxData) => {
     // Parse GPX data and extract latLngs of waypoints
     const latLngs = [];
+    const wptArr = [];
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(gpxData, 'text/xml');
     const waypoints = xmlDoc.querySelectorAll('wpt');
@@ -244,7 +245,9 @@ const RoutePreferencesPanel = (props) => {
       const lat = parseFloat(waypoint.getAttribute('lat'));
       const lon = parseFloat(waypoint.getAttribute('lon'));
       latLngs.push(L.latLng(lat, lon));
+      wptArr.push([lat, lon]);
     });
+    localStorage.setItem('waypoints', wptArr)
 
     // You now have latLngs of waypoints, you can use them as needed
     props.control.current.setWaypoints(latLngs);
