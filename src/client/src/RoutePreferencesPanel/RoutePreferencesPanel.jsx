@@ -5,6 +5,7 @@ import SharePanel from './SharePanel';
 import L, { geoJson } from 'leaflet';
 import 'leaflet-gpx';
 import { type } from '@testing-library/user-event/dist/type';
+import ImportPanel from './ImportPanel';
 
 /**
  * @component RoutePreferencesPanel
@@ -14,6 +15,7 @@ import { type } from '@testing-library/user-event/dist/type';
  */
 const RoutePreferencesPanel = (props) => {
   const [showPanel, setShowPanel] = useState(false);
+  const [showImportPanel, setShowImportPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [avoidFeatures, setAvoidFeatures] = useState([]);
   const [stravaAuthCode, setStravaAuthCode] = useState(null)
@@ -21,8 +23,6 @@ const RoutePreferencesPanel = (props) => {
   const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
   const [signedInUser, setSignedInUser] = useState(null);
   const [GAPIAuthInstance, setGAPIAuthInstance] = useState(null);
-  const [file, setFile] = useState(null);
-  const [fileType, setFileType] = useState(null);
 
   const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
   const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
@@ -194,6 +194,11 @@ const RoutePreferencesPanel = (props) => {
     setShowPanel(!showPanel);
   }
 
+  const toggleImportPanel = () => {
+    console.log(showImportPanel)
+    setShowImportPanel(!showImportPanel);
+  }
+
   const toggleSharePanel = () => {
     setShowSharePanel(!showSharePanel);
   }
@@ -235,71 +240,13 @@ const RoutePreferencesPanel = (props) => {
     }
   }, [showPanel]);
 
-  const extractWaypoints = (data) => {
-    const wptArr = []
-    const latLngs = [];
-
-    if (fileType === 'gpx') {
-      // Parse GPX data and extract latLngs of waypoints
-      const wptArr = [];
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(data, 'text/xml');
-      const waypoints = xmlDoc.querySelectorAll('wpt');
-  
-      waypoints.forEach((waypoint) => {
-        const lat = parseFloat(waypoint.getAttribute('lat'));
-        const lon = parseFloat(waypoint.getAttribute('lon'));
-        latLngs.push(L.latLng(lat, lon));
-        wptArr.push([lat, lon]);
-      });
-
-    } else if (fileType === 'geojson') {
-      const geoJSON = JSON.parse(data);
-      geoJSON.features.forEach((feature) => {
-          const type = feature.geometry.type;
-          const coordinates = feature.geometry.coordinates;
-          if (type === 'Point') {
-          latLngs.push(L.latLng(coordinates[1], coordinates[0]));
-            wptArr.push([coordinates[1], coordinates[0]]);
-          }
-      });
-    }
-    localStorage.setItem('waypoints', wptArr)
-    props.control.current.setWaypoints(latLngs);
-  };
-
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const fileDetails = e.target.value.split('.')
-    const type = fileDetails[fileDetails.length - 1];
-    setFile(file);
-    setFileType(type);
-  }
-
-  const handleFileUpload = (e) => {
-    if (file !== null) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (fileType === 'geojson') {
-          const currentFile = e.target.result;
-          extractWaypoints(currentFile);
-          return;
-        } else if (fileType === 'gpx') {
-          const currentFile = e.target.result;
-          extractWaypoints(currentFile);
-          return;
-        }
-      };
-      
-      reader.readAsText(file);
-    }
-  }
-
   return (
       <div className="route-preferences-panel">        
         <button className="route-preferences-panel__button" onClick={togglePanel}>
           Route Preferences 
+        </button>
+        <button className="route-preferences-panel__button" onClick={toggleImportPanel}>
+          Import Route 
         </button>
         <button className="route-preferences-panel__button" onClick={saveGeoJSON} >
           Export Route as GeoJSON
@@ -341,13 +288,13 @@ const RoutePreferencesPanel = (props) => {
                 <input type='checkbox' className="checkbox-input"  id='avoidFords' name='Fords' value='fords' />
                 <label className='checkbox-label' htmlFor='avoidFords'>Fords</label>
               </div>
-              <div className='checkbox-item'>
-                <input type='file' onChange={handleFileChange} />
-                <button onClick={handleFileUpload}>Load GPX</button>
-              </div>
             </div>
           </div>
         </div>
+        <ImportPanel
+          control={props.control}
+          showPanel={showImportPanel}
+        />
         <SharePanel 
           geoJSON={props.geoJSON} 
           gpx={props.gpx} 
