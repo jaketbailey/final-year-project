@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import './RoutePreferencesPanel.css'
 import 'leaflet-routing-machine';
 import SharePanel from './SharePanel';
-import L from 'leaflet';
+import L, { geoJson } from 'leaflet';
 import 'leaflet-gpx';
+import { type } from '@testing-library/user-event/dist/type';
 
 /**
  * @component RoutePreferencesPanel
@@ -20,7 +21,8 @@ const RoutePreferencesPanel = (props) => {
   const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
   const [signedInUser, setSignedInUser] = useState(null);
   const [GAPIAuthInstance, setGAPIAuthInstance] = useState(null);
-  const [gpxFile, setGPXFile] = useState(null);
+  const [file, setFile] = useState(null);
+  const [fileType, setFileType] = useState(null);
 
   const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
   const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
@@ -233,42 +235,64 @@ const RoutePreferencesPanel = (props) => {
     }
   }, [showPanel]);
 
-  const extractWaypoints = (gpxData) => {
-    // Parse GPX data and extract latLngs of waypoints
+  const extractWaypoints = (data) => {
+    const wptArr = []
     const latLngs = [];
-    const wptArr = [];
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(gpxData, 'text/xml');
-    const waypoints = xmlDoc.querySelectorAll('wpt');
 
-    waypoints.forEach((waypoint) => {
-      const lat = parseFloat(waypoint.getAttribute('lat'));
-      const lon = parseFloat(waypoint.getAttribute('lon'));
-      latLngs.push(L.latLng(lat, lon));
-      wptArr.push([lat, lon]);
-    });
+    if (fileType === 'gpx') {
+      // Parse GPX data and extract latLngs of waypoints
+      const wptArr = [];
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(data, 'text/xml');
+      const waypoints = xmlDoc.querySelectorAll('wpt');
+  
+      waypoints.forEach((waypoint) => {
+        const lat = parseFloat(waypoint.getAttribute('lat'));
+        const lon = parseFloat(waypoint.getAttribute('lon'));
+        latLngs.push(L.latLng(lat, lon));
+        wptArr.push([lat, lon]);
+      });
+
+    } else if (fileType === 'geojson') {
+      const geoJSON = JSON.parse(data);
+      geoJSON.features.forEach((feature) => {
+          const type = feature.geometry.type;
+          const coordinates = feature.geometry.coordinates;
+          if (type === 'Point') {
+          latLngs.push(L.latLng(coordinates[1], coordinates[0]));
+            wptArr.push([coordinates[1], coordinates[0]]);
+          }
+      });
+    }
     localStorage.setItem('waypoints', wptArr)
-
-    // You now have latLngs of waypoints, you can use them as needed
     props.control.current.setWaypoints(latLngs);
-    console.log(latLngs);
   };
 
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setGPXFile(file);
+    const fileDetails = e.target.value.split('.')
+    const type = fileDetails[fileDetails.length - 1];
+    setFile(file);
+    setFileType(type);
   }
 
   const handleFileUpload = (e) => {
-    if (gpxFile !== null) {
+    if (file !== null) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        const gpx = e.target.result;
-        extractWaypoints(gpx);
+        if (fileType === 'geojson') {
+          const currentFile = e.target.result;
+          extractWaypoints(currentFile);
+          return;
+        } else if (fileType === 'gpx') {
+          const currentFile = e.target.result;
+          extractWaypoints(currentFile);
+          return;
+        }
       };
       
-      reader.readAsText(gpxFile);
+      reader.readAsText(file);
     }
   }
 
