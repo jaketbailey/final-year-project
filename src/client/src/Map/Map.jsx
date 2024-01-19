@@ -73,6 +73,9 @@ const Map = (props) => {
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
+
+  const [gpxLink, setGPXLink] = useState(null);
+  const [geoJSONLink, setGeoJSONLink] = useState(null);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
@@ -470,9 +473,9 @@ const Map = (props) => {
           waypoints={waypoints}
           summary={summary}
           setSummary={setSummary}
-          setGeoJSONLink={props.setGeoJSONLink} 
+          setGeoJSONLink={setGeoJSONLink} 
           setGeoJSON={setGeoJSON}
-          setGPXLink={props.setGPXLink} 
+          setGPXLink={setGPXLink} 
           setGPX={setGPX}
           control={control}
           map={props.map}
@@ -494,8 +497,8 @@ const Map = (props) => {
         setSegmentDistance={setSegmentDistance}
       />
       <RoutePreferencesPanel
-        geoJSONLink={props.geoJSONLink} 
-        gpxLink={props.gpxLink}
+        geoJSONLink={geoJSONLink} 
+        gpxLink={gpxLink}
         geoJSON={geoJSON} 
         gpx={gpx}
         setAvoidFeatures={setAvoidFeatures}
