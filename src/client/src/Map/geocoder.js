@@ -1,7 +1,6 @@
 // Import necessary libraries
 import L from 'leaflet';
 
-const HERE_APP_ID = import.meta.env.VITE_HERE_API_APP_ID;
 const HERE_API_KEY = import.meta.env.VITE_HERE_API_KEY;
 
 // Define your custom Nominatim geocoder class
@@ -13,8 +12,6 @@ L.Control.NominatimGeocoder = L.Class.extend({
   },
 
   initialize: function (options) {
-    console.log('initgeocode')
-    options
     L.Util.setOptions(this, options);
   },
 
@@ -29,7 +26,6 @@ L.Control.NominatimGeocoder = L.Class.extend({
     try {
       this.getJSON('https://revgeocode.search.hereapi.com/v1/geocode', params, function (data) {
         const results = [];
-        console.log(data.items[0])
         const bbox = data.items[0].mapView;
         const bounds = L.latLngBounds([bbox.south, bbox.west], [bbox.north, bbox.east]);
 
@@ -60,10 +56,8 @@ L.Control.NominatimGeocoder = L.Class.extend({
     setTimeout(() => {
       const wpts = JSON.parse(localStorage.getItem('waypoints'))
       if (wpts.length <= 6){
-        console.log('do geocode')
         this.getJSON('https://revgeocode.search.hereapi.com/v1/revgeocode', params, function (data) {
           const results = [];
-          console.log(data.items[0])
           const bbox = data.items[0].mapView;
           const bounds = L.latLngBounds([bbox.south, bbox.west], [bbox.north, bbox.east]);
   
@@ -78,7 +72,6 @@ L.Control.NominatimGeocoder = L.Class.extend({
           cb.call(context, results);
         });
       } else {
-        console.log('do not geocode')
         cb.call(context, [])
       }
     }, 1000);
@@ -96,7 +89,6 @@ L.Control.NominatimGeocoder = L.Class.extend({
     try {
       this.getJSON('https://autocomplete.search.hereapi.com/v1/geocode', params, function (data) {
         const suggestions = data.items.map(item => {
-          console.log(item)
         const bbox = item.mapView;
           const bounds = L.latLngBounds([bbox.south, bbox.west], [bbox.north, bbox.east]);
           return {
