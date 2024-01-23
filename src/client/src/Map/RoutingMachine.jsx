@@ -278,6 +278,9 @@ const createRoutingMachineLayer = (props) => {
     for (const type of types) {
       const option = L.DomUtil.create('option', '', select);
       option.setAttribute('value', type.value);
+      if (localStorage.getItem('vehicleType') === type.value) {
+        option.setAttribute('selected', 'selected');
+      }
       option.textContent = type.name;
     }
 
@@ -314,6 +317,7 @@ const createRoutingMachineLayer = (props) => {
         planWaypoints.push(L.latLng(wpt[0], wpt[1]));
       }
       wpts = planWaypoints;
+
     } else {
       localStorage.setItem('routerConfig', JSON.stringify(defaultConfig));
       props.routerConfig.current = defaultConfig;
