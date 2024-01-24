@@ -310,6 +310,7 @@ const RoutePreferencesPanel = (props) => {
           stravaData={props.stravaData}
           GLoginLogout={GLoginLogout}
           gapi={props.gapi}
+          map={props.map}
         />
       </div>
   );

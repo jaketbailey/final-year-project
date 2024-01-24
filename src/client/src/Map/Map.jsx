@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup, useMap } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState, useRef, createRef } from 'react';
 import RoutePreferencesPanel from '../RoutePreferencesPanel/RoutePreferencesPanel';
@@ -516,6 +516,7 @@ const Map = (props) => {
         setShowGoogle={setShowGoogle}
         gapi={gapi}
         geocoder={geocoder}
+        map={map}
       />
       <Modal 
         id='ShareEmailModal' 

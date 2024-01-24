@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useMap } from "react-leaflet";
+
 
 /**
    * @function getGeoJSON
@@ -214,3 +217,28 @@ export const createStravaActivity = async (gpx, stravaData, stravaAccessToken) =
     createActivityBtn.textContent = 'Create Activity';
   }, 1000);
 }
+
+const calculateDistance = (coord1, coord2) => {
+  const deltaX = coord2[0] - coord1[0];
+  const deltaY = coord2[1] - coord1[1];
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+export const findFurthestCoordinates = (coordinates) => {
+  let maxDistance = 0;
+  let furthestCoords = [];
+
+  for (let i = 0; i < coordinates.length; i++) {
+    for (let j = i + 1; j < coordinates.length; j++) {
+      const distance = calculateDistance(coordinates[i], coordinates[j]);
+
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        furthestCoords = [coordinates[i], coordinates[j]];
+      }
+    }
+  }
+
+  return furthestCoords;
+}
+

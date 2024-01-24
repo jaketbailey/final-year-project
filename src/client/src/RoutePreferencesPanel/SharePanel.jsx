@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
+import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
+import L from 'leaflet';
+import { useMap } from 'react-leaflet';
 
 /**
  * @component SharePanel
@@ -9,6 +12,30 @@ import { useEffect, useState } from 'react';
  * @returns SharePanel component
  */
 const SharePanel = (props) => {
+
+  const screenshotter = useRef(null);
+
+  const initScreenshotter = () => {
+    if(props.map) {
+      const snapshotOptions = {
+        hideElementsWithSelectors: [
+          ".leaflet-control-container",
+          ".leaflet-dont-include-pane",
+          "#snapshot-button"
+        ],
+        hidden: true
+      };
+      
+      // Add screenshotter to map
+      screenshotter.current = (new SimpleMapScreenshoter(snapshotOptions));
+      screenshotter.current.addTo(props.map);
+    }
+  }
+
+  useEffect(() => {
+    console.log(props.map)
+    initScreenshotter()
+  }, [props.map])
 
   useEffect(() => {
     const sharePanelContainer = document.querySelector('.share-panel__preferences');
@@ -181,6 +208,7 @@ const SharePanel = (props) => {
   }
 
 
+
   const clickHandler = (event) => {
     const id = event.target.id;
     if (id === 'shareEmailButton') {
@@ -191,6 +219,37 @@ const SharePanel = (props) => {
     } else if (id === 'shareGoogleDriveButton') {
       console.log('google-drive');
       props.setShowGoogle(!props.showGoogle)      
+    } else if (id === 'shareFacebookButton') {
+      // const mapElement = document.getElementById('map');
+      // const map = L.getMap(mapElement)
+      // Set the bounding box you want to capture
+      // const bounds = [[lat1, lng1], [lat2, lng2]]; // Replace with your desired lat/lng values
+
+      // Set the map bounds to the specified bounding box
+      const bounds = JSON.parse(localStorage.getItem('waypoints'))
+      props.map.fitBounds(bounds);
+
+      // Wait for a short time to allow the map to adjust to the new bounds
+      setTimeout(() => {
+        // Set up screenshot function
+        console.log(screenshotter)
+        screenshotter
+          .current.takeScreen("image")
+          .then((image) => {
+            // Create a Blob from the data URL
+            return fetch(image).then((res) => res.blob());
+          })
+          .then((blob) => {
+            // saveAs function installed as part of leaflet snapshot package
+            saveAs(blob, "map_snapshot.png");
+
+          })
+          .catch((e) => {
+            alert(e.toString());
+
+          });
+      }, 500); // Adjust the delay time as needed
+    
     }
   };
 
@@ -201,6 +260,7 @@ const SharePanel = (props) => {
           <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
           <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
+          <button id='shareFacebookButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Facebook</button>
         </div>
       </div>
     </div>
