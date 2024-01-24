@@ -2,8 +2,7 @@ import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
 import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
-import L from 'leaflet';
-import { useMap } from 'react-leaflet';
+import { findFurthestCoordinates } from '../Map/routeHelpers';
 
 /**
  * @component SharePanel
@@ -220,18 +219,23 @@ const SharePanel = (props) => {
       console.log('google-drive');
       props.setShowGoogle(!props.showGoogle)      
     } else if (id === 'shareFacebookButton') {
-      // const mapElement = document.getElementById('map');
-      // const map = L.getMap(mapElement)
-      // Set the bounding box you want to capture
-      // const bounds = [[lat1, lng1], [lat2, lng2]]; // Replace with your desired lat/lng values
-
       // Set the map bounds to the specified bounding box
-      const bounds = JSON.parse(localStorage.getItem('waypoints'))
+      let bounds;
+      const roundTripMode = localStorage.getItem('roundTripMode');
+      if(roundTripMode === 'true') {
+        const coords = props.control.current._routes[0].coordinates
+        const parsedCoords = [];
+        for (const coord of coords) {
+          parsedCoords.push([coord.lat, coord.lng])
+        }
+        bounds = findFurthestCoordinates(parsedCoords);
+      } else {
+        bounds = JSON.parse(localStorage.getItem('waypoints'))
+      }
       props.map.fitBounds(bounds);
 
       // Wait for a short time to allow the map to adjust to the new bounds
       setTimeout(() => {
-        // Set up screenshot function
         console.log(screenshotter)
         screenshotter
           .current.takeScreen("image")
@@ -240,16 +244,13 @@ const SharePanel = (props) => {
             return fetch(image).then((res) => res.blob());
           })
           .then((blob) => {
-            // saveAs function installed as part of leaflet snapshot package
             saveAs(blob, "map_snapshot.png");
 
           })
           .catch((e) => {
             alert(e.toString());
-
           });
       }, 500); // Adjust the delay time as needed
-    
     }
   };
 

@@ -311,6 +311,7 @@ const RoutePreferencesPanel = (props) => {
           GLoginLogout={GLoginLogout}
           gapi={props.gapi}
           map={props.map}
+          control={props.control}
         />
       </div>
   );
