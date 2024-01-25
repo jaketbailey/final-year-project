@@ -13,6 +13,7 @@ import { findFurthestCoordinates } from '../Map/routeHelpers';
 const SharePanel = (props) => {
 
   const screenshotter = useRef(null);
+  const socialShare = useRef(null);
   const [mapScreenshotBlob, setMapScreenshotBlob] = useState(null);
   const [mapScreenshotUrl, setMapScreenshotUrl] = useState(null);
 
@@ -111,10 +112,24 @@ const SharePanel = (props) => {
           console.log(response)
         });
       }
-    
     }
+
+    const shareTwitter = () => {
+      const tweetText = encodeURIComponent('Check out this route I planned!');
+      const url = encodeURIComponent(mapScreenshotUrl);
+    
+      const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
+    
+      // Open the Twitter share dialog in a new tab
+      window.open(twitterShareUrl, '_blank');
+    };
+
     //share map screenshot to facebook
-    shareFacebook();
+    if (socialShare.current === "facebook") {
+      shareFacebook();
+    } else if (socialShare.current === "x") {
+      shareTwitter();
+    }
   },[mapScreenshotUrl])
 
   useEffect(() => {
@@ -292,7 +307,37 @@ const SharePanel = (props) => {
     console.log(res);
   }
 
+  const screenshotMap = () => {
+    // Set the map bounds to the specified bounding box
+    let bounds;
+    const roundTripMode = localStorage.getItem('roundTripMode');
+    if(roundTripMode === 'true') {
+      const coords = props.control.current._routes[0].coordinates
+      const parsedCoords = [];
+      for (const coord of coords) {
+        parsedCoords.push([coord.lat, coord.lng])
+      }
+      bounds = findFurthestCoordinates(parsedCoords);
+    } else {
+      bounds = JSON.parse(localStorage.getItem('waypoints'))
+    }
+    props.map.fitBounds(bounds);
 
+    // Wait for a short time to allow the map to adjust to the new bounds
+    setTimeout(() => {
+      console.log(screenshotter)
+      screenshotter
+        .current.takeScreen("image")
+        .then((image) => {
+          // Create a Blob from the data URL
+          setMapScreenshotBlob(image);
+          // return fetch(image).then((res) => res.blob());
+        })
+        .catch((e) => {
+          alert(e.toString());
+        });
+    }, 500); // Adjust the delay time as needed
+  }
 
   const clickHandler = (event) => {
     const id = event.target.id;
@@ -305,35 +350,11 @@ const SharePanel = (props) => {
       console.log('google-drive');
       props.setShowGoogle(!props.showGoogle)      
     } else if (id === 'shareFacebookButton') {
-      // Set the map bounds to the specified bounding box
-      let bounds;
-      const roundTripMode = localStorage.getItem('roundTripMode');
-      if(roundTripMode === 'true') {
-        const coords = props.control.current._routes[0].coordinates
-        const parsedCoords = [];
-        for (const coord of coords) {
-          parsedCoords.push([coord.lat, coord.lng])
-        }
-        bounds = findFurthestCoordinates(parsedCoords);
-      } else {
-        bounds = JSON.parse(localStorage.getItem('waypoints'))
-      }
-      props.map.fitBounds(bounds);
-
-      // Wait for a short time to allow the map to adjust to the new bounds
-      setTimeout(() => {
-        console.log(screenshotter)
-        screenshotter
-          .current.takeScreen("image")
-          .then((image) => {
-            // Create a Blob from the data URL
-            setMapScreenshotBlob(image);
-            // return fetch(image).then((res) => res.blob());
-          })
-          .catch((e) => {
-            alert(e.toString());
-          });
-      }, 500); // Adjust the delay time as needed
+      socialShare.current = "facebook";
+      screenshotMap();
+    } else if (id === 'shareXButton') {
+      socialShare.current = "x";
+      screenshotMap();
     }
   };
 
@@ -345,6 +366,7 @@ const SharePanel = (props) => {
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
           <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
           <button id='shareFacebookButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Facebook</button>
+          <button id='shareXButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>X/Twitter</button>
         </div>
       </div>
     </div>
