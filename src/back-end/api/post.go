@@ -196,16 +196,15 @@ func randomString() string {
 }
 
 func PostUploadRouteImage(c *gin.Context) {
-
-	//get formData
 	file, err := c.FormFile("image")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	u := uuid.New()
 
 	// Generate a unique filename
+	u := uuid.New()
+
 	filename := fmt.Sprintf("src/client/route_image_uploads/%s-%s", u.String(), filepath.Base(file.Filename))
 	filepath := fmt.Sprintf("/uploads/%s-%s", u.String(), filepath.Base(file.Filename))
 

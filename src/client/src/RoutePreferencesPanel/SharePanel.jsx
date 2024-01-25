@@ -76,12 +76,9 @@ const SharePanel = (props) => {
     
       const uploadImage = async () => {
         try {
-          console.log(mapScreenshotBlob)
           const mapScreenshotFile = dataURLtoFile(mapScreenshotBlob, 'mapScreenshot.png');
-          console.log(mapScreenshotFile)
           const formData = new FormData();
           formData.append('image', mapScreenshotFile);
-          // console.log(formData)
           const response = await fetch('/api/upload', {
             method: 'POST',
             body: formData,
@@ -94,7 +91,6 @@ const SharePanel = (props) => {
           const { filename } = await response.json();
     
           setMapScreenshotUrl(`http://dissertation.jaketbailey.co.uk:8080${filename}`);
-          console.log(`http://dissertation.jaketbailey.co.uk:8080${filename}`)
           console.log('Image Upload Successful');
         } catch (error) {
           console.error('Image Upload Failed:', error);
