@@ -55,6 +55,7 @@ const ImportPanel = (props) => {
     
     
       const handleFileChange = (e) => {
+        console.log(e.target.files)
         const file = e.target.files[0];
         const fileDetails = e.target.value.split('.')
         const type = fileDetails[fileDetails.length - 1];
