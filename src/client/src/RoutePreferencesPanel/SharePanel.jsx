@@ -113,15 +113,22 @@ const SharePanel = (props) => {
         });
       }
     }
+    const text = encodeURIComponent('Check out this route I planned!');
+    const url = encodeURIComponent(mapScreenshotUrl);
 
     const shareTwitter = () => {
-      const tweetText = encodeURIComponent('Check out this route I planned!');
-      const url = encodeURIComponent(mapScreenshotUrl);
     
-      const twitterShareUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${url}`;
+      const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
     
       // Open the Twitter share dialog in a new tab
       window.open(twitterShareUrl, '_blank');
+    };
+
+    const shareReddit = () => {
+      const redditShareUrl = `https://www.reddit.com/submit?url=${url}&title=${text}`;
+    
+      // Open the Reddit submission form in a new tab
+      window.open(redditShareUrl, '_blank');
     };
 
     //share map screenshot to facebook
@@ -129,6 +136,8 @@ const SharePanel = (props) => {
       shareFacebook();
     } else if (socialShare.current === "x") {
       shareTwitter();
+    } else if (socialShare.current === "reddit") {
+      shareReddit();
     }
   },[mapScreenshotUrl])
 
@@ -355,6 +364,9 @@ const SharePanel = (props) => {
     } else if (id === 'shareXButton') {
       socialShare.current = "x";
       screenshotMap();
+    } else if (id === 'shareRedditButton') {
+      socialShare.current = "reddit";
+      screenshotMap();
     }
   };
 
@@ -367,6 +379,7 @@ const SharePanel = (props) => {
           <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
           <button id='shareFacebookButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Facebook</button>
           <button id='shareXButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>X/Twitter</button>
+          <button id='shareRedditButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Reddit</button>
         </div>
       </div>
     </div>
