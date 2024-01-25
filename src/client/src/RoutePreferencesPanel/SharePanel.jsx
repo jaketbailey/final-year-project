@@ -13,6 +13,8 @@ import { findFurthestCoordinates } from '../Map/routeHelpers';
 const SharePanel = (props) => {
 
   const screenshotter = useRef(null);
+  const [mapScreenshotBlob, setMapScreenshotBlob] = useState(null);
+  const [mapScreenshotUrl, setMapScreenshotUrl] = useState(null);
 
   const initScreenshotter = () => {
     if(props.map) {
@@ -30,6 +32,94 @@ const SharePanel = (props) => {
       screenshotter.current.addTo(props.map);
     }
   }
+
+  useEffect(() => {
+    // Load the Facebook SDK asynchronously
+    const FB_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID;
+    const loadFacebookSDK = () => {
+      window.fbAsyncInit = function () {
+        window.FB.init({
+          appId: FB_APP_ID,
+          autoLogAppEvents: true,
+          xfbml: true,
+          version: 'v19.0',
+        });
+      };
+
+      // Load the SDK asynchronously
+      (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    };
+
+    loadFacebookSDK();
+  },[])
+
+  useEffect(() => {
+    if(mapScreenshotBlob) {
+
+      const dataURLtoFile = (dataurl, filename) => {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+      }
+    
+      const uploadImage = async () => {
+        try {
+          console.log(mapScreenshotBlob)
+          const mapScreenshotFile = dataURLtoFile(mapScreenshotBlob, 'mapScreenshot.png');
+          console.log(mapScreenshotFile)
+          const formData = new FormData();
+          formData.append('image', mapScreenshotFile);
+          // console.log(formData)
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if(!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
+          }
+    
+          const { filename } = await response.json();
+    
+          setMapScreenshotUrl(`http://dissertation.jaketbailey.co.uk:8080${filename}`);
+          console.log(`http://dissertation.jaketbailey.co.uk:8080${filename}`)
+          console.log('Image Upload Successful');
+        } catch (error) {
+          console.error('Image Upload Failed:', error);
+        }
+      }
+      uploadImage();
+    }
+  },[mapScreenshotBlob])
+  
+  useEffect(() => {
+    const shareFacebook = () => {
+      if (mapScreenshotUrl) {
+        FB.ui({
+          method: 'share',
+          display: 'popup',
+          href: mapScreenshotUrl,
+        }, function(response){
+          console.log(response)
+        });
+      }
+    
+    }
+    //share map screenshot to facebook
+    shareFacebook();
+  },[mapScreenshotUrl])
 
   useEffect(() => {
     console.log(props.map)
@@ -241,11 +331,8 @@ const SharePanel = (props) => {
           .current.takeScreen("image")
           .then((image) => {
             // Create a Blob from the data URL
-            return fetch(image).then((res) => res.blob());
-          })
-          .then((blob) => {
-            saveAs(blob, "map_snapshot.png");
-
+            setMapScreenshotBlob(image);
+            // return fetch(image).then((res) => res.blob());
           })
           .catch((e) => {
             alert(e.toString());

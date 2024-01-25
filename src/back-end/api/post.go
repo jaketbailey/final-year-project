@@ -10,10 +10,13 @@ import (
 	"cycling-route-planner/src/back-end/utils/logger"
 	"encoding/base64"
 	"fmt"
+	"math/rand"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	strava "github.com/strava/go.strava"
@@ -112,6 +115,7 @@ func PostCreateHazard(c *gin.Context) {
 }
 
 func PostCreateUserHazardReport(c *gin.Context) {
+
 	res, err := db.CreateUserHazardReport(c)
 
 	if err != nil {
@@ -177,4 +181,39 @@ func PostCreateStravaActivity(c *gin.Context) {
 			"response": upload,
 		})
 	}
+}
+
+func randomString() string {
+	// define the characters to use
+	chars := "abcdefghijklmnopqrstuvwxyz0123456789"
+
+	// generate a random string of length 10
+	var result string
+	for i := 0; i < 15; i++ {
+		result += string(chars[rand.Intn(len(chars))])
+	}
+	return result
+}
+
+func PostUploadRouteImage(c *gin.Context) {
+
+	//get formData
+	file, err := c.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	u := uuid.New()
+
+	// Generate a unique filename
+	filename := fmt.Sprintf("src/client/route_image_uploads/%s-%s", u.String(), filepath.Base(file.Filename))
+	filepath := fmt.Sprintf("/uploads/%s-%s", u.String(), filepath.Base(file.Filename))
+
+	// Save the file to the server
+	if err := c.SaveUploadedFile(file, filename); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"filename": filepath})
 }

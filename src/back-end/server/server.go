@@ -27,6 +27,7 @@ func Init(mode string) {
 
 	router := NewRouter()
 	router.Use(static.Serve("/", static.LocalFile("./src/client/build", true)))
+	router.Use(static.Serve("/uploads", static.LocalFile("./src/client/route_image_uploads", true)))
 	router.Use(static.Serve("/exchange_token", static.LocalFile("./src/client/build", true)))
 
 	api.Init(router)
@@ -34,4 +35,5 @@ func Init(mode string) {
 	// Start and run the server
 	Logger.Info().Println("Server Starting")
 	router.Run(fmt.Sprintf(":%d", port))
+
 }
