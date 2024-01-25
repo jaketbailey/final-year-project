@@ -33,3 +33,6 @@ bun.lockb
 .VSCodeCounter/*
 
 leaflet-routing-machine-openroute/
+
+route_image_uploads/
+uploads/
