@@ -29,6 +29,7 @@ func Init(mode string) {
 	router.Use(static.Serve("/", static.LocalFile("./src/client/build", true)))
 	router.Use(static.Serve("/uploads", static.LocalFile("./src/client/route_image_uploads", true)))
 	router.Use(static.Serve("/exchange_token", static.LocalFile("./src/client/build", true)))
+	router.Use(static.Serve("/garmin", static.LocalFile("./src/client/build", true)))
 
 	api.Init(router)
 

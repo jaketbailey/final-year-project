@@ -286,27 +286,10 @@ const Modal = (props) => {
   }
 
   useEffect(() => {
+    console.log('hello')
     if (props.garminJSON.current) {
-      if(props.garminJSON.current.coureName) {
-        const saveCourse = async () => {
-          const response = await fetch('https://apis.garmin.com/training-api/courses/v1/course', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(props.garminJSON.current),
-          })
-          const res = await response.json();
-          console.log(res)
-          if (res.status === "Good") {
-            buttonUpdate('Course saved.', 'garmin', 'success');
-            return;
-          } else {
-            buttonUpdate('Error saving course.', 'garmin');
-            console.log(res);
-            return;
-          }
-        }
+      if(props.garminJSON.current.courseName) {
+        
       }
     }
   },[props.garminJSON.current])
@@ -327,7 +310,7 @@ const Modal = (props) => {
     } else if (type === "garmin") {
       console.log('garminModal')
       const input = document.getElementById('input-garmin-course-name');
-      props.garminJSON.current.coureName = input.value;
+      props.garminJSON.current.courseName = input.value;
       return;
     }
 

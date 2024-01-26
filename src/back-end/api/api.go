@@ -19,7 +19,7 @@ func Init(router *gin.Engine) {
 		api.GET("/hazards", GetHazards)
 		api.GET("/categories", GetCategories)
 		api.GET("/geotypes", GetGeometryTypes)
-
+		api.GET("/get-token", GetGarminToken)
 		// POST Routes
 		api.POST("/test", PostTest)
 		api.POST("/send-email", PostSendEmail)
