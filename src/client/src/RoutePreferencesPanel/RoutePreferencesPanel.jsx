@@ -312,6 +312,8 @@ const RoutePreferencesPanel = (props) => {
           gapi={props.gapi}
           map={props.map}
           control={props.control}
+          showGarmin={props.showGarmin} 
+          setShowGarmin={props.setShowGarmin} 
         />
       </div>
   );

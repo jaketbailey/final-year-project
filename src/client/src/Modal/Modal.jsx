@@ -285,6 +285,32 @@ const Modal = (props) => {
     addReport();
   }
 
+  useEffect(() => {
+    if (props.garminJSON.current) {
+      if(props.garminJSON.current.coureName) {
+        const saveCourse = async () => {
+          const response = await fetch('https://apis.garmin.com/training-api/courses/v1/course', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(props.garminJSON.current),
+          })
+          const res = await response.json();
+          console.log(res)
+          if (res.status === "Good") {
+            buttonUpdate('Course saved.', 'garmin', 'success');
+            return;
+          } else {
+            buttonUpdate('Error saving course.', 'garmin');
+            console.log(res);
+            return;
+          }
+        }
+      }
+    }
+  },[props.garminJSON.current])
+
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
@@ -297,6 +323,11 @@ const Modal = (props) => {
       return;
     } else if (type === "hazardReport") {
       collateReportData();
+      return;
+    } else if (type === "garmin") {
+      console.log('garminModal')
+      const input = document.getElementById('input-garmin-course-name');
+      props.garminJSON.current.coureName = input.value;
       return;
     }
 
@@ -435,6 +466,16 @@ const Modal = (props) => {
           <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Report Error</button>
         </div>
       
+      )
+    } else if (props.type === 'garmin') {
+      return (
+        <div>
+          <div className='block' id="add-garmin-course">
+          <label htmlFor='input-garmin-course-name'>Course Name:</label><br/>
+          <input id='input-garmin-course-name' name='input-garmin-course-name' type='text' placeholder='My Course'/><br/>
+          </div>
+          <button id='save-course' className='share' onClick={() => {handleClick(props.type)}}>Save</button>
+        </div>
       )
     }
   }

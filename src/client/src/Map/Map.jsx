@@ -62,6 +62,7 @@ const Map = (props) => {
   const [showHazard, setShowHazard] = useState(false);
   const [hazardID, setHazardID] = useState('');
   const [showHazardReport, setShowHazardReport] = useState(false);
+  const [showGarmin, setShowGarmin] = useState(false);
   
   const [emailData, setEmailData] = useState({});
   const [stravaData, setStravaData] = useState({});
@@ -519,6 +520,8 @@ const Map = (props) => {
         gapi={gapi}
         geocoder={geocoder}
         map={map}
+        showGarmin={showGarmin} 
+        setShowGarmin={setShowGarmin} 
       />
       <Modal 
         id='ShareEmailModal' 
@@ -572,6 +575,14 @@ const Map = (props) => {
         modalTitle='Report a Hazard Error'
         type='hazardReport'
         hazardID={hazardID}
+      />
+      <Modal 
+        id='ShareGarminModal' 
+        show={showGarmin} 
+        setShow={setShowGarmin} 
+        modalTitle='Save to Garmin Courses'
+        type='garmin'
+        garminJSON={garminJSON}
       />
     </div>
   )

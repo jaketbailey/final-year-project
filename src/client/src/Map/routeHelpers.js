@@ -257,7 +257,6 @@ export const convertRouteToGarminJSON = (route) => {
     const garminActivity = activityTypes[activity];
   
   // RUNNING, HIKING, OTHER, MOUNTAIN_BIKING, TRAIL_RUNNING, ROAD_CYCLING, GRAVEL_CYCLING
-    const courseName = "olathe gravel cycling"; // Assign the course name
   
     // Extract distance, elevation gain, and loss from the route
     const distance = route.summary.totalDistance;
@@ -279,7 +278,6 @@ export const convertRouteToGarminJSON = (route) => {
     // Construct the final JSON object
     const jsonObject = {
         // courseId,
-        courseName,
         distance,
         elevationGain,
         elevationLoss,
