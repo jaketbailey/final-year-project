@@ -9,7 +9,7 @@ import '../leaflet-routing-machine-openroute/dist/jtb-leaflet-routing-openroute.
 import 'leaflet-control-geocoder'
 import './Map.css'
 import HereGeocoder from './geocoder.js'
-import { getGPX, exportGPX, getGeoJSON, exportGeoJSON } from './routeHelpers'
+import { getGPX, exportGPX, getGeoJSON, exportGeoJSON, convertRouteToGarminJSON } from './routeHelpers'
 
 /**
  * @function createRoutingMachineLayer
@@ -401,11 +401,11 @@ const createRoutingMachineLayer = (props) => {
 
   instance.on('routesfound', (e) => {
     const routes = e.routes;
-  
     props.setCoordinates(routes[0].coordinates);
     props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
+    props.garminJSON.current = convertRouteToGarminJSON(routes[0]);
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
     exportGeoJSON(geoJSON, props.setGeoJSON, props.setGeoJSONLink);

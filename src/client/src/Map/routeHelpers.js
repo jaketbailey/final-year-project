@@ -242,3 +242,52 @@ export const findFurthestCoordinates = (coordinates) => {
   return furthestCoords;
 }
 
+export const convertRouteToGarminJSON = (route) => {
+  const activity = localStorage.getItem('vehicleType');
+  if(activity) {
+    const activityTypes = {
+      'cycling-road': 'ROAD_CYCLING',
+      'cycling-regular': 'OTHER',
+      'cycling-mountain': 'MOUNTAIN_BIKING' ,
+      'cycling-electric': 'OTHER',
+      'foot-walking': 'RUNNING'
+    }
+  
+    // convert ORS vehicle type to Garmin activity type
+    const garminActivity = activityTypes[activity];
+  
+  // RUNNING, HIKING, OTHER, MOUNTAIN_BIKING, TRAIL_RUNNING, ROAD_CYCLING, GRAVEL_CYCLING
+    const courseName = "olathe gravel cycling"; // Assign the course name
+  
+    // Extract distance, elevation gain, and loss from the route
+    const distance = route.summary.totalDistance;
+    const elevationGain = route.summary.totalAscend;
+    const elevationLoss = route.summary.totalDescend;
+  
+    // Extract geoPoints from the route
+    const geoPoints = route.coordinates.map(coord => {
+        return {
+            latitude: coord.lat,
+            longitude: coord.lng,
+            elevation: coord.alt
+        };
+    });
+  
+    // Define other properties
+    const coordinateSystem = "WGS84";
+  
+    // Construct the final JSON object
+    const jsonObject = {
+        // courseId,
+        courseName,
+        distance,
+        elevationGain,
+        elevationLoss,
+        geoPoints,
+        garminActivity,
+        coordinateSystem
+    };
+    console.log(jsonObject)
+    return jsonObject;
+  }
+}
