@@ -1,6 +1,8 @@
 import { useRef } from 'react';
 import './RoutePreferencesPanel.css'
 import { useEffect, useState } from 'react';
+import { SimpleMapScreenshoter } from 'leaflet-simple-map-screenshoter';
+import { findFurthestCoordinates } from '../Map/routeHelpers';
 
 /**
  * @component SharePanel
@@ -9,6 +11,140 @@ import { useEffect, useState } from 'react';
  * @returns SharePanel component
  */
 const SharePanel = (props) => {
+
+  const screenshotter = useRef(null);
+  const socialShare = useRef(null);
+  const [mapScreenshotBlob, setMapScreenshotBlob] = useState(null);
+  const [mapScreenshotUrl, setMapScreenshotUrl] = useState(null);
+
+  const initScreenshotter = () => {
+    if(props.map) {
+      const snapshotOptions = {
+        hideElementsWithSelectors: [
+          ".leaflet-control-container",
+          ".leaflet-dont-include-pane",
+          "#snapshot-button"
+        ],
+        hidden: true
+      };
+      
+      // Add screenshotter to map
+      screenshotter.current = (new SimpleMapScreenshoter(snapshotOptions));
+      screenshotter.current.addTo(props.map);
+    }
+  }
+
+  useEffect(() => {
+    // Load the Facebook SDK asynchronously
+    const FB_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID;
+    const loadFacebookSDK = () => {
+      window.fbAsyncInit = function () {
+        window.FB.init({
+          appId: FB_APP_ID,
+          autoLogAppEvents: true,
+          xfbml: true,
+          version: 'v19.0',
+        });
+      };
+
+      // Load the SDK asynchronously
+      (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    };
+
+    loadFacebookSDK();
+  },[])
+
+  useEffect(() => {
+    if(mapScreenshotBlob) {
+
+      const dataURLtoFile = (dataurl, filename) => {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+      }
+    
+      const uploadImage = async () => {
+        try {
+          const mapScreenshotFile = dataURLtoFile(mapScreenshotBlob, 'mapScreenshot.png');
+          const formData = new FormData();
+          formData.append('image', mapScreenshotFile);
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if(!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
+          }
+    
+          const { filename } = await response.json();
+    
+          setMapScreenshotUrl(`http://dissertation.jaketbailey.co.uk:8080${filename}`);
+          console.log('Image Upload Successful');
+        } catch (error) {
+          console.error('Image Upload Failed:', error);
+        }
+      }
+      uploadImage();
+    }
+  },[mapScreenshotBlob])
+  
+  useEffect(() => {
+    const shareFacebook = () => {
+      if (mapScreenshotUrl) {
+        FB.ui({
+          method: 'share',
+          display: 'popup',
+          href: mapScreenshotUrl,
+        }, function(response){
+          console.log(response)
+        });
+      }
+    }
+    const text = encodeURIComponent('Check out this route I planned!');
+    const url = encodeURIComponent(mapScreenshotUrl);
+
+    const shareTwitter = () => {
+    
+      const twitterShareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+    
+      // Open the Twitter share dialog in a new tab
+      window.open(twitterShareUrl, '_blank');
+    };
+
+    const shareReddit = () => {
+      const redditShareUrl = `https://www.reddit.com/submit?url=${url}&title=${text}`;
+    
+      // Open the Reddit submission form in a new tab
+      window.open(redditShareUrl, '_blank');
+    };
+
+    //share map screenshot to facebook
+    if (socialShare.current === "facebook") {
+      shareFacebook();
+    } else if (socialShare.current === "x") {
+      shareTwitter();
+    } else if (socialShare.current === "reddit") {
+      shareReddit();
+    }
+  },[mapScreenshotUrl])
+
+  useEffect(() => {
+    console.log(props.map)
+    initScreenshotter()
+  }, [props.map])
 
   useEffect(() => {
     const sharePanelContainer = document.querySelector('.share-panel__preferences');
@@ -132,7 +268,7 @@ const SharePanel = (props) => {
         sendBtn.textContent = 'Send';
       }, 1000)
     } else {
-      console.log(res);
+      console.log(res);``
     }
   }
 
@@ -180,6 +316,37 @@ const SharePanel = (props) => {
     console.log(res);
   }
 
+  const screenshotMap = () => {
+    // Set the map bounds to the specified bounding box
+    let bounds;
+    const roundTripMode = localStorage.getItem('roundTripMode');
+    if(roundTripMode === 'true') {
+      const coords = props.control.current._routes[0].coordinates
+      const parsedCoords = [];
+      for (const coord of coords) {
+        parsedCoords.push([coord.lat, coord.lng])
+      }
+      bounds = findFurthestCoordinates(parsedCoords);
+    } else {
+      bounds = JSON.parse(localStorage.getItem('waypoints'))
+    }
+    props.map.fitBounds(bounds);
+
+    // Wait for a short time to allow the map to adjust to the new bounds
+    setTimeout(() => {
+      console.log(screenshotter)
+      screenshotter
+        .current.takeScreen("image")
+        .then((image) => {
+          // Create a Blob from the data URL
+          setMapScreenshotBlob(image);
+          // return fetch(image).then((res) => res.blob());
+        })
+        .catch((e) => {
+          alert(e.toString());
+        });
+    }, 500); // Adjust the delay time as needed
+  }
 
   const clickHandler = (event) => {
     const id = event.target.id;
@@ -191,6 +358,17 @@ const SharePanel = (props) => {
     } else if (id === 'shareGoogleDriveButton') {
       console.log('google-drive');
       props.setShowGoogle(!props.showGoogle)      
+    } else if (id === 'shareFacebookButton') {
+      socialShare.current = "facebook";
+      screenshotMap();
+    } else if (id === 'shareXButton') {
+      socialShare.current = "x";
+      screenshotMap();
+    } else if (id === 'shareRedditButton') {
+      socialShare.current = "reddit";
+      screenshotMap();
+    } else if (id === 'shareGarminButton') {
+      props.setShowGarmin(!props.showGarmin)
     }
   };
 
@@ -198,9 +376,13 @@ const SharePanel = (props) => {
     <div className="share-panel__preferences">
       <div className="share-panel__preferences__preference">
         <div className='button-list'>
-          <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
+          <button id='shareGarminButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Garmin Course</button>
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
           <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
+          <button id='shareFacebookButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Facebook</button>
+          <button id='shareXButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>X/Twitter</button>
+          <button id='shareRedditButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Reddit</button>
+          <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
         </div>
       </div>
     </div>

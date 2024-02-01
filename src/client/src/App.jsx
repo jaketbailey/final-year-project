@@ -5,8 +5,6 @@ import LeftPanel from './LeftPanel/LeftPanel';
 
 
 function App() {
-  const [gpxLink, setGPXLink] = useState(null);
-  const [geoJSONLink, setGeoJSONLink] = useState(null);
   const [GToken, setGToken] = useState(null);
 
   useEffect(() => {
@@ -19,14 +17,9 @@ function App() {
     <div>
       <div className='main-flex'>
         <LeftPanel 
-          geoJSONLink={geoJSONLink} 
-          gpxLink={gpxLink}
           setGToken={setGToken}
         />
-        <Map 
-          setGeoJSONLink={setGeoJSONLink}
-          setGPXLink={setGPXLink}
-        />
+        <Map/>
       </div>
       
     </div>

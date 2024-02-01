@@ -19,12 +19,17 @@ func Init(router *gin.Engine) {
 		api.GET("/hazards", GetHazards)
 		api.GET("/categories", GetCategories)
 		api.GET("/geotypes", GetGeometryTypes)
+		api.GET("/get-token", GetGarminToken)
+		api.GET("/get-access-token", GetGarminUserAccessToken)
 
 		// POST Routes
 		api.POST("/test", PostTest)
 		api.POST("/send-email", PostSendEmail)
 		api.POST("/create-strava-activity", PostCreateStravaActivity)
 		api.POST("/hazard", PostCreateHazard)
+		api.POST("/hazard-report", PostCreateUserHazardReport)
+		api.POST("/upload", PostUploadRouteImage)
+		api.POST("/create-garmin-course", PostCreateGarminCourse)
 
 		// PUT Routes
 		api.PUT("/test", PutTest)

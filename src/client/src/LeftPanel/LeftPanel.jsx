@@ -21,6 +21,8 @@ const LeftPanel = (props) => {
                     <div>Route Waypoints</div><hr/>
                     <div><img src="/img/routing/hazard.svg" className="panelImg"/></div>
                     <div>Hazards</div><hr/>
+                    <div><img src="/img/routing/cycling_infrastructure.svg" className="panelImg"/></div>
+                    <div>Cycling Infrastructure</div><hr/>
                     <div><img src="/img/routing/attractions.svg" className="panelImg"/></div>
                     <div>POI - Attractions</div><hr/>
                     <div><img src="/img/routing/accommodation.svg" className="panelImg"/></div>

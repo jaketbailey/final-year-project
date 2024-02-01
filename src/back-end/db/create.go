@@ -69,3 +69,22 @@ func CreateHazard(c *gin.Context) (interface{}, error) {
 
 	return hazard, nil
 }
+
+func CreateUserHazardReport(c *gin.Context) (interface{}, error) {
+	var hazardReport HazardReportRequestBody
+	if c.BindJSON(&hazardReport) != nil {
+		return nil, fmt.Errorf("Error binding JSON")
+	}
+	_, err := db.Query(fmt.Sprintf(`
+		INSERT INTO hazard_error_report (hazard_id, report_date, user_feedback) VALUES
+			(%s, '%s', '%s')
+		`,
+		hazardReport.HazardId, hazardReport.Date, hazardReport.ReportBody))
+
+	if err != nil {
+		fmt.Printf("Error: %v", err)
+
+		return nil, err
+	}
+	return hazardReport, nil
+}

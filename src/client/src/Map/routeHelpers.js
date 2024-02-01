@@ -1,3 +1,6 @@
+import { useEffect } from "react";
+import { useMap } from "react-leaflet";
+
 
 /**
    * @function getGeoJSON
@@ -213,4 +216,74 @@ export const createStravaActivity = async (gpx, stravaData, stravaAccessToken) =
     createActivityBtn.classList.remove('fail');
     createActivityBtn.textContent = 'Create Activity';
   }, 1000);
+}
+
+const calculateDistance = (coord1, coord2) => {
+  const deltaX = coord2[0] - coord1[0];
+  const deltaY = coord2[1] - coord1[1];
+  return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+}
+
+export const findFurthestCoordinates = (coordinates) => {
+  let maxDistance = 0;
+  let furthestCoords = [];
+
+  for (let i = 0; i < coordinates.length; i++) {
+    for (let j = i + 1; j < coordinates.length; j++) {
+      const distance = calculateDistance(coordinates[i], coordinates[j]);
+
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        furthestCoords = [coordinates[i], coordinates[j]];
+      }
+    }
+  }
+
+  return furthestCoords;
+}
+
+export const convertRouteToGarminJSON = (route) => {
+  const activity = localStorage.getItem('vehicleType') || 'cycling-road';
+  if(activity) {
+    const activityTypes = {
+      'cycling-road': 'ROAD_CYCLING',
+      'cycling-regular': 'OTHER',
+      'cycling-mountain': 'MOUNTAIN_BIKING' ,
+      'cycling-electric': 'OTHER',
+      'foot-walking': 'RUNNING'
+    }
+  
+    // convert ORS vehicle type to Garmin activity type
+    const garminActivity = activityTypes[activity];
+  
+  // RUNNING, HIKING, OTHER, MOUNTAIN_BIKING, TRAIL_RUNNING, ROAD_CYCLING, GRAVEL_CYCLING
+  
+    // Extract distance, elevation gain, and loss from the route
+    const distance = route.summary.totalDistance;
+    const elevationGain = route.summary.totalAscend;
+    const elevationLoss = route.summary.totalDescend;
+  
+    // Extract geoPoints from the route
+    const geoPoints = route.coordinates.map(coord => {
+        return {
+            latitude: coord.lat,
+            longitude: coord.lng,
+            elevation: coord.alt
+        };
+    });
+  
+    // Define other properties
+    const coordinateSystem = "WGS84";
+  
+    // Construct the final JSON object
+    const jsonObject = {
+        distance,
+        elevationGain,
+        elevationLoss,
+        geoPoints,
+        activityType: garminActivity,
+        coordinateSystem
+    };
+    return jsonObject;
+  }
 }

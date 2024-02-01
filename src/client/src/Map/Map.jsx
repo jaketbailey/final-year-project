@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup } from 'react-leaflet'
+import { LayersControl, MapContainer, TileLayer, Marker, Popup, LayerGroup, Polygon, FeatureGroup, useMap } from 'react-leaflet'
 import RoutingMachine from './RoutingMachine';
 import { useEffect, useState, useRef, createRef } from 'react';
 import RoutePreferencesPanel from '../RoutePreferencesPanel/RoutePreferencesPanel';
@@ -18,10 +18,37 @@ import { EditControl } from "react-leaflet-draw";
 const Map = (props) => {
   const chartRef = useRef(null);
   const control = useRef(null);
+  const roundTripMode = useRef(false);
+  const geocoder = useRef(L.Control.Geocoder.nominatim());
+  const [garminJSON, setGarminJSON] = useState({});
+  const routerConfig = useRef({
+            attributes: [
+                "avgspeed",
+                "percentage",
+              ],
+            extra_info: [
+                "steepness",
+                "suitability",
+                "surface",
+                "waycategory",
+                "waytype"
+            ],
+            continue_straight: true,
+            options: {
+                avoid_features: ['ferries']
+            },
+            language: "en",
+            maneuvers: "true",
+            preference: "recommended",
+            elevation: "true",
+        },
+  )
   
+
   const [categories, setCategories] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 50.798908, lng: -1.091160});
   const [coordinates, setCoordinates] = useState([]);
+  const [waypoints, setWaypoints] = useState([]);
   const [summary, setSummary] = useState({});
   const [map, setMap] = useState(null);
   const [geoJSON, setGeoJSON] = useState(null);
@@ -33,7 +60,10 @@ const Map = (props) => {
   const [showStrava, setShowStrava] = useState(false);
   const [showGoogle, setShowGoogle] = useState(false);
   const [showHazard, setShowHazard] = useState(false);
-
+  const [hazardID, setHazardID] = useState('');
+  const [showHazardReport, setShowHazardReport] = useState(false);
+  const [showGarmin, setShowGarmin] = useState(false);
+  
   const [emailData, setEmailData] = useState({});
   const [stravaData, setStravaData] = useState({});
   const [googleData, setGoogleData] = useState({});
@@ -45,12 +75,32 @@ const Map = (props) => {
   const [keyPOIMarkers, setKeyPOIMarkers] = useState([]);
   const [hazardAreas, setHazardAreas] = useState([]);
   const [segmentDistance, setSegmentDistance] = useState(0);
+
+  const [gpxLink, setGPXLink] = useState(null);
+  const [geoJSONLink, setGeoJSONLink] = useState(null);
   
   const OpenCycleAPIKey = import.meta.env.VITE_OPEN_CYCLE_MAP_API_KEY;
   const StravaKeyPairId = import.meta.env.VITE_STRAVA_HEATMAP_KEY_PAIR_ID;
   const StravaPolicy = import.meta.env.VITE_STRAVA_HEATMAP_POLICY;
   const StravaSignature = import.meta.env.VITE_STRAVA_HEATMAP_SIGNATURE;
   const FoursquareAPIKey = import.meta.env.VITE_FOURSQUARE_API_KEY;
+
+  useEffect(() => {
+    if (waypoints.length > 0) {
+      localStorage.setItem('waypoints', JSON.stringify(waypoints));
+      localStorage.setItem('roundTripMode', roundTripMode.current);
+    }
+
+    if (localStorage.getItem('routerConfig') !== null) {
+      routerConfig.current = JSON.parse(localStorage.getItem('routerConfig'));
+    } else {
+      localStorage.setItem('routerConfig', JSON.stringify(routerConfig.current))
+    }
+
+    if (localStorage.getItem('roundTripDistance') === null) {
+      localStorage.setItem('roundTripDistance', 10);
+    }
+  },[waypoints, roundTripMode.current])
 
   /**
    * Calculate the great-circle distance between two points on the Earth's surface
@@ -92,7 +142,6 @@ const Map = (props) => {
     
     // Check if to boolean is present, final element in waypoint array is replaced with new coordinates
     if (to) {
-      console.log(currentWaypoints)
       const length = currentWaypoints.length;
       control.current.spliceWaypoints(length-1,1, L.latLng(coords))
       return;
@@ -119,7 +168,6 @@ const Map = (props) => {
         }
       }
     })
-    console.log(spliceIndex)
     control.current.spliceWaypoints(spliceIndex,0, L.latLng(coords))
   }
 
@@ -182,20 +230,30 @@ const Map = (props) => {
       const url = `/api/hazards?latitude=${mapCenter.lat}&longitude=${mapCenter.lng}&radius=${radiusMiles}`;
       const response = await fetch(url);
       const res = await response.json();
-      console.log(res);
       const hazards = [];
 
-      const icon = L.icon({
+      let icon = L.icon({
         iconUrl: '/img/routing/hazard.svg',
         iconSize: [30, 110],
         iconAnchor: [15, 68],
         popupAnchor: [-3, -76],
       });
 
+      let color = '#FFBF00';
+      
       for (const hazard of res) {
-        console.log(hazard)
+        if (hazard.Properties[0].Key === 'cycling_infrastructure') {
+          icon = L.icon({
+            iconUrl: '/img/routing/cycling_infrastructure.svg',
+            iconSize: [30, 110],
+            iconAnchor: [15, 68],
+            popupAnchor: [-3, -76],
+          });
+
+          color = '#038546';
+        }
         let hazardType = hazard.Properties[0].Key
-        console.log(hazard.Date)
+
         let date = Date.parse(hazard.Date);
         date = new Date(date);
         const formattedDate = date.toLocaleDateString('en-GB', {
@@ -206,10 +264,9 @@ const Map = (props) => {
 
         hazardType = hazardType.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         if (hazard.Geometry.Type === "Polygon") {
-          console.log(convertCoords(hazard.Geometry.Coordinates))
           hazards.push(
-            <Polygon 
-              pathOptions={{color: '#FFBF00'}} 
+            <Polygon
+              pathOptions={{color: color}} 
               positions={convertCoords(hazard.Geometry.Coordinates)}
             >
               <Popup>
@@ -219,7 +276,12 @@ const Map = (props) => {
                     Danger Risk: {hazard.Properties[1].Value}<br/>
                     Date Reported: {formattedDate}
                   </p>
-              </Popup>  
+                  <button className="popup reportHazard" id={`reportHazard-${hazard.ID}`} onClick={(e) => {
+                    setShowHazardReport(!showHazardReport)
+                    setHazardID(e.target.id.split('-')[1])
+                  }}>Report Error</button>
+                  <button className="popup" id={`hazardRepeat-${hazard.ID}`}>Report as a reoccurring Hazard</button>
+              </Popup>
             </Polygon>
           )
         } 
@@ -236,6 +298,11 @@ const Map = (props) => {
                   Danger Risk: {hazard.Properties[1].Value}<br/>
                   Date Reported: {formattedDate}
                 </p>
+                <button id={`reportHazard-${hazard.ID}`} className="popup" onClick={(e) => {
+                  setShowHazardReport(!showHazardReport)
+                  setHazardID(e.target.id.split('-')[1])
+                }}>Report Error</button>
+                <button id={`hazardRepeat-${hazard.ID}`} className="popup">Report as a reoccurring Hazard</button>
               </Popup>
             </Marker>
           )
@@ -382,7 +449,7 @@ const Map = (props) => {
           <LayersControl.Overlay name="Strava Heatmap">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url={`https://heatmap-external-a.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
+              url={`https://heatmap-external-c.strava.com/tiles-auth/ride/hot/{z}/{x}/{y}.png?Key-Pair-Id=${StravaKeyPairId}&Policy=${StravaPolicy}&Signature=${StravaSignature}`}
               opacity="0.5"
             />
           </LayersControl.Overlay>
@@ -404,16 +471,23 @@ const Map = (props) => {
         </LayersControl>
         <RoutingMachine
           setCoordinates={setCoordinates}
+          setWaypoints={setWaypoints}
+          waypoints={waypoints}
           summary={summary}
           setSummary={setSummary}
-          setGeoJSONLink={props.setGeoJSONLink} 
+          setGeoJSONLink={setGeoJSONLink} 
           setGeoJSON={setGeoJSON}
-          setGPXLink={props.setGPXLink} 
+          setGPXLink={setGPXLink} 
           setGPX={setGPX}
           control={control}
+          map={props.map}
           setInstructions={setInstructions}
           chartRef={chartRef}
           setSegmentDistance={setSegmentDistance}
+          roundTripMode={roundTripMode}
+          routerConfig={routerConfig}
+          geocoder={geocoder}
+          setGarminJSON={setGarminJSON}
         />      
       </MapContainer>
 
@@ -426,8 +500,8 @@ const Map = (props) => {
         setSegmentDistance={setSegmentDistance}
       />
       <RoutePreferencesPanel
-        geoJSONLink={props.geoJSONLink} 
-        gpxLink={props.gpxLink}
+        geoJSONLink={geoJSONLink} 
+        gpxLink={gpxLink}
         geoJSON={geoJSON} 
         gpx={gpx}
         setAvoidFeatures={setAvoidFeatures}
@@ -444,6 +518,10 @@ const Map = (props) => {
         showGoogle={showGoogle} 
         setShowGoogle={setShowGoogle}
         gapi={gapi}
+        geocoder={geocoder}
+        map={map}
+        showGarmin={showGarmin} 
+        setShowGarmin={setShowGarmin} 
       />
       <Modal 
         id='ShareEmailModal' 
@@ -490,7 +568,22 @@ const Map = (props) => {
         hazard={hazard}
         categories={categories}
       />
-      
+      <Modal 
+        id='AddHazardReportModal' 
+        show={showHazardReport} 
+        setShow={setShowHazardReport} 
+        modalTitle='Report a Hazard Error'
+        type='hazardReport'
+        hazardID={hazardID}
+      />
+      <Modal 
+        id='ShareGarminModal' 
+        show={showGarmin} 
+        setShow={setShowGarmin} 
+        modalTitle='Save to Garmin Courses'
+        type='garmin'
+        garminJSON={garminJSON}
+      />
     </div>
   )
 }
