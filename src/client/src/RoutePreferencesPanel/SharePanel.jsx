@@ -268,7 +268,7 @@ const SharePanel = (props) => {
         sendBtn.textContent = 'Send';
       }, 1000)
     } else {
-      console.log(res);
+      console.log(res);``
     }
   }
 
