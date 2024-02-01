@@ -59,6 +59,7 @@ func GetGarminToken(c *gin.Context) {
 	consumerKey := config.GetDotEnvStr("GARMIN_CONSUMER_KEY")
 	consumerSecret := config.GetDotEnvStr("GARMIN_CONSUMER_SECRET")
 	callbackURL := config.GetDotEnvStr("GARMIN_CALLBACK_URL")
+
 	// Create OAuth1 configuration
 	config := oauth1.Config{
 		ConsumerKey:    consumerKey,
@@ -70,15 +71,16 @@ func GetGarminToken(c *gin.Context) {
 	}
 
 	// Obtain request token
-	requestToken, _, err := config.RequestToken()
+	token, tokenSecret, err := config.RequestToken()
+
 	if err != nil {
 		fmt.Println("Error obtaining request token:", err)
 		return
 	}
 
-	fmt.Println(requestToken)
+	fmt.Println(token, tokenSecret)
 	// Construct OAuth1 authorization header
-	authorizationURL, err := config.AuthorizationURL(requestToken)
+	authorizationURL, err := config.AuthorizationURL(token)
 	if err != nil {
 		// Handle error
 		fmt.Println("Error constructing authorization URL:", err)
@@ -93,5 +95,42 @@ func GetGarminToken(c *gin.Context) {
 	fmt.Println(URL)
 	c.JSON(http.StatusOK, gin.H{
 		"token_url": URL,
+		"token":     token,
+		"secret":    tokenSecret,
 	})
+}
+
+func GetGarminUserAccessToken(c *gin.Context) {
+	// Get the request token and token secret from the query parameters
+	token := c.Query("oauth_token")
+	tokenSecret := c.Query("oauth_token_secret")
+	verifier := c.Query("oauth_verifier")
+
+	fmt.Println(token, tokenSecret, verifier)
+
+	consumerKey := config.GetDotEnvStr("GARMIN_CONSUMER_KEY")
+	consumerSecret := config.GetDotEnvStr("GARMIN_CONSUMER_SECRET")
+
+	// Create OAuth1 configuration
+	config := oauth1.Config{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+		Endpoint: oauth1.Endpoint{
+			AccessTokenURL: "https://connectapi.garmin.com/oauth-service/oauth/access_token",
+		},
+	}
+
+	// Exchange request token with access token
+	accessToken, accessSecret, err := config.AccessToken(token, tokenSecret, verifier)
+	if err != nil {
+		fmt.Println("Error obtaining access token:", err)
+		c.String(http.StatusInternalServerError, fmt.Sprintf("%s", err))
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"access_token":  accessToken,
+		"access_secret": accessSecret,
+	})
+
 }
