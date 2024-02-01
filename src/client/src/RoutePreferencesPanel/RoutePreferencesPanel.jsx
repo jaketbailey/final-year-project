@@ -23,24 +23,12 @@ const RoutePreferencesPanel = (props) => {
   const [isLoadingGoogleDriveApi, setIsLoadingGoogleDriveApi] = useState(false);
   const [signedInUser, setSignedInUser] = useState(null);
   const [GAPIAuthInstance, setGAPIAuthInstance] = useState(null);
-  const [garminAuthUrl, setGarminAuthUrl] = useState(null);
 
   const G_CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID
   const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
   const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   
-  useEffect(() => {
-    const getGarminAuth = async () => {
-      const response = await fetch('/api/get-token');
-      const data = await response.json();
-      console.log(data);
-      setGarminAuthUrl(data.url);
-    }
-
-    getGarminAuth();
-  },[])
-
   const handleAuthClick = (event) => {
     props.gapi.auth2.getAuthInstance().signIn();
   };
@@ -252,10 +240,6 @@ const RoutePreferencesPanel = (props) => {
     }
   }, [showPanel]);
 
-  const authGarmin = () => {
-    window.location.href = garminAuthUrl;
-  }
-
   return (
       <div className="route-preferences-panel">        
         <button className="route-preferences-panel__button" onClick={togglePanel}>
@@ -272,9 +256,6 @@ const RoutePreferencesPanel = (props) => {
         </button> 
         <button id="strava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
           Log in to Strava 
-        </button>
-        <button id="garmin-login" className="route-preferences-panel__button" onClick={authGarmin}>
-          Log in to Garmin 
         </button>
         <button id="google-login" className="route-preferences-panel__button" onClick={() => {
             if (GLoginLogout === true) {
