@@ -276,6 +276,7 @@ func PostCreateGarminCourse(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
+		"status":  "Good",
 		"message": "Garmin course created successfully",
 		"data":    courseData,
 	})

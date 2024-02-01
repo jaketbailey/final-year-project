@@ -243,7 +243,7 @@ export const findFurthestCoordinates = (coordinates) => {
 }
 
 export const convertRouteToGarminJSON = (route) => {
-  const activity = localStorage.getItem('vehicleType');
+  const activity = localStorage.getItem('vehicleType') || 'cycling-road';
   if(activity) {
     const activityTypes = {
       'cycling-road': 'ROAD_CYCLING',
@@ -284,7 +284,6 @@ export const convertRouteToGarminJSON = (route) => {
         activityType: garminActivity,
         coordinateSystem
     };
-    console.log(jsonObject)
     return jsonObject;
   }
 }
