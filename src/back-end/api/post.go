@@ -5,16 +5,19 @@
 package api
 
 import (
+	"bytes"
 	"cycling-route-planner/src/back-end/config"
 	"cycling-route-planner/src/back-end/db"
 	"cycling-route-planner/src/back-end/utils/logger"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
 	"path/filepath"
 	"strings"
 
+	"github.com/dghubble/oauth1"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/sendgrid/sendgrid-go"
@@ -215,4 +218,65 @@ func PostUploadRouteImage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"filename": filepath})
+}
+
+func PostCreateGarminCourse(c *gin.Context) {
+	// Get the request token and token secret from the query parameters
+	token := c.Query("oauth_token")
+	tokenSecret := c.Query("oauth_token_secret")
+
+	fmt.Println(token, tokenSecret)
+
+	consumerKey := config.GetDotEnvStr("GARMIN_CONSUMER_KEY")
+	consumerSecret := config.GetDotEnvStr("GARMIN_CONSUMER_SECRET")
+
+	// Create OAuth1 configuration
+	garminConfig := oauth1.Config{
+		ConsumerKey:    consumerKey,
+		ConsumerSecret: consumerSecret,
+		Endpoint: oauth1.Endpoint{
+			AccessTokenURL: "https://connectapi.garmin.com/oauth-service/oauth/access_token",
+		},
+	}
+
+	httpClient := garminConfig.Client(oauth1.NoContext, oauth1.NewToken(token, tokenSecret))
+
+	// Retrieve JSON payload from request body
+	var courseData map[string]interface{}
+	if err := c.BindJSON(&courseData); err != nil {
+		fmt.Println("Error parsing request body:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON payload"})
+		return
+	}
+
+	// Convert courseData to JSON bytes
+	payload, err := json.Marshal(courseData)
+	if err != nil {
+		fmt.Println("Error marshaling course payload:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Make POST request to create Garmin course
+	url := "https://apis.garmin.com/training-api/courses/v1/course"
+	resp, err := httpClient.Post(url, "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		fmt.Println("Error making POST request:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+
+	// Check response status
+	fmt.Println(resp)
+	if resp.StatusCode != http.StatusOK {
+		fmt.Println("Unexpected status code:", resp.StatusCode)
+		c.JSON(resp.StatusCode, gin.H{"error": "Unexpected status code"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Garmin course created successfully",
+		"data":    courseData,
+	})
 }

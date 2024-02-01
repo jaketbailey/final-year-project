@@ -405,7 +405,11 @@ const createRoutingMachineLayer = (props) => {
     props.setInstructions(routes[0].instructions);
     props.setSummary(routes[0].summary);
     routes[0].name = 'Route Summary';
-    props.garminJSON.current = convertRouteToGarminJSON(routes[0]);
+    const garminJSON = convertRouteToGarminJSON(routes[0])
+    console.log(routes[0])
+    console.log(garminJSON)
+    localStorage.setItem('garminJSON', JSON.stringify(garminJSON))
+    props.setGarminJSON(garminJSON);
     const geoJSON = getGeoJSON(routes[0].instructions, routes[0].coordinates); 
     const gpx = getGPX(routes[0].instructions, routes[0].coordinates);
     exportGeoJSON(geoJSON, props.setGeoJSON, props.setGeoJSONLink);

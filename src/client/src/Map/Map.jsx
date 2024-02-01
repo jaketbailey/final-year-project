@@ -20,7 +20,7 @@ const Map = (props) => {
   const control = useRef(null);
   const roundTripMode = useRef(false);
   const geocoder = useRef(L.Control.Geocoder.nominatim());
-  const garminJSON = useRef({});
+  const [garminJSON, setGarminJSON] = useState({});
   const routerConfig = useRef({
             attributes: [
                 "avgspeed",
@@ -487,7 +487,7 @@ const Map = (props) => {
           roundTripMode={roundTripMode}
           routerConfig={routerConfig}
           geocoder={geocoder}
-          garminJSON={garminJSON}
+          setGarminJSON={setGarminJSON}
         />      
       </MapContainer>
 

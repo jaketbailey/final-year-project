@@ -277,12 +277,11 @@ export const convertRouteToGarminJSON = (route) => {
   
     // Construct the final JSON object
     const jsonObject = {
-        // courseId,
         distance,
         elevationGain,
         elevationLoss,
         geoPoints,
-        garminActivity,
+        activityType: garminActivity,
         coordinateSystem
     };
     console.log(jsonObject)

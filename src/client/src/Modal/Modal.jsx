@@ -11,7 +11,7 @@ const Modal = (props) => {
   if (!props.show) {
     return null
   }
-  
+
   const [typeDesc, setTypeDesc] = useState(23);
 
   const buttonUpdate = (text, type, check) => {
@@ -285,15 +285,6 @@ const Modal = (props) => {
     addReport();
   }
 
-  useEffect(() => {
-    console.log('hello')
-    if (props.garminJSON.current) {
-      if(props.garminJSON.current.courseName) {
-        
-      }
-    }
-  },[props.garminJSON.current])
-
   const handleClick = (type) => {
     console.log('clicked')
     if (type === "strava") {
@@ -310,7 +301,24 @@ const Modal = (props) => {
     } else if (type === "garmin") {
       console.log('garminModal')
       const input = document.getElementById('input-garmin-course-name');
-      props.garminJSON.current.courseName = input.value;
+      const createCourse = async () => {
+        const body = props.garminJSON;
+        const token = localStorage.getItem('garmin_user_token');
+        const secret = localStorage.getItem('garmin_user_secret');
+        console.log(token, secret)
+
+        const response = await fetch(`/api/create-garmin-course?oauth_token=${token}&oauth_token_secret=${secret}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({...body, courseName: input.value})
+        });
+        const res = await response.json();
+        console.log(res.message)
+      }
+
+      createCourse();
       return;
     }
 

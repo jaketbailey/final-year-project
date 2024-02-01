@@ -369,7 +369,6 @@ const SharePanel = (props) => {
       screenshotMap();
     } else if (id === 'shareGarminButton') {
       props.setShowGarmin(!props.showGarmin)
-      console.log(garmin)
     }
   };
 
