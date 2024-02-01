@@ -268,7 +268,7 @@ const SharePanel = (props) => {
         sendBtn.textContent = 'Send';
       }, 1000)
     } else {
-      console.log(res);
+      console.log(res);``
     }
   }
 
@@ -367,6 +367,8 @@ const SharePanel = (props) => {
     } else if (id === 'shareRedditButton') {
       socialShare.current = "reddit";
       screenshotMap();
+    } else if (id === 'shareGarminButton') {
+      props.setShowGarmin(!props.showGarmin)
     }
   };
 
@@ -374,12 +376,13 @@ const SharePanel = (props) => {
     <div className="share-panel__preferences">
       <div className="share-panel__preferences__preference">
         <div className='button-list'>
-          <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
+          <button id='shareGarminButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Garmin Course</button>
           <button id='shareStravaButton' type='button' className='share-panel__button'>Strava Activity</button>
           <button id='shareGoogleDriveButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Google Drive</button>
           <button id='shareFacebookButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Facebook</button>
           <button id='shareXButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>X/Twitter</button>
           <button id='shareRedditButton' type='button' className='share-panel__button' onClick={(e) => clickHandler(e)}>Reddit</button>
+          <button id='shareEmailButton' type='button' className='share-panel__button'>Email</button>
         </div>
       </div>
     </div>

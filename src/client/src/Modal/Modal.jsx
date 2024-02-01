@@ -11,7 +11,7 @@ const Modal = (props) => {
   if (!props.show) {
     return null
   }
-  
+
   const [typeDesc, setTypeDesc] = useState(23);
 
   const buttonUpdate = (text, type, check) => {
@@ -21,6 +21,9 @@ const Modal = (props) => {
     } 
     if (type === 'google') {
       sendBtn = document.querySelector('#upload-drive');
+    }
+    if (type === 'garmin') {
+      sendBtn = document.querySelector('#save-course');
     }
     if (type === 'hazard' || type === 'hazardReport') {
       sendBtn = document.querySelector('#save-hazard') || document.querySelector('#save-hazard');
@@ -40,6 +43,14 @@ const Modal = (props) => {
       }
     }
     if (!(type === 'google' && check)) {
+      if (type === 'garmin' && check) {
+        sendBtn.textContent = text
+        sendBtn.classList.add('success')
+        setTimeout(() => {
+          sendBtn.classList.remove('success');
+          sendBtn.textContent = 'Save';
+          },1000);
+      }
       sendBtn.classList.add('fail')
       sendBtn.textContent = text
       setTimeout(() => {
@@ -239,7 +250,6 @@ const Modal = (props) => {
         return;
       }; 
     }
-
     addHazard();
   }
 
@@ -279,7 +289,6 @@ const Modal = (props) => {
         console.log(res);
         return;
       };
-      
     }
 
     addReport();
@@ -297,6 +306,35 @@ const Modal = (props) => {
       return;
     } else if (type === "hazardReport") {
       collateReportData();
+      return;
+    } else if (type === "garmin") {
+      const input = document.getElementById('input-garmin-course-name');
+      const createCourse = async () => {
+        const body = props.garminJSON;
+        const token = localStorage.getItem('garmin_user_token');
+        const secret = localStorage.getItem('garmin_user_secret');
+        console.log(token, secret)
+
+        const response = await fetch(`/api/create-garmin-course?oauth_token=${token}&oauth_token_secret=${secret}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({...body, courseName: input.value})
+        });
+        const res = await response.json();
+        console.log(res.status)
+        if (res.status === "Good") {
+          buttonUpdate('Course created.', 'garmin', 'success');
+          return;
+        } else {
+          buttonUpdate('Error creating course.', 'garmin');
+          console.log(res);
+          return
+        }
+      }
+
+      createCourse();
       return;
     }
 
@@ -435,6 +473,16 @@ const Modal = (props) => {
           <button id='save-hazard' className='share' onClick={() => {handleClick(props.type)}}>Report Error</button>
         </div>
       
+      )
+    } else if (props.type === 'garmin') {
+      return (
+        <div>
+          <div className='block' id="add-garmin-course">
+          <label htmlFor='input-garmin-course-name'>Course Name:</label><br/>
+          <input id='input-garmin-course-name' name='input-garmin-course-name' type='text' placeholder='My Course'/><br/>
+          </div>
+          <button id='save-course' className='share' onClick={() => {handleClick(props.type)}}>Save</button>
+        </div>
       )
     }
   }

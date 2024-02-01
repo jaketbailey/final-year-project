@@ -28,7 +28,7 @@ const RoutePreferencesPanel = (props) => {
   const G_API_ID = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY
   const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-  
+
   const handleAuthClick = (event) => {
     props.gapi.auth2.getAuthInstance().signIn();
   };
@@ -156,14 +156,15 @@ const RoutePreferencesPanel = (props) => {
     }
 
     const pathname = window.location.pathname;
+    console.log(pathname)
     if (pathname === '/exchange_token') {
       const params = (new URL(document.location)).searchParams;
       console.log(params)
-      localStorage.setItem('strava_auth_code', params.get('code'))
       if (params.get('error')) {
         console.log(params.get('error'))
         return;
       }
+      localStorage.setItem('strava_auth_code', params.get('code'))
       const stravaBtn = document.querySelector("#strava-login");
       if (stravaBtn !== null) {
         stravaBtn.innerText = 'Log out of Strava';
@@ -176,6 +177,43 @@ const RoutePreferencesPanel = (props) => {
 
       localStorage.setItem('strava_auth_code', JSON.stringify(code));
       setStravaAuthCode(code);
+      return;
+    }
+    if (pathname === '/garmin_callback') {
+      console.log('garmin test')
+      const params = (new URL(document.location)).searchParams;
+      console.log(params)
+      console.log(params.get('oauth_verifier'))
+      if (params.get('error')) {
+        console.log(params.get('error'))
+        return;
+      }
+      localStorage.setItem('garmin_oauth_verifier', params.get('oauth_verifier'))
+
+      const getGarminUserAccess = async () => {
+        console.log('test')
+        const garminOAuth = JSON.parse(localStorage.getItem('garmin_token'));
+        const token = garminOAuth.token;
+        const secret = garminOAuth.secret;
+        const verifier = params.get('oauth_verifier');
+
+        const response = await fetch(`/api/get-access-token?oauth_token=${token}&oauth_token_secret=${secret}&oauth_verifier=${verifier}`);
+        console.log(response)
+        
+        const res = await response.json();
+        console.log('verifier request!!!!!')
+        console.log(res)
+        localStorage.setItem('garmin_user_token', res.access_token);
+        localStorage.setItem('garmin_user_secret', res.access_secret);
+        localStorage.setItem('garmin_logged_in', true)
+      }
+
+      getGarminUserAccess();
+      const garminBtn = document.querySelector("#garmin-login");
+      if (garminBtn !== null) {
+        garminBtn.innerText = 'Log out of Garmin';
+        garminBtn.classList.add('garmin-logout');
+      }
       return;
     }
     return;
@@ -240,6 +278,13 @@ const RoutePreferencesPanel = (props) => {
     }
   }, [showPanel]);
 
+  const authGarmin = async () => {
+    const response = await fetch('/api/get-token');
+    const data = await response.json();
+    localStorage.setItem('garmin_token', JSON.stringify(data));
+    window.location.href = data.token_url;
+  }
+
   return (
       <div className="route-preferences-panel">        
         <button className="route-preferences-panel__button" onClick={togglePanel}>
@@ -256,6 +301,9 @@ const RoutePreferencesPanel = (props) => {
         </button> 
         <button id="strava-login" className="route-preferences-panel__button" onClick={getStravaAuthCode}>
           Log in to Strava 
+        </button>
+        <button id="garmin-login" className="route-preferences-panel__button" onClick={authGarmin}>
+          Log in to Garmin 
         </button>
         <button id="google-login" className="route-preferences-panel__button" onClick={() => {
             if (GLoginLogout === true) {
@@ -312,6 +360,8 @@ const RoutePreferencesPanel = (props) => {
           gapi={props.gapi}
           map={props.map}
           control={props.control}
+          showGarmin={props.showGarmin} 
+          setShowGarmin={props.setShowGarmin} 
         />
       </div>
   );
